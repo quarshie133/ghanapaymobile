@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import T from "@/lib/tokens";
+import { FaBars, FaMagnifyingGlass, FaBell, FaChevronDown, FaUpRightFromSquare } from "react-icons/fa6";
 
 interface TopNavProps {
   onMenuToggle: () => void;
@@ -20,19 +21,21 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
         onClick={onMenuToggle}
         aria-label="Toggle sidebar"
         style={{
-          background: "none", border: "none", fontSize: 20,
+          background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center",
           cursor: "pointer", color: T.textMuted, padding: 4,
         }}>
-        ☰
+        <FaBars size={20} />
       </button>
 
       {/* Search */}
       <div style={{ flex: 1, maxWidth: 400, position: "relative" }}>
         <span style={{
           position: "absolute", left: 14, top: "50%",
-          transform: "translateY(-50%)", color: T.textMuted, fontSize: 14,
-          pointerEvents: "none",
-        }}>🔍</span>
+          transform: "translateY(-50%)", color: T.textMuted,
+          pointerEvents: "none", display: "flex", alignItems: "center"
+        }}>
+          <FaMagnifyingGlass size={16} />
+        </span>
         <input
           id="global-search"
           placeholder="Search transactions, contacts… ⌘K"
@@ -51,8 +54,8 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
       <button
         id="notifications-btn"
         aria-label="Notifications"
-        style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", position: "relative" }}>
-        🔔
+        style={{ background: "none", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", position: "relative" }}>
+        <FaBell size={20} style={{ color: T.textSec }} />
         <span style={{
           position: "absolute", top: -2, right: -2, width: 16, height: 16,
           background: T.error, borderRadius: 9999, fontSize: 9, fontWeight: 700,
@@ -72,10 +75,10 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
         }}>
           {isAdmin ? "EA" : "AO"}
         </div>
-        <span style={{ fontSize: 14, fontWeight: 500, color: T.textPrimary }}>
+        <span style={{ fontSize: 14, fontWeight: 500, color: T.textPrimary, display: "flex", alignItems: "center" }}>
           {isAdmin ? "Esi A." : "Abena O."}
         </span>
-        <span style={{ color: T.textMuted }}>▾</span>
+        <FaChevronDown size={14} style={{ color: T.textMuted }} />
       </div>
 
       {/* Admin / User switch */}
@@ -84,8 +87,9 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
           <button style={{
             background: T.navyMid, color: "#fff", border: "none",
             borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 6
           }}>
-            Admin ↗
+            Admin <FaUpRightFromSquare size={12} />
           </button>
         </Link>
       ) : (
@@ -93,8 +97,9 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
           <button style={{
             background: T.adminAccent, color: "#fff", border: "none",
             borderRadius: 8, padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 6
           }}>
-            User ↗
+            User <FaUpRightFromSquare size={12} />
           </button>
         </Link>
       )}

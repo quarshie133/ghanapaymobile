@@ -8,23 +8,26 @@ import Btn from '@/components/ui/Btn';
 import Input from '@/components/ui/Input';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
+import {
+  FaBolt, FaDroplet, FaTv, FaGlobe, FaShieldHalved, FaGraduationCap, FaCircleCheck, FaHashtag, FaCediSign, FaFileInvoiceDollar
+} from 'react-icons/fa6';
 
 type BillCategory = {
   id: string;
   name: string;
   provider: string;
-  icon: string;
+  icon: React.ReactNode;
   color: string;
   accent: string;
 };
 
 const CATEGORIES: BillCategory[] = [
-  { id: 'electricity', name: 'Electricity',  provider: 'ECG',      icon: '⚡', color: '#FFF3CD', accent: '#D68910' },
-  { id: 'water',       name: 'Water',        provider: 'GWCL',     icon: '💧', color: '#D6EAF8', accent: '#1E7B9E' },
-  { id: 'tv',          name: 'TV / Cable',   provider: 'DStv·GOtv',icon: '📺', color: '#E8DAEF', accent: '#8E44AD' },
-  { id: 'internet',    name: 'Internet',     provider: 'Various',  icon: '🌐', color: '#D5F5E3', accent: '#1E8449' },
-  { id: 'insurance',   name: 'Insurance',    provider: 'GLICO',    icon: '🛡️', color: '#FADBD8', accent: '#C0392B' },
-  { id: 'school',      name: 'School Fees',  provider: 'Schools',  icon: '🎓', color: '#FDEBD0', accent: '#D68910' },
+  { id: 'electricity', name: 'Electricity',  provider: 'ECG',      icon: <FaBolt />, color: '#FFF3CD', accent: '#D68910' },
+  { id: 'water',       name: 'Water',        provider: 'GWCL',     icon: <FaDroplet />, color: '#D6EAF8', accent: '#1E7B9E' },
+  { id: 'tv',          name: 'TV / Cable',   provider: 'DStv·GOtv',icon: <FaTv />, color: '#E8DAEF', accent: '#8E44AD' },
+  { id: 'internet',    name: 'Internet',     provider: 'Various',  icon: <FaGlobe />, color: '#D5F5E3', accent: '#1E8449' },
+  { id: 'insurance',   name: 'Insurance',    provider: 'GLICO',    icon: <FaShieldHalved />, color: '#FADBD8', accent: '#C0392B' },
+  { id: 'school',      name: 'School Fees',  provider: 'Schools',  icon: <FaGraduationCap />, color: '#FDEBD0', accent: '#D68910' },
 ];
 
 const RECENT_BILLS = TRANSACTIONS.filter(t => t.type === 'Bill');
@@ -89,7 +92,7 @@ export default function BillPaymentsPage() {
                   placeholder="Enter your account number"
                   value={acctNo}
                   onChange={e => setAcctNo(e.target.value)}
-                  icon="🔢"
+                  icon={<FaHashtag />}
                 />
 
                 {selected.id === 'tv' && (
@@ -113,7 +116,7 @@ export default function BillPaymentsPage() {
                   type="number"
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
-                  icon="₵"
+                  icon={<FaCediSign />}
                 />
 
                 <div style={{ padding: 14, borderRadius: 10, background: T.surfaceLow, fontSize: 13, color: T.textMuted }}>
@@ -141,7 +144,7 @@ export default function BillPaymentsPage() {
 
           {paid && (
             <Card style={{ textAlign: 'center', padding: 40 }}>
-              <div style={{ fontSize: 56 }}>✅</div>
+              <div style={{ fontSize: 56, color: T.success, display: 'flex', justifyContent: 'center' }}><FaCircleCheck /></div>
               <div style={{ fontSize: 20, fontWeight: 800, color: T.success, marginTop: 16 }}>Bill Paid!</div>
               <div style={{ fontSize: 13, color: T.textMuted, marginTop: 8 }}>
                 {selected?.name} payment of {formatCurrency(parseFloat(amount || '0'))} was successful.
@@ -164,7 +167,7 @@ export default function BillPaymentsPage() {
                     background: T.errorBg, color: T.error,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
                   }}>
-                    {tx.method === 'Electricity' ? '⚡' : tx.method === 'Water' ? '💧' : tx.method === 'TV' ? '📺' : '🧾'}
+                    {tx.method === 'Electricity' ? <FaBolt /> : tx.method === 'Water' ? <FaDroplet /> : tx.method === 'TV' ? <FaTv /> : <FaFileInvoiceDollar />}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: T.textPrimary }}>{tx.name}</div>

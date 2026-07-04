@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import T from "@/lib/tokens";
 import Input from "@/components/ui/Input";
+import {
+  FaLock, FaUser, FaEye, FaEyeSlash, FaArrowRight, FaKey, FaShieldHalved, FaCircleCheck, FaGlobe, FaSignal
+} from 'react-icons/fa6';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -51,16 +54,18 @@ export default function LoginPage() {
 
         {/* Feature tiles */}
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
-          {[
-            ["🌍 Global Standard", "Bank-Grade Security"],
-            ["📶 Accessibility",   "Nationwide Network"],
-          ].map(([sub, title]) => (
+          {([
+            [<FaGlobe key="globe" />, "Global Standard", "Bank-Grade Security"],
+            [<FaSignal key="signal" />, "Accessibility",   "Nationwide Network"],
+          ] as const).map(([icon, sub, title]) => (
             <div key={title} style={{
               background: "rgba(255,255,255,0.08)",
               border: "1px solid rgba(206,166,44,0.25)",
               borderRadius: 12, padding: "16px 20px",
             }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.08em", marginBottom: 4 }}>{sub}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.08em", marginBottom: 4, display: 'flex', gap: 6, alignItems: 'center' }}>
+                {icon} {sub}
+              </div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{title}</div>
             </div>
           ))}
@@ -68,7 +73,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.4)", fontSize: 12 }}>
-          <span>🔒</span> PCI-DSS COMPLIANT PLATFORM
+          <span><FaLock /></span> PCI-DSS COMPLIANT PLATFORM
         </div>
       </div>
 
@@ -89,7 +94,7 @@ export default function LoginPage() {
             <Input
               id="phone-input"
               label="Phone Number or Email"
-              icon="👤"
+              icon={<FaUser />}
               placeholder="02X XXX XXXX or email@example.com"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -97,14 +102,14 @@ export default function LoginPage() {
             <Input
               id="password-input"
               label="PIN / Password"
-              icon="🔒"
+              icon={<FaLock />}
               type={showPw ? "text" : "password"}
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               right={
-                <span onClick={() => setShowPw((s) => !s)}>
-                  {showPw ? "🙈" : "👁"}
+                <span onClick={() => setShowPw((s) => !s)} style={{ cursor: "pointer", display: "flex", alignItems: "center", color: T.textMuted }}>
+                  {showPw ? <FaEyeSlash /> : <FaEye />}
                 </span>
               }
             />
@@ -137,7 +142,7 @@ export default function LoginPage() {
               display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               transition: "all 0.15s",
             }}>
-            {loading ? <span className="spinner" /> : <>Log In →</>}
+            {loading ? <span className="spinner" /> : <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>Log In <FaArrowRight /></span>}
           </button>
 
           {/* Divider */}
@@ -149,7 +154,11 @@ export default function LoginPage() {
 
           {/* Security badges */}
           <div style={{ display: "flex", justifyContent: "center", gap: 32 }}>
-            {([["🔐", "BANK GRADE"], ["🛡", "ENCRYPTED"], ["✅", "REGULATED"]] as [string, string][]).map(([icon, label]) => (
+            {([
+              [<FaKey key="key" />, "BANK GRADE"],
+              [<FaShieldHalved key="shield" />, "ENCRYPTED"],
+              [<FaCircleCheck key="check" />, "REGULATED"]
+            ] as const).map(([icon, label]) => (
               <div key={label} style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 22, color: T.textMuted }}>{icon}</div>
                 <div style={{ fontSize: 10, fontWeight: 600, color: T.textMuted, letterSpacing: "0.08em", marginTop: 4 }}>{label}</div>

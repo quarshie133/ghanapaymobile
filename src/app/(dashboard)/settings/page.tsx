@@ -5,6 +5,9 @@ import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Input from '@/components/ui/Input';
 import { SectionTitle, PageWrap, Divider } from '@/components/ui/Layout';
+import {
+  FaUser, FaLock, FaBell, FaShieldHalved
+} from 'react-icons/fa6';
 
 const TABS = ['Profile', 'Security', 'Notifications', 'Privacy'];
 
@@ -79,10 +82,10 @@ export default function SettingsPage() {
                   transition: 'all 0.15s',
                 }}
               >
-                {tab === 'Profile' && '👤 '}
-                {tab === 'Security' && '🔒 '}
-                {tab === 'Notifications' && '🔔 '}
-                {tab === 'Privacy' && '🛡️ '}
+                {tab === 'Profile' && <FaUser style={{ marginRight: 6 }} />}
+                {tab === 'Security' && <FaLock style={{ marginRight: 6 }} />}
+                {tab === 'Notifications' && <FaBell style={{ marginRight: 6 }} />}
+                {tab === 'Privacy' && <FaShieldHalved style={{ marginRight: 6 }} />}
                 {tab}
               </button>
             ))}

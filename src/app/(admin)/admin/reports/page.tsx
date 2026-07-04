@@ -7,11 +7,14 @@ import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import { PageWrap, SectionTitle, Divider } from '@/components/ui/Layout';
+import {
+  FaMoneyBillTransfer, FaArrowTrendUp, FaShieldHalved, FaMoneyBillTrendUp, FaTriangleExclamation, FaFileInvoice, FaChartBar, FaCalendarDays, FaCheck, FaExclamation, FaGear, FaDownload, FaClipboardList, FaHourglassHalf
+} from 'react-icons/fa6';
 
 /* ── Report Types ───────────────────────────────────────── */
 interface Report {
   id: string;
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   description: string;
   lastGenerated: string;
@@ -23,7 +26,7 @@ interface Report {
 const REPORTS: Report[] = [
   {
     id: 'RPT-001',
-    icon: '💸',
+    icon: <FaMoneyBillTransfer />,
     title: 'Transaction Summary',
     description: 'Complete breakdown of all transactions by type, method, and status across the selected period.',
     lastGenerated: '4 Jul 2026, 08:00',
@@ -33,7 +36,7 @@ const REPORTS: Report[] = [
   },
   {
     id: 'RPT-002',
-    icon: '📈',
+    icon: <FaArrowTrendUp />,
     title: 'User Growth Report',
     description: 'New registrations, activation rates, churn analysis, and tier distribution over time.',
     lastGenerated: '3 Jul 2026, 18:30',
@@ -43,7 +46,7 @@ const REPORTS: Report[] = [
   },
   {
     id: 'RPT-003',
-    icon: '🛡',
+    icon: <FaShieldHalved />,
     title: 'KYC Compliance',
     description: 'KYC approval rates, rejection reasons, average processing time, and tier upgrade funnel.',
     lastGenerated: '4 Jul 2026, 06:00',
@@ -53,7 +56,7 @@ const REPORTS: Report[] = [
   },
   {
     id: 'RPT-004',
-    icon: '💰',
+    icon: <FaMoneyBillTrendUp />,
     title: 'Revenue Report',
     description: 'Fee revenue, transaction volume, gross margin, and MoMo/Bank channel breakdown.',
     lastGenerated: '1 Jul 2026, 09:00',
@@ -63,7 +66,7 @@ const REPORTS: Report[] = [
   },
   {
     id: 'RPT-005',
-    icon: '🚨',
+    icon: <FaTriangleExclamation />,
     title: 'Fraud Report',
     description: 'Flagged transactions, risk scores distribution, blocked IPs, and false-positive rates.',
     lastGenerated: '4 Jul 2026, 07:30',
@@ -73,7 +76,7 @@ const REPORTS: Report[] = [
   },
   {
     id: 'RPT-006',
-    icon: '📋',
+    icon: <FaFileInvoice />,
     title: 'Regulatory Filing',
     description: 'Bank of Ghana AML/CTF report formatted for BoG regulatory submission requirements.',
     lastGenerated: '30 Jun 2026, 23:59',
@@ -120,10 +123,10 @@ export default function AdminReportsPage() {
       {/* ── Quick Stats ── */}
       <div style={{ display: 'flex', gap: 14, marginBottom: 24, flexWrap: 'wrap' }}>
         {[
-          { label: 'Generated This Month', value: '24', icon: '📊', color: T.adminAccent },
-          { label: 'Scheduled Reports', value: '6',  icon: '🗓', color: T.navy },
-          { label: 'Last Export',   value: 'Today',  icon: '✅', color: T.success },
-          { label: 'Pending Filing', value: '1',     icon: '⚠',  color: T.warning },
+          { label: 'Generated This Month', value: '24', icon: <FaChartBar />, color: T.adminAccent },
+          { label: 'Scheduled Reports', value: '6',  icon: <FaCalendarDays />, color: T.navy },
+          { label: 'Last Export',   value: 'Today',  icon: <FaCheck />, color: T.success },
+          { label: 'Pending Filing', value: '1',     icon: <FaExclamation />,  color: T.warning },
         ].map((s) => (
           <Card key={s.label} style={{ flex: 1, minWidth: 160, padding: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -238,7 +241,7 @@ export default function AdminReportsPage() {
                     style={{ flex: 1, justifyContent: 'center' }}
                     onClick={() => handleGenerate(report.id)}
                     disabled={isGenerating}
-                    icon={isGenerating ? '⏳' : '⚙'}
+                    icon={isGenerating ? <FaHourglassHalf /> : <FaGear />}
                   >
                     {isGenerating ? 'Generating…' : 'Generate'}
                   </Btn>
@@ -246,7 +249,7 @@ export default function AdminReportsPage() {
                     variant="secondary"
                     size="sm"
                     style={{ flex: 1, justifyContent: 'center' }}
-                    icon="⬇"
+                    icon={<FaDownload />}
                   >
                     Download
                   </Btn>
@@ -268,8 +271,8 @@ export default function AdminReportsPage() {
                   width: 36, height: 36, borderRadius: 10,
                   background: '#e8ecff', border: `1px solid ${T.adminAccent}22`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 16,
-                }}>📋</div>
+                  fontSize: 16, color: T.adminAccent
+                }}><FaClipboardList /></div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.textPrimary }}>{r.name}</div>
                   <div style={{ fontSize: 12, color: T.textMuted }}>Generated by {r.by} · {r.time}</div>
@@ -277,7 +280,7 @@ export default function AdminReportsPage() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <span style={{ fontSize: 12, color: T.textMuted }}>{r.size}</span>
-                <Btn variant="ghost" size="sm" icon="⬇" style={{ color: T.adminAccent }}>Download</Btn>
+                <Btn variant="ghost" size="sm" icon={<FaDownload />} style={{ color: T.adminAccent }}>Download</Btn>
               </div>
             </div>
             {i < RECENT_REPORTS.length - 1 && <Divider />}

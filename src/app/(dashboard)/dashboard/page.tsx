@@ -12,6 +12,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import {
+  FaMobileScreen, FaBuildingColumns, FaMoneyBillTransfer, FaDownload, 
+  FaFileInvoiceDollar, FaSatelliteDish, FaUsers, FaPlus, FaEye, FaEyeSlash
+} from 'react-icons/fa6';
 
 const CONTACTS = [
   { name: 'Kwame Mensah', phone: '0244 567 890' },
@@ -20,17 +24,17 @@ const CONTACTS = [
 ];
 
 const LINKED = [
-  { name: 'MTN Mobile Money', icon: '📱', balance: 1200, color: '#FFCB05' },
-  { name: 'Ecobank',           icon: '🏦', balance: 8500, color: '#003087' },
+  { name: 'MTN Mobile Money', icon: <FaMobileScreen />, balance: 1200, color: '#FFCB05' },
+  { name: 'Ecobank',           icon: <FaBuildingColumns />, balance: 8500, color: '#003087' },
 ];
 
 const QUICK_ACTIONS = [
-  { label: 'Send Money',  icon: '💸', href: '/send-money',     bg: T.navyMid,    color: '#fff' },
-  { label: 'Request',     icon: '📥', href: '#',               bg: '#8E44AD',    color: '#fff' },
-  { label: 'Pay Bills',   icon: '🧾', href: '/bill-payments',  bg: T.gold,       color: T.navy },
-  { label: 'Airtime',     icon: '📡', href: '#',               bg: T.info,       color: '#fff' },
-  { label: 'Bulk Pay',    icon: '👥', href: '/bulk-payments',  bg: T.success,    color: '#fff' },
-  { label: 'Add Money',   icon: '➕', href: '/wallet',         bg: T.navyLight,  color: '#fff' },
+  { label: 'Send Money',  icon: <FaMoneyBillTransfer />, href: '/send-money',     bg: T.navyMid,    color: '#fff' },
+  { label: 'Request',     icon: <FaDownload />, href: '#',               bg: '#8E44AD',    color: '#fff' },
+  { label: 'Pay Bills',   icon: <FaFileInvoiceDollar />, href: '/bill-payments',  bg: T.gold,       color: T.navy },
+  { label: 'Airtime',     icon: <FaSatelliteDish />, href: '#',               bg: T.info,       color: '#fff' },
+  { label: 'Bulk Pay',    icon: <FaUsers />, href: '/bulk-payments',  bg: T.success,    color: '#fff' },
+  { label: 'Add Money',   icon: <FaPlus />, href: '/wallet',         bg: T.navyLight,  color: '#fff' },
 ];
 
 const PERIOD_TABS = ['Week', 'Month', '3M'];
@@ -61,7 +65,7 @@ export default function DashboardPage() {
               onClick={() => setBalanceHidden(h => !h)}
               style={{ background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 6, color: '#fff', cursor: 'pointer', fontSize: 16, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              {balanceHidden ? '🙈' : '👁️'}
+              {balanceHidden ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
           <div style={{ fontSize: 30, fontWeight: 800, margin: '12px 0 4px', letterSpacing: -1 }}>

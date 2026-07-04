@@ -9,6 +9,9 @@ import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import { PageWrap, SectionTitle } from '@/components/ui/Layout';
+import {
+  FaFileExport, FaMagnifyingGlass, FaClipboardList, FaMoneyBillWave, FaChartBar, FaHourglassHalf, FaBuilding
+} from 'react-icons/fa6';
 
 /* ── Helpers ────────────────────────────────────────────── */
 function typeBadge(type: string) {
@@ -66,7 +69,7 @@ export default function AdminTransactionsPage() {
       subtitle="Full audit trail of platform transactions"
       breadcrumb="Admin / Transactions"
       action={
-        <Btn variant="admin" icon="📤" onClick={() => exportCSV(filtered)}>
+        <Btn variant="admin" icon={<FaFileExport />} onClick={() => exportCSV(filtered)}>
           Export CSV
         </Btn>
       }
@@ -96,7 +99,7 @@ export default function AdminTransactionsPage() {
               placeholder="Search name, ref, method…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              icon="🔍"
+              icon={<FaMagnifyingGlass />}
             />
           </div>
           <div>
@@ -122,10 +125,10 @@ export default function AdminTransactionsPage() {
       {/* ── Stats Row ── */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
         {[
-          { label: 'Total Transactions', value: filtered.length.toString(), icon: '📋', color: T.navy },
-          { label: 'Total Volume', value: formatCurrency(totalVolume), icon: '💰', color: T.success },
-          { label: 'Average Amount', value: formatCurrency(avgAmount), icon: '📊', color: T.adminAccent },
-          { label: 'Pending', value: filtered.filter((t) => t.status === 'pending').length.toString(), icon: '⏳', color: T.warning },
+          { label: 'Total Transactions', value: filtered.length.toString(), icon: <FaClipboardList />, color: T.navy },
+          { label: 'Total Volume', value: formatCurrency(totalVolume), icon: <FaMoneyBillWave />, color: T.success },
+          { label: 'Average Amount', value: formatCurrency(avgAmount), icon: <FaChartBar />, color: T.adminAccent },
+          { label: 'Pending', value: filtered.filter((t) => t.status === 'pending').length.toString(), icon: <FaHourglassHalf />, color: T.warning },
         ].map((s) => (
           <Card key={s.label} style={{ flex: 1, minWidth: 160 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -146,7 +149,7 @@ export default function AdminTransactionsPage() {
         <SectionTitle action={
           <div style={{ padding: '0 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 13, color: T.textMuted }}>{filtered.length} transactions</span>
-            <Btn variant="admin" size="sm" icon="📤" onClick={() => exportCSV(filtered)}>CSV</Btn>
+            <Btn variant="admin" size="sm" icon={<FaFileExport />} onClick={() => exportCSV(filtered)}>CSV</Btn>
           </div>
         }>
           <div style={{ padding: '20px 20px 0' }}>Transaction List</div>
@@ -204,8 +207,8 @@ export default function AdminTransactionsPage() {
                           width: 32, height: 32, borderRadius: 9999, flexShrink: 0,
                           background: T.surfaceLow, border: `1.5px solid ${T.border}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 14,
-                        }}>🏢</div>
+                          fontSize: 14, color: T.textMuted
+                        }}><FaBuilding /></div>
                       )}
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 600, color: T.textPrimary }}>{tx.name}</div>

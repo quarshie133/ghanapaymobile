@@ -7,6 +7,9 @@ import Btn from '@/components/ui/Btn';
 import Input from '@/components/ui/Input';
 import Badge from '@/components/ui/Badge';
 import { PageWrap } from '@/components/ui/Layout';
+import {
+  FaMagnifyingGlass, FaPhone, FaArrowLeft, FaArrowRight, FaCheck, FaCircleCheck
+} from 'react-icons/fa6';
 
 const CONTACTS = [
   { name: 'Kwame Mensah',   phone: '0244 567 890', method: 'MTN MoMo' },
@@ -63,7 +66,7 @@ export default function SendMoneyPage() {
                   color: step >= s.n ? '#fff' : T.textMuted,
                   transition: 'all 0.3s',
                 }}>
-                  {step > s.n ? '✓' : s.n}
+                  {step > s.n ? <FaCheck /> : s.n}
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 600, color: step === s.n ? T.navyMid : T.textMuted }}>{s.label}</span>
               </div>
@@ -82,7 +85,7 @@ export default function SendMoneyPage() {
               placeholder="Search by name or phone..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              icon="🔍"
+              icon={<FaMagnifyingGlass />}
             />
             <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 4 }}>
               {filtered.map(c => (
@@ -119,9 +122,11 @@ export default function SendMoneyPage() {
             </div>
             <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
               <p style={{ fontSize: 12, color: T.textMuted, marginBottom: 12 }}>Or send to a new number</p>
-              <Input placeholder="Enter phone number (e.g. 0244 123 456)" icon="📞" />
+              <Input placeholder="Enter phone number (e.g. 0244 123 456)" icon={<FaPhone />} />
               <div style={{ marginTop: 12 }}>
-                <Btn style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep(2)}>Continue →</Btn>
+                <Btn style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep(2)}>
+                  <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>Continue <FaArrowRight /></span>
+                </Btn>
               </div>
             </div>
           </Card>
@@ -195,8 +200,12 @@ export default function SendMoneyPage() {
             )}
 
             <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-              <Btn variant="secondary" onClick={() => setStep(1)} style={{ flex: 1, justifyContent: 'center' }}>← Back</Btn>
-              <Btn onClick={() => setStep(3)} disabled={!amount || parseFloat(amount) <= 0} style={{ flex: 2, justifyContent: 'center' }}>Review →</Btn>
+              <Btn variant="secondary" onClick={() => setStep(1)} style={{ flex: 1, justifyContent: 'center' }}>
+                <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><FaArrowLeft /> Back</span>
+              </Btn>
+              <Btn onClick={() => setStep(3)} disabled={!amount || parseFloat(amount) <= 0} style={{ flex: 2, justifyContent: 'center' }}>
+                <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>Review <FaArrowRight /></span>
+              </Btn>
             </div>
           </Card>
         )}
@@ -248,8 +257,12 @@ export default function SendMoneyPage() {
               By confirming, you authorize this transfer from your GhanaPay wallet.
             </p>
             <div style={{ display: 'flex', gap: 12 }}>
-              <Btn variant="secondary" onClick={() => setStep(2)} style={{ flex: 1, justifyContent: 'center' }}>← Back</Btn>
-              <Btn variant="success" onClick={handleSend} style={{ flex: 2, justifyContent: 'center', fontSize: 15 }}>✓ Confirm & Send</Btn>
+              <Btn variant="secondary" onClick={() => setStep(2)} style={{ flex: 1, justifyContent: 'center' }}>
+                <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><FaArrowLeft /> Back</span>
+              </Btn>
+              <Btn variant="success" onClick={handleSend} style={{ flex: 2, justifyContent: 'center', fontSize: 15 }}>
+                <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><FaCheck /> Confirm & Send</span>
+              </Btn>
             </div>
           </Card>
         )}
@@ -257,7 +270,7 @@ export default function SendMoneyPage() {
         {/* Success State */}
         {sent && (
           <Card style={{ textAlign: 'center', padding: 48 }}>
-            <div style={{ fontSize: 64, marginBottom: 16 }}>✅</div>
+            <div style={{ fontSize: 64, marginBottom: 16, color: T.success, display: 'flex', justifyContent: 'center' }}><FaCircleCheck /></div>
             <div style={{ fontSize: 22, fontWeight: 800, color: T.success, marginBottom: 8 }}>Payment Sent!</div>
             <div style={{ fontSize: 15, color: T.textMuted, marginBottom: 24 }}>
               {formatCurrency(parseFloat(amount))} sent to {selected?.name}

@@ -6,6 +6,9 @@ import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, Divider, PageWrap } from '@/components/ui/Layout';
+import {
+  FaIdCard, FaCamera, FaHouse, FaBuildingColumns, FaCircleCheck, FaLock
+} from 'react-icons/fa6';
 
 type KycStepStatus = 'done' | 'active' | 'pending';
 
@@ -13,7 +16,7 @@ type KycStep = {
   title: string;
   desc: string;
   status: KycStepStatus;
-  icon: string;
+  icon: React.ReactNode;
 };
 
 const TIER2_LIMITS = [
@@ -31,10 +34,10 @@ const TIER3_LIMITS = [
 ];
 
 const TIER3_STEPS: KycStep[] = [
-  { title: 'Ghana Card Upload',   desc: 'Upload front & back of your Ghana National ID (NIA Card)', status: 'done',    icon: '🪪' },
-  { title: 'Selfie Verification', desc: 'Take a live selfie for biometric face match',              status: 'active',  icon: '🤳' },
-  { title: 'Address Proof',       desc: 'Upload a utility bill or bank statement',                  status: 'pending', icon: '🏠' },
-  { title: 'Bank Verification',   desc: 'Link and verify a licensed Ghana bank account',            status: 'pending', icon: '🏦' },
+  { title: 'Ghana Card Upload',   desc: 'Upload front & back of your Ghana National ID (NIA Card)', status: 'done',    icon: <FaIdCard /> },
+  { title: 'Selfie Verification', desc: 'Take a live selfie for biometric face match',              status: 'active',  icon: <FaCamera /> },
+  { title: 'Address Proof',       desc: 'Upload a utility bill or bank statement',                  status: 'pending', icon: <FaHouse /> },
+  { title: 'Bank Verification',   desc: 'Link and verify a licensed Ghana bank account',            status: 'pending', icon: <FaBuildingColumns /> },
 ];
 
 export default function KycPage() {
@@ -169,7 +172,9 @@ export default function KycPage() {
                     {step.status === 'active' && (
                       <div style={{ marginTop: 12, display: 'flex', gap: 10 }}>
                         <Btn size="sm" variant="primary" onClick={advanceStep} style={{ flex: 1, justifyContent: 'center' }}>
-                          {step.title === 'Selfie Verification' ? '📷 Start Camera' : step.title === 'Ghana Card Upload' ? '📁 Upload ID' : '📁 Upload Document'}
+                          <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                            {step.title === 'Selfie Verification' ? <><FaCamera /> Start Camera</> : step.title === 'Ghana Card Upload' ? <><FaIdCard /> Upload ID</> : <><FaHouse /> Upload Document</>}
+                          </span>
                         </Btn>
                       </div>
                     )}
@@ -180,7 +185,7 @@ export default function KycPage() {
 
             {doneCount === steps.length && (
               <div style={{ marginTop: 16, padding: 20, borderRadius: 12, background: T.successBg, textAlign: 'center' }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🎉</div>
+                <div style={{ fontSize: 32, marginBottom: 8, color: T.success, display: 'flex', justifyContent: 'center' }}><FaCircleCheck /></div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: T.success }}>All steps complete!</div>
                 <div style={{ fontSize: 13, color: T.textMuted, marginTop: 6 }}>Your application is under review (1–2 business days)</div>
               </div>
@@ -189,7 +194,9 @@ export default function KycPage() {
 
           {/* Security Note */}
           <Card style={{ background: T.infoBg, border: `1px solid ${T.info}33` }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.info, marginBottom: 8 }}>🔒 Your data is safe</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.info, marginBottom: 8, display: 'flex', gap: 6, alignItems: 'center' }}>
+              <FaLock /> Your data is safe
+            </div>
             <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.7 }}>
               All documents are encrypted with AES-256 and reviewed by our compliance team. We do not share your data with third parties.
             </div>

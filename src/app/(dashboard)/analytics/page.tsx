@@ -11,6 +11,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
+import {
+  FaCreditCard, FaInbox, FaHouse, FaLightbulb, FaCar, FaShieldHalved
+} from 'react-icons/fa6';
 
 const PERIOD_TABS = ['Week', 'Month', '3M'];
 
@@ -22,18 +25,18 @@ const PAYMENT_METHODS = [
 ];
 
 const SAVINGS_GOALS = [
-  { icon: '🚗', name: 'New Car Fund',    saved: 1200, target: 5000, pct: 24, eta: 'Dec 2026' },
-  { icon: '🛡️', name: 'Emergency Fund', saved: 3800, target: 5000, pct: 76, eta: 'Sep 2026' },
+  { icon: <FaCar />, name: 'New Car Fund',    saved: 1200, target: 5000, pct: 24, eta: 'Dec 2026' },
+  { icon: <FaShieldHalved />, name: 'Emergency Fund', saved: 3800, target: 5000, pct: 76, eta: 'Sep 2026' },
 ];
 
 export default function AnalyticsPage() {
   const [period, setPeriod] = useState('Month');
 
   const kpiCards = [
-    { label: 'Total Spent',       value: '₵2,000', delta: '▼ 8% vs last month', deltaColor: T.success, icon: '💳' },
-    { label: 'Total Received',    value: '₵5,400', delta: '▲ 15% vs last month', deltaColor: T.success, icon: '📥' },
-    { label: 'Largest Expense',   value: '₵1,500', delta: 'Rent · Jun 14', deltaColor: T.textMuted, icon: '🏠' },
-    { label: 'Health Score',      value: '82/100', delta: 'Good · Top 20%', deltaColor: T.info, icon: '💡' },
+    { label: 'Total Spent',       value: '₵2,000', delta: '▼ 8% vs last month', deltaColor: T.success, icon: <FaCreditCard /> },
+    { label: 'Total Received',    value: '₵5,400', delta: '▲ 15% vs last month', deltaColor: T.success, icon: <FaInbox /> },
+    { label: 'Largest Expense',   value: '₵1,500', delta: 'Rent · Jun 14', deltaColor: T.textMuted, icon: <FaHouse /> },
+    { label: 'Health Score',      value: '82/100', delta: 'Good · Top 20%', deltaColor: T.info, icon: <FaLightbulb /> },
   ];
 
   return (

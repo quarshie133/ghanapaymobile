@@ -7,10 +7,14 @@ import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import { SectionTitle, Divider, PageWrap } from '@/components/ui/Layout';
+import {
+  FaMobileScreen, FaBuildingColumns, FaArrowDown, FaArrowUp, FaArrowRightArrowLeft,
+  FaMoneyBillTransfer, FaDownload, FaFileInvoiceDollar, FaSatelliteDish, FaEye, FaEyeSlash, FaCediSign
+} from 'react-icons/fa6';
 
 const LINKED_ACCOUNTS = [
-  { name: 'MTN Mobile Money', icon: '📱', acct: '**** 7890', balance: 1200, color: '#FFCB05', badge: 'MoMo' },
-  { name: 'Ecobank Ghana',    icon: '🏦', acct: '**** 3421', balance: 8500, color: '#003087', badge: 'Bank' },
+  { name: 'MTN Mobile Money', icon: <FaMobileScreen />, acct: '**** 7890', balance: 1200, color: '#FFCB05', badge: 'MoMo' },
+  { name: 'Ecobank Ghana',    icon: <FaBuildingColumns />, acct: '**** 3421', balance: 8500, color: '#003087', badge: 'Bank' },
 ];
 
 const LIMITS = [
@@ -68,7 +72,7 @@ export default function WalletPage() {
                     onClick={() => setHidden(h => !h)}
                     style={{ background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 18, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
-                    {hidden ? '🙈' : '👁️'}
+                    {hidden ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
               </div>
@@ -82,9 +86,9 @@ export default function WalletPage() {
             {/* Action Buttons */}
             <div style={{ background: T.white, padding: '20px 28px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, borderTop: `1px solid ${T.border}` }}>
               {[
-                { label: 'Add Money',  icon: '⬇️', type: 'add'      as ModalType, variant: 'primary'   as const },
-                { label: 'Withdraw',   icon: '⬆️', type: 'withdraw' as ModalType, variant: 'secondary' as const },
-                { label: 'Transfer',   icon: '↕️', type: 'transfer' as ModalType, variant: 'ghost'     as const },
+                { label: 'Add Money',  icon: <FaArrowDown />, type: 'add'      as ModalType, variant: 'primary'   as const },
+                { label: 'Withdraw',   icon: <FaArrowUp />, type: 'withdraw' as ModalType, variant: 'secondary' as const },
+                { label: 'Transfer',   icon: <FaArrowRightArrowLeft />, type: 'transfer' as ModalType, variant: 'ghost'     as const },
               ].map(a => (
                 <Btn key={a.label} variant={a.variant} icon={a.icon} onClick={() => setModal(a.type)} style={{ justifyContent: 'center' }}>
                   {a.label}
@@ -165,10 +169,10 @@ export default function WalletPage() {
           <Card>
             <SectionTitle>This Month</SectionTitle>
             {[
-              { label: 'Total Spent',    val: '₵2,000', icon: '💸', color: T.error },
-              { label: 'Total Received', val: '₵5,300', icon: '📥', color: T.success },
-              { label: 'Bills Paid',     val: '₵340',   icon: '🧾', color: T.warning },
-              { label: 'Airtime',        val: '₵50',    icon: '📡', color: T.info },
+              { label: 'Total Spent',    val: '₵2,000', icon: <FaMoneyBillTransfer />, color: T.error },
+              { label: 'Total Received', val: '₵5,300', icon: <FaDownload />, color: T.success },
+              { label: 'Bills Paid',     val: '₵340',   icon: <FaFileInvoiceDollar />, color: T.warning },
+              { label: 'Airtime',        val: '₵50',    icon: <FaSatelliteDish />, color: T.info },
             ].map(s => (
               <div key={s.label} className="trow" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 6px', borderRadius: 8 }}>
                 <span style={{ fontSize: 20 }}>{s.icon}</span>
@@ -186,12 +190,12 @@ export default function WalletPage() {
           onClick={() => setModal(null)}>
           <div onClick={e => e.stopPropagation()} style={{ width: 420, background: T.white, borderRadius: 20, padding: 28, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: T.navy }}>
-                {modal === 'add' ? '⬇️ Add Money' : modal === 'withdraw' ? '⬆️ Withdraw' : '↕️ Transfer'}
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: T.navy, display: 'flex', gap: 8, alignItems: 'center' }}>
+                {modal === 'add' ? <><FaArrowDown /> Add Money</> : modal === 'withdraw' ? <><FaArrowUp /> Withdraw</> : <><FaArrowRightArrowLeft /> Transfer</>}
               </h2>
               <button onClick={() => setModal(null)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: T.textMuted }}>✕</button>
             </div>
-            <Input label="Amount (₵)" placeholder="0.00" type="number" value={amount} onChange={e => setAmount(e.target.value)} icon="₵" />
+            <Input label="Amount (₵)" placeholder="0.00" type="number" value={amount} onChange={e => setAmount(e.target.value)} icon={<FaCediSign />} />
             {modal !== 'add' && (
               <div style={{ marginTop: 14 }}>
                 <label style={{ fontSize: 13, fontWeight: 600, color: T.textSec, display: 'block', marginBottom: 6 }}>Destination</label>

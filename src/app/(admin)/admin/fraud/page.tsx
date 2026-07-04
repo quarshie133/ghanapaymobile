@@ -7,6 +7,9 @@ import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { PageWrap, SectionTitle, Divider } from '@/components/ui/Layout';
+import {
+  FaCircle, FaClipboardList, FaBan, FaShieldHalved
+} from 'react-icons/fa6';
 
 /* ── Mock Fraud Data ────────────────────────────────────── */
 type RiskLevel = 'High' | 'Medium' | 'Low';
@@ -163,7 +166,9 @@ export default function AdminFraudPage() {
             color: riskFilter === f ? '#fff' : T.textSec,
             boxShadow: riskFilter === f ? 'none' : `0 1px 3px rgba(0,0,0,0.08)`,
           }}>
-            {f === 'High' ? '🔴' : f === 'Medium' ? '🟡' : f === 'Low' ? '🟢' : '📋'} {f}
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              {f === 'High' ? <FaCircle style={{ color: T.error, fontSize: 10 }} /> : f === 'Medium' ? <FaCircle style={{ color: T.warning, fontSize: 10 }} /> : f === 'Low' ? <FaCircle style={{ color: T.success, fontSize: 10 }} /> : <FaClipboardList style={{ fontSize: 12 }} />} {f}
+            </span>
           </button>
         ))}
       </div>
@@ -274,9 +279,9 @@ export default function AdminFraudPage() {
       {/* ── Blocked IPs Card ── */}
       <Card style={{ maxWidth: 640 }}>
         <SectionTitle action={
-          <Btn variant="danger" size="sm" icon="🚫">Block New IP</Btn>
+          <Btn variant="danger" size="sm" icon={<FaBan />}>Block New IP</Btn>
         }>
-          🛡 Blocked IP Addresses
+          <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><FaShieldHalved /> Blocked IP Addresses</span>
         </SectionTitle>
 
         <div style={{ fontSize: 13, color: T.textMuted, marginBottom: 16 }}>
@@ -291,8 +296,8 @@ export default function AdminFraudPage() {
                   width: 38, height: 38, borderRadius: 10,
                   background: T.errorBg, border: `1px solid ${T.error}22`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 16,
-                }}>🚫</div>
+                  fontSize: 16, color: T.error
+                }}><FaBan /></div>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, fontFamily: 'monospace', color: T.textPrimary }}>{ip.ip}</div>
                   <div style={{ fontSize: 12, color: T.textMuted }}>

@@ -6,6 +6,9 @@ import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
+import {
+  FaFolderOpen, FaCircleInfo, FaBolt, FaCalendarDays, FaCheck, FaCircleCheck, FaTriangleExclamation, FaDownload
+} from 'react-icons/fa6';
 
 const SAMPLE_ENTRIES = [
   { name: 'Kwame Mensah',   phone: '0244 567 890', amount: 500,  status: 'ready'   },
@@ -31,7 +34,7 @@ export default function BulkPaymentsPage() {
       action={
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <Badge label="Business" type="navy" />
-          <Btn size="sm" variant="secondary" icon="📥">Download Template</Btn>
+          <Btn size="sm" variant="secondary" icon={<FaDownload />}>Download Template</Btn>
         </div>
       }
     >
@@ -60,7 +63,7 @@ export default function BulkPaymentsPage() {
                 }}
                 onClick={() => setUploaded(true)}
               >
-                <div style={{ fontSize: 48, marginBottom: 16 }}>📂</div>
+                <div style={{ fontSize: 48, marginBottom: 16, color: T.navyMid, display: 'flex', justifyContent: 'center' }}><FaFolderOpen /></div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: T.textPrimary, marginBottom: 8 }}>
                   Drop your CSV file here
                 </div>
@@ -70,7 +73,7 @@ export default function BulkPaymentsPage() {
                 <Btn variant="secondary" size="sm">Browse Files</Btn>
               </div>
               <div style={{ marginTop: 16, padding: 14, borderRadius: 10, background: T.infoBg, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                <span style={{ fontSize: 16 }}>ℹ️</span>
+                <span style={{ fontSize: 16, color: T.info }}><FaCircleInfo /></span>
                 <div style={{ fontSize: 12, color: T.info, lineHeight: 1.6 }}>
                   Your CSV must include columns: <strong>Name, Phone, Amount</strong> (in cedis). Download our template above to get started.
                 </div>
@@ -148,8 +151,8 @@ export default function BulkPaymentsPage() {
             <SectionTitle>Schedule</SectionTitle>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
-                { label: 'Send Now', icon: '⚡', desc: 'Process immediately', active: true },
-                { label: 'Schedule Later', icon: '🗓️', desc: 'Pick a date & time', active: false },
+                { label: 'Send Now', icon: <FaBolt />, desc: 'Process immediately', active: true },
+                { label: 'Schedule Later', icon: <FaCalendarDays />, desc: 'Pick a date & time', active: false },
               ].map(opt => (
                 <div key={opt.label} style={{
                   padding: 14, borderRadius: 10, cursor: 'pointer',
@@ -172,11 +175,11 @@ export default function BulkPaymentsPage() {
               onClick={() => setConfirmed(true)}
               style={{ width: '100%', justifyContent: 'center', fontSize: 15, padding: '14px' }}
             >
-              ✓ Validate &amp; Send Batch
+              <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><FaCheck /> Validate &amp; Send Batch</span>
             </Btn>
           ) : (
             <Card style={{ textAlign: 'center', padding: 32 }}>
-              <div style={{ fontSize: 48, marginBottom: 12 }}>🎉</div>
+              <div style={{ fontSize: 48, marginBottom: 12, color: T.success, display: 'flex', justifyContent: 'center' }}><FaCircleCheck /></div>
               <div style={{ fontSize: 16, fontWeight: 700, color: T.success }}>Batch Submitted!</div>
               <div style={{ fontSize: 13, color: T.textMuted, marginTop: 6 }}>Processing {SAMPLE_ENTRIES.length} payments of {formatCurrency(total)}</div>
             </Card>
@@ -184,7 +187,7 @@ export default function BulkPaymentsPage() {
 
           <Card style={{ background: T.warningBg, border: `1px solid ${T.warning}22` }}>
             <div style={{ fontSize: 12, color: T.warning, fontWeight: 600, display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 16 }}>⚠️</span>
+              <span style={{ fontSize: 16 }}><FaTriangleExclamation /></span>
               <span>Bulk payments above ₵10,000 require additional authorization from your account admin.</span>
             </div>
           </Card>

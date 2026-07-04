@@ -1,14 +1,34 @@
 "use client";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Badge from "@/components/ui/Badge";
 import T from "@/lib/tokens";
+import {
+  FaHouse,
+  FaChartSimple,
+  FaPaperPlane,
+  FaCloudArrowUp,
+  FaReceipt,
+  FaCalendarDays,
+  FaWallet,
+  FaClockRotateLeft,
+  FaFileCsv,
+  FaShieldHalved,
+  FaGear,
+  FaGaugeHigh,
+  FaUsers,
+  FaUserCheck,
+  FaCreditCard,
+  FaTriangleExclamation,
+  FaClipboardList
+} from "react-icons/fa6";
 
 interface NavItem {
   group?: string;
   key?: string;
   href?: string;
-  icon?: string;
+  icon?: React.ComponentType<any>;
   label?: string;
   badge?: string;
   badgeType?: "error" | "gold";
@@ -16,30 +36,30 @@ interface NavItem {
 
 const USER_NAV: NavItem[] = [
   { group: "OVERVIEW" },
-  { key: "dashboard",     href: "/dashboard",      icon: "🏠", label: "Dashboard" },
-  { key: "analytics",     href: "/analytics",      icon: "📊", label: "Analytics" },
+  { key: "dashboard",     href: "/dashboard",      icon: FaHouse, label: "Dashboard" },
+  { key: "analytics",     href: "/analytics",      icon: FaChartSimple, label: "Analytics" },
   { group: "PAYMENTS" },
-  { key: "send-money",    href: "/send-money",     icon: "↗",  label: "Send Money" },
-  { key: "bulk",          href: "/bulk-payments",  icon: "⬆",  label: "Bulk Payments", badge: "Biz", badgeType: "gold" },
-  { key: "bills",         href: "/bill-payments",  icon: "🧾", label: "Bill Payments" },
-  { key: "scheduled",     href: "/scheduled",      icon: "🗓", label: "Scheduled" },
+  { key: "send-money",    href: "/send-money",     icon: FaPaperPlane,  label: "Send Money" },
+  { key: "bulk",          href: "/bulk-payments",  icon: FaCloudArrowUp,  label: "Bulk Payments", badge: "Biz", badgeType: "gold" },
+  { key: "bills",         href: "/bill-payments",  icon: FaReceipt, label: "Bill Payments" },
+  { key: "scheduled",     href: "/scheduled",      icon: FaCalendarDays, label: "Scheduled" },
   { group: "WALLET" },
-  { key: "wallet",        href: "/wallet",         icon: "💳", label: "Wallet & Accounts" },
+  { key: "wallet",        href: "/wallet",         icon: FaWallet, label: "Wallet & Accounts" },
   { group: "HISTORY" },
-  { key: "history",       href: "/history",        icon: "📋", label: "Transactions" },
-  { key: "statements",    href: "/statements",     icon: "📄", label: "Statements" },
+  { key: "history",       href: "/history",        icon: FaClockRotateLeft, label: "Transactions" },
+  { key: "statements",    href: "/statements",     icon: FaFileCsv, label: "Statements" },
   { group: "ACCOUNT" },
-  { key: "kyc",           href: "/kyc",            icon: "🛡",  label: "KYC Verification" },
-  { key: "settings",      href: "/settings",       icon: "⚙",  label: "Settings" },
+  { key: "kyc",           href: "/kyc",            icon: FaShieldHalved,  label: "KYC Verification" },
+  { key: "settings",      href: "/settings",       icon: FaGear,  label: "Settings" },
 ];
 
 const ADMIN_NAV: NavItem[] = [
-  { key: "admin",         href: "/admin",                icon: "📊", label: "Overview" },
-  { key: "users",         href: "/admin/users",          icon: "👥", label: "User Management" },
-  { key: "kyc-queue",     href: "/admin/kyc",            icon: "🪪", label: "KYC Queue", badge: "47", badgeType: "error" },
-  { key: "transactions",  href: "/admin/transactions",   icon: "💸", label: "Transactions" },
-  { key: "fraud",         href: "/admin/fraud",          icon: "🚨", label: "Fraud Alerts", badge: "3", badgeType: "error" },
-  { key: "reports",       href: "/admin/reports",        icon: "📋", label: "Reports" },
+  { key: "admin",         href: "/admin",                icon: FaGaugeHigh, label: "Overview" },
+  { key: "users",         href: "/admin/users",          icon: FaUsers, label: "User Management" },
+  { key: "kyc-queue",     href: "/admin/kyc",            icon: FaUserCheck, label: "KYC Queue", badge: "47", badgeType: "error" },
+  { key: "transactions",  href: "/admin/transactions",   icon: FaCreditCard, label: "Transactions" },
+  { key: "fraud",         href: "/admin/fraud",          icon: FaTriangleExclamation, label: "Fraud Alerts", badge: "3", badgeType: "error" },
+  { key: "reports",       href: "/admin/reports",        icon: FaClipboardList, label: "Reports" },
 ];
 
 interface SidebarProps {
@@ -117,7 +137,9 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle }: Sideba
                 transition: "all 0.12s",
                 color: isActive ? activeTextColor : textColor,
               }}>
-                <span style={{ fontSize: 16, flexShrink: 0 }}>{item.icon}</span>
+                <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+                  {item.icon && <item.icon size={18} strokeWidth={2.2} />}
+                </span>
                 {!collapsed && (
                   <>
                     <span style={{

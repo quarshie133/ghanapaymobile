@@ -9,6 +9,9 @@ import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
 import type { Transaction } from '@/types/transaction';
+import {
+  FaDownload, FaMagnifyingGlass, FaClipboard, FaFileInvoice, FaXmark, FaArrowRight
+} from 'react-icons/fa6';
 
 type FilterTab = 'All' | 'Sent' | 'Received' | 'Bills' | 'Airtime';
 
@@ -43,7 +46,7 @@ export default function HistoryPage() {
     <PageWrap
       title="Transaction History"
       subtitle="Full record of all your GhanaPay transactions"
-      action={<Btn variant="secondary" size="sm" icon="📥">Export CSV</Btn>}
+      action={<Btn variant="secondary" size="sm" icon={<FaDownload />}>Export CSV</Btn>}
     >
       <style>{`.trow:hover { background: ${T.tableHover} !important; cursor: pointer; }`}</style>
 
@@ -64,7 +67,7 @@ export default function HistoryPage() {
               ))}
             </div>
             <div style={{ width: 240 }}>
-              <Input placeholder="Search transactions…" value={search} onChange={e => setSearch(e.target.value)} icon="🔍" />
+              <Input placeholder="Search transactions…" value={search} onChange={e => setSearch(e.target.value)} icon={<FaMagnifyingGlass />} />
             </div>
           </div>
 
@@ -121,7 +124,7 @@ export default function HistoryPage() {
                         onClick={e => { e.stopPropagation(); setSelected(s => s?.id === tx.id ? null : tx); }}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: T.textMuted }}
                       >
-                        {selected?.id === tx.id ? '✕' : '→'}
+                        {selected?.id === tx.id ? <FaXmark /> : <FaArrowRight />}
                       </button>
                     </td>
                   </tr>
@@ -151,7 +154,7 @@ export default function HistoryPage() {
           <Card style={{ borderLeft: `3px solid ${T.navyMid}`, height: 'fit-content', position: 'sticky', top: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
               <h3 style={{ fontSize: 16, fontWeight: 700, color: T.navy }}>Transaction Details</h3>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: T.textMuted }}>✕</button>
+              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: T.textMuted }}><FaXmark /></button>
             </div>
 
             {/* Avatar + Name */}
@@ -194,8 +197,8 @@ export default function HistoryPage() {
             </div>
 
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <Btn variant="secondary" size="sm" style={{ flex: 1, justifyContent: 'center' }} icon="📋">Copy Ref</Btn>
-              <Btn variant="primary" size="sm" style={{ flex: 2, justifyContent: 'center' }} icon="📄">Download Receipt</Btn>
+              <Btn variant="secondary" size="sm" style={{ flex: 1, justifyContent: 'center' }} icon={<FaClipboard />}>Copy Ref</Btn>
+              <Btn variant="primary" size="sm" style={{ flex: 2, justifyContent: 'center' }} icon={<FaFileInvoice />}>Download Receipt</Btn>
             </div>
           </Card>
         )}

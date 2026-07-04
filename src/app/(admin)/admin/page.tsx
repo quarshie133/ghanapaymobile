@@ -4,6 +4,9 @@ import { useState } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
+import {
+  FaUsers, FaCreditCard, FaMoneyBillTrendUp, FaShieldHalved
+} from 'react-icons/fa6';
 import T from '@/lib/tokens';
 import { KYC_QUEUE } from '@/lib/mock-data';
 import { formatCurrency, getInitials } from '@/lib/utils';
@@ -33,7 +36,7 @@ const FRAUD_ALERTS = [
 function KpiCard({
   label, value, sub, subColor, icon,
 }: {
-  label: string; value: string; sub: string; subColor: string; icon: string;
+  label: string; value: string; sub: string; subColor: string; icon: React.ReactNode;
 }) {
   return (
     <Card style={{ flex: 1, minWidth: 200 }}>
@@ -80,10 +83,10 @@ export default function AdminOverviewPage() {
     >
       {/* ── KPI Cards ── */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 24 }}>
-        <KpiCard label="Total Users" value="48,291" sub="▲ +1.2% today" subColor={T.success} icon="👥" />
-        <KpiCard label="Active Wallets" value="31,400" sub="65% of total users" subColor={T.textMuted} icon="💳" />
-        <KpiCard label="Today's Volume" value="₵2.4M" sub="↑ ₵312K from yesterday" subColor={T.success} icon="💰" />
-        <KpiCard label="Pending KYC" value="47" sub="⚠ Urgent review required" subColor={T.warning} icon="🛡" />
+        <KpiCard label="Total Users" value="48,291" sub="▲ +1.2% today" subColor={T.success} icon={<FaUsers />} />
+        <KpiCard label="Active Wallets" value="31,400" sub="65% of total users" subColor={T.textMuted} icon={<FaCreditCard />} />
+        <KpiCard label="Today's Volume" value="₵2.4M" sub="↑ ₵312K from yesterday" subColor={T.success} icon={<FaMoneyBillTrendUp />} />
+        <KpiCard label="Pending KYC" value="47" sub="⚠ Urgent review required" subColor={T.warning} icon={<FaShieldHalved />} />
       </div>
 
       {/* ── Charts + System Health row ── */}
@@ -230,7 +233,7 @@ export default function AdminOverviewPage() {
               View All
             </Btn>
           }>
-            🚨 Fraud Alerts
+            <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><FaShieldHalved /> Fraud Alerts</span>
           </SectionTitle>
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>

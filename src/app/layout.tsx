@@ -1,19 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Syne } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["700"],
-  variable: "--font-syne",
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -38,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${syne.variable}`}>
-      <body style={{ fontFamily: "var(--font-inter), Inter, sans-serif" }}>
+    <html lang="en">
+      <body style={{ fontFamily: "'Inter', sans-serif" }}>
         {children}
       </body>
     </html>

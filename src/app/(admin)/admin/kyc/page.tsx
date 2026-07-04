@@ -9,6 +9,9 @@ import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { PageWrap, SectionTitle, Divider } from '@/components/ui/Layout';
 import type { KycEntry } from '@/types/transaction';
+import {
+  FaIdCard, FaCamera, FaRobot
+} from 'react-icons/fa6';
 
 /* ── Extended KYC data ──────────────────────────────────── */
 const KYC_EXTENDED = [
@@ -107,16 +110,16 @@ function KycDetailPanel({ entry, onClose, onApprove, onReject }: {
         {/* Document placeholders */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
           {[
-            { label: '🪪 ID Document', note: 'Ghana Card front' },
-            { label: '🤳 Selfie Photo', note: 'Face match source' },
+            { label: 'ID Document', note: 'Ghana Card front', icon: <FaIdCard /> },
+            { label: 'Selfie Photo', note: 'Face match source', icon: <FaCamera /> },
           ].map((d) => (
             <div key={d.label} style={{
               borderRadius: 12, border: `2px dashed ${T.borderVar}`,
               padding: '24px 12px', textAlign: 'center',
               background: T.surfaceLow,
             }}>
-              <div style={{ fontSize: 24, marginBottom: 6 }}>{d.label.split(' ')[0]}</div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: T.textSec }}>{d.label.slice(2)}</div>
+              <div style={{ fontSize: 24, marginBottom: 6, color: T.navyMid }}>{d.icon}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: T.textSec }}>{d.label}</div>
               <div style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>{d.note}</div>
               <div style={{ marginTop: 10, fontSize: 10, color: T.adminAccent, fontWeight: 600 }}>UPLOADED ✓</div>
             </div>
@@ -155,8 +158,8 @@ function KycDetailPanel({ entry, onClose, onApprove, onReject }: {
           background: aiRec === 'APPROVE' ? T.successBg : aiRec === 'REJECT' ? T.errorBg : T.warningBg,
           border: `1px solid ${aiColor}44`,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: aiColor, letterSpacing: '0.1em', marginBottom: 4 }}>
-            🤖 AI RECOMMENDATION
+          <div style={{ fontSize: 11, fontWeight: 700, color: aiColor, letterSpacing: '0.1em', marginBottom: 4, display: 'flex', gap: 6, alignItems: 'center' }}>
+            <FaRobot /> AI RECOMMENDATION
           </div>
           <div style={{ fontSize: 18, fontWeight: 800, color: aiColor }}>{aiRec}</div>
           <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>

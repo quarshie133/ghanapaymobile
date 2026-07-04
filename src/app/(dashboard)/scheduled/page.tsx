@@ -8,6 +8,9 @@ import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
 import type { ScheduledPayment } from '@/types/transaction';
+import {
+  FaPlus, FaCalendarDays, FaRepeat, FaPause, FaPlay, FaTrashCan, FaXmark
+} from 'react-icons/fa6';
 
 export default function ScheduledPage() {
   const [payments, setPayments] = useState<ScheduledPayment[]>(SCHEDULED);
@@ -36,7 +39,7 @@ export default function ScheduledPage() {
     <PageWrap
       title="Scheduled Payments"
       subtitle="Manage your recurring transfers and automatic bill payments"
-      action={<Btn onClick={() => setShowNew(true)} icon="➕">New Schedule</Btn>}
+      action={<Btn onClick={() => setShowNew(true)} icon={<FaPlus />}>New Schedule</Btn>}
     >
       <style>{`.trow:hover { background: ${T.tableHover} !important; }`}</style>
 
@@ -97,7 +100,7 @@ export default function ScheduledPage() {
                   <td style={{ padding: '14px 16px', fontWeight: 700, color: T.textPrimary }}>{formatCurrency(p.amount)}</td>
                   <td style={{ padding: '14px 16px', color: T.textSec }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      {p.freq === 'Monthly' ? '📅' : '🔁'} {p.freq}
+                      {p.freq === 'Monthly' ? <FaCalendarDays /> : <FaRepeat />} {p.freq}
                     </span>
                   </td>
                   <td style={{ padding: '14px 16px', color: T.textSec }}>{p.nextRun}</td>
@@ -115,7 +118,9 @@ export default function ScheduledPage() {
                           color:      p.status === 'active' ? T.warning   : T.success,
                         }}
                       >
-                        {p.status === 'active' ? '⏸ Pause' : '▶ Resume'}
+                        <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                          {p.status === 'active' ? <><FaPause /> Pause</> : <><FaPlay /> Resume</>}
+                        </span>
                       </button>
                       <button
                         onClick={() => deletePayment(p.id)}
@@ -125,7 +130,7 @@ export default function ScheduledPage() {
                           background: T.errorBg, color: T.error,
                         }}
                       >
-                        🗑️
+                        <FaTrashCan />
                       </button>
                     </div>
                   </td>
@@ -152,7 +157,7 @@ export default function ScheduledPage() {
           <div onClick={e => e.stopPropagation()} style={{ width: 480, background: T.white, borderRadius: 20, padding: 28, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: T.navy }}>New Scheduled Payment</h2>
-              <button onClick={() => setShowNew(false)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: T.textMuted }}>✕</button>
+              <button onClick={() => setShowNew(false)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: T.textMuted }}><FaXmark /></button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {[

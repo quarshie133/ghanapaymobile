@@ -7,6 +7,9 @@ import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, Divider, PageWrap } from '@/components/ui/Layout';
+import {
+  FaFilePdf, FaFileCsv, FaEnvelope, FaClipboardList
+} from 'react-icons/fa6';
 
 const MONTHS = [
   { label: 'Jun 2026', key: 'jun', opening: 3750, closing: 4250, debits: 2300, credits: 2800 },
@@ -30,8 +33,8 @@ export default function StatementsPage() {
       subtitle="Download and review monthly account statements"
       action={
         <div style={{ display: 'flex', gap: 10 }}>
-          <Btn variant="secondary" size="sm" icon="📄">Download PDF</Btn>
-          <Btn variant="ghost" size="sm" icon="📊">Download CSV</Btn>
+          <Btn variant="secondary" size="sm" icon={<FaFilePdf />}>Download PDF</Btn>
+          <Btn variant="ghost" size="sm" icon={<FaFileCsv />}>Download CSV</Btn>
         </div>
       }
     >
@@ -151,13 +154,13 @@ export default function StatementsPage() {
             <div style={{ fontSize: 13, opacity: 0.75, marginBottom: 20 }}>Account: GHP-2026-00182</div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <Btn variant="gold" style={{ width: '100%', justifyContent: 'center' }} icon="📄">
+              <Btn variant="gold" style={{ width: '100%', justifyContent: 'center' }} icon={<FaFilePdf />}>
                 Download PDF
               </Btn>
-              <Btn variant="ghost" style={{ width: '100%', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }} icon="📊">
+              <Btn variant="ghost" style={{ width: '100%', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }} icon={<FaFileCsv />}>
                 Download CSV
               </Btn>
-              <Btn variant="ghost" style={{ width: '100%', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }} icon="📧">
+              <Btn variant="ghost" style={{ width: '100%', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }} icon={<FaEnvelope />}>
                 Email Statement
               </Btn>
             </div>
@@ -187,7 +190,9 @@ export default function StatementsPage() {
           </Card>
 
           <Card style={{ background: T.successBg, border: `1px solid ${T.success}33` }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.success, marginBottom: 8 }}>📋 Statement Tips</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.success, marginBottom: 8, display: 'flex', gap: 6, alignItems: 'center' }}>
+              <FaClipboardList /> Statement Tips
+            </div>
             <ul style={{ margin: 0, padding: '0 0 0 16px', fontSize: 12, color: T.textSec, lineHeight: 2 }}>
               <li>Statements are available for the last 12 months</li>
               <li>PDF statements are bank-certified</li>

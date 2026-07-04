@@ -8,6 +8,9 @@ import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
 import { PageWrap, SectionTitle, Divider } from '@/components/ui/Layout';
+import {
+  FaFileExport, FaMagnifyingGlass, FaXmark
+} from 'react-icons/fa6';
 
 /* ── Mock Users ─────────────────────────────────────────── */
 type UserStatus = 'active' | 'suspended' | 'pending';
@@ -74,7 +77,7 @@ function UserDetailPanel({ user, onClose }: { user: AdminUser; onClose: () => vo
           background: 'rgba(255,255,255,0.15)', border: 'none',
           borderRadius: 8, color: '#fff', cursor: 'pointer',
           width: 32, height: 32, fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>✕</button>
+        }}><FaXmark /></button>
       </div>
 
       <div style={{ padding: 24 }}>
@@ -154,7 +157,7 @@ export default function AdminUsersPage() {
       subtitle={`${USERS.length} total registered users`}
       breadcrumb="Admin / Users"
       action={
-        <Btn variant="admin" icon="📤">Export Users</Btn>
+        <Btn variant="admin" icon={<FaFileExport />}>Export Users</Btn>
       }
     >
       {/* ── Stats Row ── */}
@@ -180,7 +183,7 @@ export default function AdminUsersPage() {
               placeholder="Search by name, phone, or ID…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              icon="🔍"
+              icon={<FaMagnifyingGlass />}
             />
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
