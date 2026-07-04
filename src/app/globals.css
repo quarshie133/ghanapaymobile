@@ -1,49 +1,119 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700&display=swap');
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ─── Reset & Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html {
+html, body, #__next {
   height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  background: #f6fafe;
+  color: #171c1f;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c7c5d2; border-radius: 99px; }
+
+/* ─── Typography ─── */
+.syne { font-family: 'Syne', sans-serif !important; }
+.amount-pos { color: #1E8449; }
+.amount-neg { color: #C0392B; }
+
+/* ─── Kente Pattern Backgrounds ─── */
+.kente-bg {
+  background-color: #1B1F6B;
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(206,166,44,0.10) 0, rgba(206,166,44,0.10) 2px, transparent 0, transparent 50%),
+    repeating-linear-gradient(-45deg, rgba(206,166,44,0.06) 0, rgba(206,166,44,0.06) 2px, transparent 0, transparent 50%);
+  background-size: 28px 28px;
+}
+.kente-bg-dark {
+  background-color: #020259;
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(206,166,44,0.12) 0, rgba(206,166,44,0.12) 2px, transparent 0, transparent 50%),
+    repeating-linear-gradient(-45deg, rgba(206,166,44,0.07) 0, rgba(206,166,44,0.07) 2px, transparent 0, transparent 50%);
+  background-size: 28px 28px;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* ─── Shimmer Skeleton ─── */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #e4e9ed 25%, #f0f4f8 50%, #e4e9ed 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* ─── Success Pop ─── */
+@keyframes successPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  70%  { transform: scale(1.1); }
+  100% { transform: scale(1);   opacity: 1; }
 }
+.success-pop { animation: successPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+/* ─── Slide In Panel ─── */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.slide-in { animation: slideInRight 0.28s ease-out forwards; }
+
+/* ─── Toast ─── */
+@keyframes toastIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.toast-enter { animation: toastIn 0.3s ease-out forwards; }
+
+/* ─── Spinner ─── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ─── Form Inputs ─── */
+input, select, textarea {
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #1B1F6B !important;
+  box-shadow: 0 0 0 3px rgba(27,31,107,0.12);
+}
+button { cursor: pointer; font-family: 'Inter', sans-serif; }
+
+/* ─── Tab underline active ─── */
+.filter-tab { border-bottom: 2px solid transparent; transition: all 0.15s; }
+.filter-tab.active { border-bottom-color: #1B1F6B; color: #1B1F6B; }
+
+/* ─── Table row hover ─── */
+.trow { transition: background 0.12s; cursor: pointer; }
+.trow:hover { background: #F5F7FF; }
+
+/* ─── Stepper ─── */
+.step-active { background: #1B1F6B; color: #fff; }
+.step-done   { background: #1E8449; color: #fff; }
+.step-todo   { background: #E8ECF0; color: #777682; }
+
+/* ─── Fade In ─── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.25s ease-out forwards; }
+
+/* ─── Pulse ─── */
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.pulse { animation: pulse 2s ease-in-out infinite; }
