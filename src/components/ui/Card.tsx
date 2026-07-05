@@ -5,14 +5,15 @@ import T from "@/lib/tokens";
 interface CardProps {
   children: React.ReactNode;
   style?: React.CSSProperties;
+  className?: string;
   onClick?: () => void;
   padding?: number;
   id?: string;
 }
 
-export default function Card({ children, style, onClick, padding = 20, id }: CardProps) {
+export default function Card({ children, style, className, onClick, padding = 20, id }: CardProps) {
   return (
-    <div id={id} onClick={onClick} style={{
+    <div id={id} className={className} onClick={onClick} style={{
       background: T.white,
       borderRadius: 16,
       padding,
