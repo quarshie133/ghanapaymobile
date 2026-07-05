@@ -11,48 +11,27 @@ interface ShellProps {
 }
 
 export default function Shell({ children, isAdmin = false }: ShellProps) {
-  const [collapsed, setCollapsed]       = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden", position: "relative" }}>
 
-      {/* ── Mobile drawer backdrop ── */}
+      {/* ── Mobile backdrop overlay ── */}
       {mobileDrawerOpen && (
         <div
-          className="mobile-drawer-backdrop"
           onClick={() => setMobileDrawerOpen(false)}
-          style={{ zIndex: 200 }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(2, 2, 89, 0.55)",
+            backdropFilter: "blur(2px)",
+            zIndex: 200,
+          }}
         />
       )}
 
-      {/* ── Sidebar (desktop fixed, mobile drawer) ── */}
-      <div
-        className="sidebar-desktop"
-        style={
-          /* On mobile, becomes a fixed overlay drawer */
-          mobileDrawerOpen
-            ? {
-                position: "fixed",
-                top: 0,
-                left: 0,
-                height: "100vh",
-                zIndex: 201,
-                display: "flex",
-                animation: "slideInLeft 0.25s ease-out",
-              }
-            : {}
-        }
-      >
-        <Sidebar
-          isAdmin={isAdmin}
-          collapsed={collapsed}
-          onToggle={() => setCollapsed((c) => !c)}
-          onNavClick={() => setMobileDrawerOpen(false)}
-        />
-      </div>
-
-      {/* Mobile drawer (separate from sidebar-desktop so it's always rendered) */}
+      {/* ── Mobile drawer sidebar ── */}
       {mobileDrawerOpen && (
         <div
           style={{
@@ -62,8 +41,9 @@ export default function Shell({ children, isAdmin = false }: ShellProps) {
             height: "100vh",
             zIndex: 201,
             display: "flex",
+            flexDirection: "column",
+            animation: "slideInLeft 0.25s ease-out",
           }}
-          className="mobile-only"
         >
           <Sidebar
             isAdmin={isAdmin}
@@ -74,12 +54,23 @@ export default function Shell({ children, isAdmin = false }: ShellProps) {
         </div>
       )}
 
+      {/* ── Desktop sidebar (hidden on mobile via CSS) ── */}
+      <div className="sidebar-desktop" style={{ display: "flex", flexShrink: 0 }}>
+        <Sidebar
+          isAdmin={isAdmin}
+          collapsed={collapsed}
+          onToggle={() => setCollapsed((c) => !c)}
+        />
+      </div>
+
       {/* ── Main content area ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
         <TopNav
           isAdmin={isAdmin}
           onMenuToggle={() => {
+            // Desktop: collapse sidebar
             setCollapsed((c) => !c);
+            // Mobile: open drawer
             setMobileDrawerOpen((o) => !o);
           }}
         />
@@ -91,7 +82,7 @@ export default function Shell({ children, isAdmin = false }: ShellProps) {
         </div>
       </div>
 
-      {/* ── Mobile bottom nav ── */}
+      {/* ── Mobile bottom nav (CSS hides it on desktop) ── */}
       <MobileBottomNav />
     </div>
   );

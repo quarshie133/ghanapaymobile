@@ -83,10 +83,19 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavCli
 
   return (
     <div style={{
-      width: sidebarW, minWidth: sidebarW, transition: "width 0.2s",
-      background: bg, borderRight: `1px solid ${borderColor}`,
-      display: "flex", flexDirection: "column", overflow: "hidden",
-      position: "relative", zIndex: 10, flexShrink: 0,
+      width: sidebarW,
+      minWidth: sidebarW,
+      height: "100%",           /* ← fill parent height fully */
+      transition: "width 0.2s",
+      background: bg,
+      borderRight: `1px solid ${borderColor}`,
+      display: "flex",
+      flexDirection: "column",
+      overflowX: "hidden",      /* ← only clip horizontal, not vertical */
+      overflowY: "hidden",
+      position: "relative",
+      zIndex: 10,
+      flexShrink: 0,
     }}>
       {/* Logo */}
       <div style={{
@@ -108,7 +117,7 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavCli
       </div>
 
       {/* Nav Items */}
-      <nav style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
+      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px 0", background: bg }}>
         {navItems.map((item, i) => {
           if (item.group) {
             if (collapsed) return null;
@@ -164,7 +173,12 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavCli
       {!collapsed && (
         <div style={{
           borderTop: `1px solid ${borderColor}`,
-          padding: "14px 16px", display: "flex", alignItems: "center", gap: 10,
+          padding: "14px 16px",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          background: bg,          /* ← match sidebar bg, no colour gap */
+          flexShrink: 0,
         }}>
           <div style={{
             width: 36, height: 36, borderRadius: 9999,

@@ -69,7 +69,7 @@ export default function ScheduledPage() {
         <SectionTitle action={<span style={{ fontSize: 12, color: T.textMuted }}>{visible.length} schedule{visible.length !== 1 ? 's' : ''}</span>}>
           Payment Schedules
         </SectionTitle>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ background: T.surfaceLow }}>

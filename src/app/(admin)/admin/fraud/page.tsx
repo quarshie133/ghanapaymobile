@@ -157,7 +157,7 @@ export default function AdminFraudPage() {
       </div>
 
       {/* ── Filters ── */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         {(['All', 'High', 'Medium', 'Low'] as const).map((f) => (
           <button key={f} onClick={() => setRiskFilter(f)} style={{
             padding: '8px 18px', borderRadius: 10, border: 'none', cursor: 'pointer',
@@ -180,7 +180,7 @@ export default function AdminFraudPage() {
         }>
           <div style={{ padding: '20px 20px 0' }}>Fraud Alert Queue</div>
         </SectionTitle>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: T.surfaceLow, borderBottom: `2px solid ${T.border}` }}>

@@ -186,7 +186,7 @@ export default function AdminUsersPage() {
               icon={<FaMagnifyingGlass />}
             />
           </div>
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {STATUS_FILTERS.map((f) => (
               <button key={f} onClick={() => setStatusFilter(f)} style={{
                 padding: '8px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
@@ -209,7 +209,7 @@ export default function AdminUsersPage() {
         }>
           <div style={{ padding: '20px 20px 0' }}>User List</div>
         </SectionTitle>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: T.surfaceLow, borderBottom: `2px solid ${T.border}` }}>

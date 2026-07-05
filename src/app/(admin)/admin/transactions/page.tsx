@@ -108,7 +108,7 @@ export default function AdminTransactionsPage() {
         </div>
 
         {/* Type filter pills */}
-        <div style={{ display: 'flex', gap: 6, marginTop: 16 }}>
+        <div style={{ display: 'flex', gap: 6, marginTop: 16, flexWrap: 'wrap' }}>
           {TYPE_FILTERS.map((f) => (
             <button key={f} onClick={() => setTypeFilter(f)} style={{
               padding: '6px 14px', borderRadius: 9999, border: 'none', cursor: 'pointer',
@@ -155,7 +155,7 @@ export default function AdminTransactionsPage() {
           <div style={{ padding: '20px 20px 0' }}>Transaction List</div>
         </SectionTitle>
 
-        <div style={{ overflowX: 'auto' }}>
+        <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: T.surfaceLow, borderBottom: `2px solid ${T.border}` }}>

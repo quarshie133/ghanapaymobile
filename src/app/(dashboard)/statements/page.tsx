@@ -66,7 +66,7 @@ export default function StatementsPage() {
         {/* Statement Summary */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* KPI Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+          <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
             <Card style={{ background: T.surfaceLow }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: 0.5, marginBottom: 8 }}>OPENING BALANCE</div>
               <div style={{ fontSize: 28, fontWeight: 800, color: T.textPrimary }}>{formatCurrency(active.opening)}</div>
@@ -94,7 +94,7 @@ export default function StatementsPage() {
             <SectionTitle action={<Badge label={active.label} type="navy" />}>
               Transactions — {active.label}
             </SectionTitle>
-            <div style={{ overflowX: 'auto' }}>
+            <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: T.surfaceLow }}>

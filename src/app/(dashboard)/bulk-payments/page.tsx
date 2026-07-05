@@ -94,7 +94,7 @@ export default function BulkPaymentsPage() {
               >
                 Preview Recipients
               </SectionTitle>
-              <div style={{ overflowX: 'auto' }}>
+              <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>
                     <tr style={{ background: T.surfaceLow }}>
@@ -132,7 +132,7 @@ export default function BulkPaymentsPage() {
             <div style={{ fontSize: 34, fontWeight: 800, margin: '8px 0', color: T.gold }}>{formatCurrency(total)}</div>
             <div style={{ fontSize: 13, opacity: 0.8 }}>Total payout amount</div>
             <div style={{ height: 1, background: 'rgba(255,255,255,0.15)', margin: '16px 0' }} />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {[
                 ['Recipients', SAMPLE_ENTRIES.length],
                 ['Ready', ready],

@@ -90,7 +90,7 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* ── Charts + System Health row ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 20, marginBottom: 24 }}>
+      <div className="analytics-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 20, marginBottom: 24 }}>
         {/* Volume Chart */}
         <Card>
           <SectionTitle>7-Day Transaction Volume</SectionTitle>
@@ -150,7 +150,7 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* ── KYC Queue preview + Fraud Alerts row ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
+      <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
         {/* KYC Queue Preview */}
         <Card>
           <SectionTitle action={
@@ -161,7 +161,7 @@ export default function AdminOverviewPage() {
             Recent KYC Queue
           </SectionTitle>
 
-          <div style={{ overflowX: 'auto' }}>
+          <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: `2px solid ${T.border}` }}>

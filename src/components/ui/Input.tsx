@@ -22,9 +22,12 @@ export default function Input({
   icon, right, error, hint, id, name, disabled,
 }: InputProps) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       {label && (
-        <label htmlFor={id} style={{ fontSize: 13, fontWeight: 600, color: T.textSec }}>
+        <label htmlFor={id} style={{
+          fontSize: 12, fontWeight: 700, color: T.textSec,
+          letterSpacing: "0.04em", textTransform: "uppercase" as const,
+        }}>
           {label}
         </label>
       )}
@@ -33,7 +36,9 @@ export default function Input({
           <span style={{
             position: "absolute", left: 14, top: "50%",
             transform: "translateY(-50%)",
-            color: T.textMuted, fontSize: 15, pointerEvents: "none",
+            color: T.textMuted, fontSize: 14,
+            pointerEvents: "none",
+            display: "flex", alignItems: "center",
           }}>
             {icon}
           </span>
@@ -43,11 +48,16 @@ export default function Input({
           value={value} onChange={onChange}
           placeholder={placeholder} disabled={disabled}
           style={{
-            width: "100%", height: 44, borderRadius: 10,
+            width: "100%",
+            height: 46,
+            borderRadius: 10,
             border: `1.5px solid ${error ? T.error : T.borderVar}`,
-            padding: `0 ${right ? 42 : 14}px 0 ${icon ? 42 : 14}px`,
-            fontSize: 14, color: T.textPrimary, background: T.white,
-            opacity: disabled ? 0.6 : 1,
+            padding: `0 ${right ? 44 : 16}px 0 ${icon ? 44 : 16}px`,
+            fontSize: 14,
+            color: T.textPrimary,
+            background: disabled ? T.surfaceLow : T.white,
+            opacity: disabled ? 0.7 : 1,
+            transition: "border-color 0.15s, box-shadow 0.15s",
           }}
         />
         {right && (
@@ -55,12 +65,13 @@ export default function Input({
             position: "absolute", right: 14, top: "50%",
             transform: "translateY(-50%)",
             color: T.textMuted, cursor: "pointer",
+            display: "flex", alignItems: "center",
           }}>
             {right}
           </span>
         )}
       </div>
-      {error && <span style={{ fontSize: 12, color: T.error }}>{error}</span>}
+      {error && <span style={{ fontSize: 12, color: T.error, fontWeight: 500 }}>{error}</span>}
       {hint && !error && <span style={{ fontSize: 12, color: T.textMuted }}>{hint}</span>}
     </div>
   );

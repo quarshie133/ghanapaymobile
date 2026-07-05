@@ -58,7 +58,7 @@ export default function DashboardPage() {
 
       {/* KPI Cards Row */}
       <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-        <Card style={{ background: `linear-gradient(135deg, ${T.navy} 60%, ${T.navyMid})`, color: '#fff', border: 'none' }}>
+        <Card className="card-hover" style={{ background: `linear-gradient(135deg, ${T.navy} 60%, ${T.navyMid})`, color: '#fff', border: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: 12, fontWeight: 600, opacity: 0.75, letterSpacing: 0.5 }}>WALLET BALANCE</span>
             <button
@@ -75,21 +75,21 @@ export default function DashboardPage() {
           <div style={{ marginTop: 12, fontSize: 12, color: T.gold, fontWeight: 600 }}>▲ 12.4% vs last month</div>
         </Card>
 
-        <Card>
+        <Card className="card-hover">
           <div style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, letterSpacing: 0.5 }}>SENT TODAY</div>
           <div style={{ fontSize: 26, fontWeight: 800, color: T.error, margin: '10px 0 4px' }}>₵200.00</div>
           <div style={{ fontSize: 12, color: T.textMuted }}>1 transaction</div>
           <div style={{ marginTop: 10, fontSize: 12, color: T.error, fontWeight: 600 }}>▼ ₵50 vs yesterday</div>
         </Card>
 
-        <Card>
+        <Card className="card-hover">
           <div style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, letterSpacing: 0.5 }}>RECEIVED TODAY</div>
           <div style={{ fontSize: 26, fontWeight: 800, color: T.success, margin: '10px 0 4px' }}>₵500.00</div>
           <div style={{ fontSize: 12, color: T.textMuted }}>1 transaction</div>
           <div style={{ marginTop: 10, fontSize: 12, color: T.success, fontWeight: 600 }}>▲ ₵200 vs yesterday</div>
         </Card>
 
-        <Card>
+        <Card className="card-hover">
           <div style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, letterSpacing: 0.5 }}>SAVED THIS MONTH</div>
           <div style={{ fontSize: 26, fontWeight: 800, color: T.gold, margin: '10px 0 4px' }}>₵820.00</div>
           <div style={{ fontSize: 12, color: T.textMuted }}>Emergency + Car Fund</div>

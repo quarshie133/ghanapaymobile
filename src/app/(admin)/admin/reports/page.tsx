@@ -162,7 +162,7 @@ export default function AdminReportsPage() {
               onChange={(e) => setToDate(e.target.value)}
             />
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {['Today', 'This Week', 'This Month', 'Last Month'].map((p) => (
               <button key={p} style={{
                 padding: '8px 14px', borderRadius: 9999, border: `1px solid ${T.border}`,
@@ -184,7 +184,7 @@ export default function AdminReportsPage() {
         }>
           Available Reports
         </SectionTitle>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div className="analytics-layout" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
           {REPORTS.map((report) => {
             const catStyle = CATEGORY_COLORS[report.category] ?? { bg: T.infoBg, color: T.info };
             const isGenerating = generating === report.id;

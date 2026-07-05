@@ -55,7 +55,7 @@ export default function HistoryPage() {
         <Card>
           {/* Filter Bar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
-            <div style={{ display: 'flex', gap: 4 }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {TABS.map(t => (
                 <button key={t} onClick={() => setTab(t)} style={{
                   padding: '6px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
@@ -71,7 +71,7 @@ export default function HistoryPage() {
             </div>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
+          <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: T.surfaceLow }}>

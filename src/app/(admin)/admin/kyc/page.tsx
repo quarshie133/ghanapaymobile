@@ -249,7 +249,7 @@ export default function AdminKycPage() {
       </div>
 
       {/* ── Filter Tabs ── */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
         {TABS.map((tab) => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
             padding: '9px 18px', borderRadius: 10, border: 'none', cursor: 'pointer',
@@ -278,7 +278,7 @@ export default function AdminKycPage() {
         }>
           <div style={{ padding: '20px 20px 0' }}>KYC Applications</div>
         </SectionTitle>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: T.surfaceLow, borderBottom: `2px solid ${T.border}` }}>

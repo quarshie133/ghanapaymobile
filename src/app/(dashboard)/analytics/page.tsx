@@ -60,7 +60,7 @@ export default function AnalyticsPage() {
       <style>{`.trow:hover { background: ${T.tableHover} !important; }`}</style>
 
       {/* KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         {kpiCards.map(k => (
           <Card key={k.label}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
@@ -129,7 +129,7 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+      <div className="analytics-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
         {/* Payment Methods */}
         <Card>
           <SectionTitle>Payment Methods</SectionTitle>
