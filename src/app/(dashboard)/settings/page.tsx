@@ -61,7 +61,7 @@ export default function SettingsPage() {
         }
       `}</style>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 32, alignItems: 'start' }}>
+      <div className="settings-layout" style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 32, alignItems: 'start' }}>
         {/* Navigation Sidebar */}
         <Card padding={12}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>

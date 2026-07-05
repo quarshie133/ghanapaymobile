@@ -47,13 +47,13 @@ export default function BillPaymentsPage() {
     <PageWrap title="Bill Payments" subtitle="Pay utilities, TV, internet, insurance and more">
       <style>{`.trow:hover { background: ${T.tableHover} !important; } .cat-card:hover { border-color: ${T.navyMid} !important; transform: translateY(-2px); } .cat-card { transition: all 0.18s; }`}</style>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
+      <div className="bill-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
           {/* Category Grid */}
           <Card>
             <SectionTitle>Select Bill Type</SectionTitle>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            <div className="category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
               {CATEGORIES.map(cat => (
                 <div
                   key={cat.id}

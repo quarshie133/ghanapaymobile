@@ -66,9 +66,10 @@ interface SidebarProps {
   isAdmin?: boolean;
   collapsed: boolean;
   onToggle: () => void;
+  onNavClick?: () => void;
 }
 
-export default function Sidebar({ isAdmin = false, collapsed, onToggle }: SidebarProps) {
+export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavClick }: SidebarProps) {
   const pathname = usePathname();
   const navItems = isAdmin ? ADMIN_NAV : USER_NAV;
   const sidebarW = collapsed ? 72 : 240;
@@ -127,7 +128,7 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle }: Sideba
             : false;
 
           return (
-            <Link key={item.key} href={item.href!} style={{ textDecoration: "none" }}>
+            <Link key={item.key} href={item.href!} style={{ textDecoration: "none" }} onClick={onNavClick}>
               <div style={{
                 display: "flex", alignItems: "center", gap: 10,
                 padding: collapsed ? "11px 22px" : "11px 14px",

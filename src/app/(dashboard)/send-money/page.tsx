@@ -53,7 +53,7 @@ export default function SendMoneyPage() {
     <PageWrap title="Send Money" subtitle="Transfer funds to any GhanaPay user or mobile money account">
       <style>{`.contact-row:hover { background: ${T.tableHover} !important; }`}</style>
 
-      <div style={{ maxWidth: 620, margin: '0 auto' }}>
+      <div className="send-money-wrap" style={{ maxWidth: 620, margin: '0 auto' }}>
         {/* Step Indicator */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, marginBottom: 32 }}>
           {steps.map((s, i) => (

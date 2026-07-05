@@ -34,7 +34,7 @@ export default function WalletPage() {
     <PageWrap title="Wallet & Accounts" subtitle="Manage your GhanaPay wallet, linked accounts, and limits">
       <style>{`.trow:hover { background: ${T.tableHover} !important; } .acc-row:hover { background: ${T.surfaceLow} !important; }`}</style>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
+      <div className="wallet-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
           {/* Main Wallet Card */}

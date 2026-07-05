@@ -63,7 +63,7 @@ export default function KycPage() {
     <PageWrap title="KYC Verification" subtitle="Verify your identity to unlock higher limits and features">
       <style>{`.trow:hover { background: ${T.tableHover} !important; }`}</style>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
+      <div className="kyc-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
         {/* Left Column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
@@ -80,7 +80,7 @@ export default function KycPage() {
                 <Badge label="Ghana Card" type="gold" />
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
               {TIER2_LIMITS.map(l => (
                 <div key={l.label} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px' }}>
                   <div style={{ fontSize: 11, opacity: 0.65 }}>{l.label}</div>

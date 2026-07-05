@@ -44,7 +44,7 @@ export default function ScheduledPage() {
       <style>{`.trow:hover { background: ${T.tableHover} !important; }`}</style>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="scheduled-summary" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
         <Card>
           <div style={{ fontSize: 12, fontWeight: 600, color: T.textMuted }}>ACTIVE SCHEDULES</div>
           <div style={{ fontSize: 30, fontWeight: 800, color: T.success, margin: '8px 0' }}>{activeCount}</div>

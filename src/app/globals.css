@@ -64,6 +64,13 @@ html, body, #__next {
 }
 .slide-in { animation: slideInRight 0.28s ease-out forwards; }
 
+/* ─── Slide In Left (mobile drawer) ─── */
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+.slide-in-left { animation: slideInLeft 0.25s ease-out forwards; }
+
 /* ─── Toast ─── */
 @keyframes toastIn {
   from { transform: translateX(120%); opacity: 0; }
@@ -117,3 +124,211 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
 /* ─── Pulse ─── */
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 .pulse { animation: pulse 2s ease-in-out infinite; }
+
+/* ══════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — Bottom Nav (Mobile only)
+   ══════════════════════════════════════════════════════ */
+.mobile-bottom-nav {
+  display: none; /* hidden on desktop */
+}
+
+/* ─── Mobile drawer backdrop ─── */
+.mobile-drawer-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 2, 89, 0.5);
+  z-index: 199;
+  backdrop-filter: blur(2px);
+}
+
+/* ─── Responsive table wrapper ─── */
+.responsive-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Mobile-only / desktop-only utilities ─── */
+.mobile-only  { display: none !important; }
+.desktop-only { display: flex !important; }
+
+/* ══════════════════════════════════════════════════════
+   BREAKPOINT: ≤ 768px  (Tablets & Mobile)
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Show / hide utilities */
+  .mobile-only  { display: flex !important; }
+  .desktop-only { display: none !important; }
+
+  /* Mobile bottom nav */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 68px;
+    background: #ffffff;
+    border-top: 1px solid #E8ECF0;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 4px;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(27,31,107,0.08);
+  }
+
+  /* Mobile drawer backdrop */
+  .mobile-drawer-backdrop {
+    display: block;
+  }
+
+  /* Page content bottom padding so content clears the bottom nav */
+  .page-content-wrap {
+    padding-bottom: 80px !important;
+  }
+
+  /* PageWrap title padding */
+  .page-wrap-inner {
+    padding: 16px !important;
+  }
+
+  /* TopNav mobile adjustments */
+  .topnav-search      { display: none !important; }
+  .topnav-user-info   { display: none !important; }
+  .topnav-admin-btn   { display: none !important; }
+  .topnav-separator   { display: none !important; }
+
+  /* Sidebar: always hidden on mobile (shown as drawer via JS) */
+  .sidebar-desktop { display: none !important; }
+
+  /* KPI grid: 4-col → 2-col */
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* Quick actions: 6-col → 3-col */
+  .quick-actions-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Dashboard 2-col layout → single col */
+  .dashboard-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Generic 2-col grids → 1-col */
+  .two-col-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Category 3-col → 2-col */
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Bill payment 2-col → 1-col */
+  .bill-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Send money centered */
+  .send-money-wrap {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Settings sidebar + content: stacked */
+  .settings-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Statement 2-col → 1-col */
+  .statement-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Wallet overview → 1-col */
+  .wallet-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Analytics layout → 1-col */
+  .analytics-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hide detail panel on history (takes separate screen flow) */
+  .history-detail-panel {
+    display: none !important;
+  }
+
+  /* Table → horizontal scroll */
+  table {
+    min-width: 600px;
+  }
+
+  /* Slide-in admin panel full width */
+  .admin-detail-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Login page: 2-panel → single column */
+  .login-left-panel {
+    display: none !important;
+  }
+  .login-right-panel {
+    flex: unset !important;
+    width: 100% !important;
+    padding: 32px 20px !important;
+  }
+
+  /* Bulk payment layout → 1-col */
+  .bulk-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* KYC layout → 1-col */
+  .kyc-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Scheduled 3-col summary → 1-col */
+  .scheduled-summary {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   BREAKPOINT: ≤ 480px  (Small phones)
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  /* KPI grid: 2-col → 1-col on very small screens */
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Touch targets: minimum 44px */
+  button, a, input, select {
+    min-height: 44px;
+  }
+
+  .page-wrap-inner {
+    padding: 12px !important;
+  }
+
+  /* Category grid stays 2-col */
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Quick actions: 3-col stays */
+  .quick-actions-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}

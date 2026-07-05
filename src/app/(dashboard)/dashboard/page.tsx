@@ -57,7 +57,7 @@ export default function DashboardPage() {
       `}</style>
 
       {/* KPI Cards Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         <Card style={{ background: `linear-gradient(135deg, ${T.navy} 60%, ${T.navyMid})`, color: '#fff', border: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: 12, fontWeight: 600, opacity: 0.75, letterSpacing: 0.5 }}>WALLET BALANCE</span>
@@ -97,13 +97,13 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
+      <div className="dashboard-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
           {/* Quick Actions */}
           <Card>
             <SectionTitle>Quick Actions</SectionTitle>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
+            <div className="quick-actions-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
               {QUICK_ACTIONS.map(a => (
                 <Link key={a.label} href={a.href} style={{ textDecoration: 'none' }}>
                   <div className="qa-btn" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>

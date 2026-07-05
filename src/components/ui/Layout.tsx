@@ -12,6 +12,7 @@ export function SectionTitle({ children, action }: SectionTitleProps) {
     <div style={{
       display: "flex", justifyContent: "space-between",
       alignItems: "center", marginBottom: 16,
+      flexWrap: "wrap", gap: 8,
     }}>
       <h2 style={{ fontSize: 16, fontWeight: 700, color: T.navyMid }}>{children}</h2>
       {action}
@@ -33,19 +34,28 @@ interface PageWrapProps {
 
 export function PageWrap({ title, subtitle, breadcrumb, action, children }: PageWrapProps) {
   return (
-    <div style={{ padding: 32 }}>
-      <div style={{ marginBottom: 24 }}>
+    /* page-wrap-inner — CSS sets padding: 16px on mobile, 32px on desktop */
+    <div className="page-wrap-inner" style={{ padding: 32 }}>
+      <div style={{ marginBottom: 20 }}>
         {breadcrumb && (
           <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 6 }}>{breadcrumb}</div>
         )}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+        <div style={{
+          display: "flex", alignItems: "flex-start",
+          justifyContent: "space-between", gap: 12,
+          flexWrap: "wrap",
+        }}>
           <div>
-            <h1 style={{ fontSize: 26, fontWeight: 700, color: T.navy, marginBottom: subtitle ? 4 : 0 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: T.navy, marginBottom: subtitle ? 4 : 0 }}>
               {title}
             </h1>
             {subtitle && <p style={{ fontSize: 14, color: T.textMuted }}>{subtitle}</p>}
           </div>
-          {action}
+          {action && (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              {action}
+            </div>
+          )}
         </div>
       </div>
       {children}

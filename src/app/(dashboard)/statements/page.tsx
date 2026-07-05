@@ -62,7 +62,7 @@ export default function StatementsPage() {
         </div>
       </Card>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
+      <div className="statement-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
         {/* Statement Summary */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* KPI Row */}

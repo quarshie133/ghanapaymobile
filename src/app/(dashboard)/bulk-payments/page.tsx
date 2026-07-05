@@ -43,7 +43,7 @@ export default function BulkPaymentsPage() {
         .dz-hover { border-color: ${T.navyMid} !important; background: ${T.sidebarActive} !important; }
       `}</style>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
+      <div className="bulk-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
           {/* Upload Section */}

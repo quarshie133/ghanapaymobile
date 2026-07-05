@@ -50,7 +50,7 @@ export default function HistoryPage() {
     >
       <style>{`.trow:hover { background: ${T.tableHover} !important; cursor: pointer; }`}</style>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 360px' : '1fr', gap: 24, transition: 'all 0.3s' }}>
+      <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 360px' : '1fr', gap: 24, transition: 'all 0.3s' }}>
         {/* Main Table Card */}
         <Card>
           {/* Filter Bar */}
@@ -151,7 +151,7 @@ export default function HistoryPage() {
 
         {/* Detail Panel */}
         {selected && (
-          <Card style={{ borderLeft: `3px solid ${T.navyMid}`, height: 'fit-content', position: 'sticky', top: 24 }}>
+          <Card className="history-detail-panel" style={{ borderLeft: `3px solid ${T.navyMid}`, height: 'fit-content', position: 'sticky', top: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
               <h3 style={{ fontSize: 16, fontWeight: 700, color: T.navy }}>Transaction Details</h3>
               <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: T.textMuted }}><FaXmark /></button>

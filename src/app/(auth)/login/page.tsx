@@ -30,7 +30,7 @@ export default function LoginPage() {
     <div style={{ display: "flex", height: "100vh", fontFamily: "'Inter', sans-serif" }}>
 
       {/* ── LEFT PANEL ── */}
-      <div className="kente-bg-dark" style={{
+      <div className="kente-bg-dark login-left-panel" style={{
         width: "48%", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", padding: 48, gap: 32,
       }}>
@@ -78,7 +78,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── RIGHT PANEL ── */}
-      <div style={{
+      <div className="login-right-panel" style={{
         flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
         background: T.white, padding: 48,
       }}>
