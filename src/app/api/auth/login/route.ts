@@ -18,12 +18,12 @@ export async function POST(request: Request) {
       return NextResponse.json(data, { status: backendRes.status });
     }
 
-    const { token, user } = data;
+    const { accessToken, refreshToken, user } = data;
 
     // Create NextResponse and set the HttpOnly cookie
-    const response = NextResponse.json({ success: true, user });
+    const response = NextResponse.json({ success: true, user, accessToken, refreshToken });
     
-    response.cookies.set('token', token, {
+    response.cookies.set('token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

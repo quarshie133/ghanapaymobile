@@ -63,12 +63,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Login failed');
     
+    if (data.accessToken) {
+      localStorage.setItem("ghana_pay_access", data.accessToken);
+    }
+    if (data.refreshToken) {
+      localStorage.setItem("ghana_pay_refresh", data.refreshToken);
+    }
+    
     setUser(data.user);
     router.push('/dashboard');
   };
 
   const logout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
+    localStorage.removeItem("ghana_pay_access");
+    localStorage.removeItem("ghana_pay_refresh");
     setUser(null);
     router.push('/login');
   };
