@@ -12,6 +12,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
+import {
   FaCreditCard, FaInbox, FaHouse, FaLightbulb, FaCar, FaShieldHalved
 } from 'react-icons/fa6';
 import T from '@/lib/tokens';

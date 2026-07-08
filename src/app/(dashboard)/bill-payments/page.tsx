@@ -9,6 +9,7 @@ import Btn from '@/components/ui/Btn';
 import Input from '@/components/ui/Input';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
+import {
   FaBolt, FaDroplet, FaTv, FaGlobe, FaShieldHalved, FaGraduationCap, FaCircleCheck, FaHashtag, FaCediSign, FaFileInvoiceDollar
 } from 'react-icons/fa6';
 import T from '@/lib/tokens';

@@ -9,6 +9,7 @@ import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
 import type { ScheduledPayment } from '@/types/transaction';
+import {
   FaPlus, FaCalendarDays, FaRepeat, FaPause, FaPlay, FaTrashCan, FaXmark
 } from 'react-icons/fa6';
 import T from '@/lib/tokens';
