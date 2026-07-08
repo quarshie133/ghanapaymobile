@@ -1,7 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { formatCurrency } from '@/lib/utils';
+import { useAuth } from '@/lib/AuthContext';
+import { api } from '@/lib/api';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
@@ -11,6 +12,7 @@ import {
   FaMobileScreen, FaBuildingColumns, FaArrowDown, FaArrowUp, FaArrowRightArrowLeft,
   FaMoneyBillTransfer, FaDownload, FaFileInvoiceDollar, FaSatelliteDish, FaEye, FaEyeSlash, FaCediSign
 } from 'react-icons/fa6';
+import T from '@/lib/tokens';
 
 const LINKED_ACCOUNTS = [
   { name: 'MTN Mobile Money', icon: <FaMobileScreen />, acct: '**** 7890', balance: 1200, color: '#FFCB05', badge: 'MoMo' },
@@ -26,9 +28,27 @@ const LIMITS = [
 type ModalType = 'add' | 'withdraw' | 'transfer' | null;
 
 export default function WalletPage() {
+  const { user } = useAuth();
   const [modal, setModal]   = useState<ModalType>(null);
   const [amount, setAmount] = useState('');
   const [hidden, setHidden] = useState(false);
+  const [wallet, setWallet] = useState<any>(null);
+  const [limits, setLimits] = useState<any>(null);
+
+  React.useEffect(() => {
+    if (user) {
+      api.get('/wallet').then(res => setWallet(res)).catch(() => {});
+      api.get('/wallet/limits').then(res => setLimits(res)).catch(() => {});
+    }
+  }, [user]);
+
+  const displayLimits = limits ? [
+    { period: 'Daily',   used: limits.dailyUsed,   limit: limits.dailyLimit  },
+    { period: 'Weekly',  used: limits.weeklyUsed,  limit: limits.weeklyLimit },
+    { period: 'Monthly', used: limits.monthlyUsed, limit: limits.monthlyLimit },
+  ] : LIMITS;
+
+  const linkedAccounts = wallet?.linkedAccounts || LINKED_ACCOUNTS;
 
   return (
     <PageWrap title="Wallet & Accounts" subtitle="Manage your GhanaPay wallet, linked accounts, and limits">
@@ -66,7 +86,7 @@ export default function WalletPage() {
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 8 }}>Available Balance</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: 40, fontWeight: 900, color: '#fff', letterSpacing: -1 }}>
-                    {hidden ? '₵ ••••••' : '₵4,250.00'}
+                    {hidden ? '₵ ••••••' : `₵${wallet?.balance?.toFixed(2) || '0.00'}`}
                   </span>
                   <button
                     onClick={() => setHidden(h => !h)}
@@ -78,9 +98,9 @@ export default function WalletPage() {
               </div>
 
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', letterSpacing: 2, marginBottom: 4 }}>
-                GHP-2026-00182
+                {wallet?.walletId || 'Loading...'}
               </div>
-              <div style={{ fontSize: 12, color: T.gold }}>Kofi Asante Boateng</div>
+              <div style={{ fontSize: 12, color: T.gold }}>{user?.name || 'User'}</div>
             </div>
 
             {/* Action Buttons */}
@@ -103,8 +123,8 @@ export default function WalletPage() {
               Linked Accounts
             </SectionTitle>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {LINKED_ACCOUNTS.map(acc => (
-                <div key={acc.name} className="acc-row" style={{
+              {linkedAccounts.map((acc: any, i: number) => (
+                <div key={i} className="acc-row" style={{
                   display: 'flex', alignItems: 'center', gap: 14, padding: '14px', borderRadius: 12, border: `1px solid ${T.border}`, cursor: 'pointer',
                 }}>
                   <div style={{ width: 44, height: 44, borderRadius: 12, background: acc.color + '20', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
@@ -137,8 +157,8 @@ export default function WalletPage() {
           <Card>
             <SectionTitle>Transaction Limits</SectionTitle>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {LIMITS.map(l => {
-                const pct = Math.round((l.used / l.limit) * 100);
+              {displayLimits.map((l: any) => {
+                const pct = l.limit > 0 ? Math.round((l.used / l.limit) * 100) : 0;
                 const color = pct > 80 ? T.error : pct > 50 ? T.warning : T.success;
                 return (
                   <div key={l.period}>

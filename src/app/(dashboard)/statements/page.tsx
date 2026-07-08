@@ -1,15 +1,16 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { TRANSACTIONS } from '@/lib/mock-data';
 import { formatCurrency, getInitials } from '@/lib/utils';
+import { api } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, Divider, PageWrap } from '@/components/ui/Layout';
-import {
   FaFilePdf, FaFileCsv, FaEnvelope, FaClipboardList
 } from 'react-icons/fa6';
+import T from '@/lib/tokens';
 
 const MONTHS = [
   { label: 'Jun 2026', key: 'jun', opening: 3750, closing: 4250, debits: 2300, credits: 2800 },
@@ -21,7 +22,16 @@ const MONTHS = [
 ];
 
 export default function StatementsPage() {
+  const { user } = useAuth();
   const [selectedKey, setSelectedKey] = useState('jun');
+  const [statements, setStatements] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (user) {
+      api.get('/statements').then(res => setStatements(res)).catch(() => {});
+    }
+  }, [user]);
+
   const active = MONTHS.find(m => m.key === selectedKey)!;
 
   // For mini list, show all TRANSACTIONS (in a real app, filter by month)

@@ -4,6 +4,8 @@ import T from '@/lib/tokens';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Input from '@/components/ui/Input';
+import { useAuth } from '@/lib/AuthContext';
+import { api } from '@/lib/api';
 import { SectionTitle, PageWrap, Divider } from '@/components/ui/Layout';
 import {
   FaUser, FaLock, FaBell, FaShieldHalved
@@ -12,13 +14,32 @@ import {
 const TABS = ['Profile', 'Security', 'Notifications', 'Privacy'];
 
 export default function SettingsPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('Profile');
-  const [name, setName] = useState('Abena Owusu');
-  const [phone, setPhone] = useState('+233 24 567 8901');
-  const [email, setEmail] = useState('abena.owusu@example.com');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [biometrics, setBiometrics] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setPhone(user.phone || '');
+    }
+  }, [user]);
+
+  async function handleSave() {
+    try {
+      await api.post('/users/update', { name, phone, email });
+      setIsEditing(false);
+      alert('Profile updated successfully!');
+    } catch (e) {
+      alert('Failed to update profile');
+    }
+  }
 
   return (
     <PageWrap title="Settings" subtitle="Manage your profile, security settings, and notifications">
@@ -107,8 +128,8 @@ export default function SettingsPage() {
                   AO
                 </div>
                 <div>
-                  <h3 style={{ fontSize: 16, fontWeight: 700, color: T.textPrimary }}>Abena Owusu</h3>
-                  <p style={{ fontSize: 13, color: T.textMuted }}>Personal Account · Tier 2 Verified</p>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: T.textPrimary }}>{user?.name || 'User'}</h3>
+                  <p style={{ fontSize: 13, color: T.textMuted }}>Personal Account · Tier {user?.tier || 1} Verified</p>
                 </div>
               </div>
 
@@ -136,8 +157,13 @@ export default function SettingsPage() {
               <div style={{ display: 'flex', gap: 12 }}>
                 {isEditing ? (
                   <>
-                    <Btn variant="primary" onClick={() => setIsEditing(false)}>Save Changes</Btn>
-                    <Btn variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Btn>
+                    <Btn variant="primary" onClick={handleSave}>Save Changes</Btn>
+                    <Btn variant="ghost" onClick={() => {
+                      setIsEditing(false);
+                      setName(user?.name || '');
+                      setEmail(user?.email || '');
+                      setPhone(user?.phone || '');
+                    }}>Cancel</Btn>
                   </>
                 ) : (
                   <Btn variant="secondary" onClick={() => setIsEditing(true)}>Edit Profile</Btn>

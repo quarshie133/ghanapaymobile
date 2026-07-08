@@ -4,6 +4,8 @@ import Link from 'next/link';
 import T from '@/lib/tokens';
 import { TRANSACTIONS, SPENDING_DATA } from '@/lib/mock-data';
 import { formatCurrency, getInitials } from '@/lib/utils';
+import { useAuth } from '@/lib/AuthContext';
+import { api } from '@/lib/api';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
@@ -40,14 +42,25 @@ const QUICK_ACTIONS = [
 const PERIOD_TABS = ['Week', 'Month', '3M'];
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const [balanceHidden, setBalanceHidden] = useState(false);
   const [period, setPeriod] = useState('Week');
-  const recent = TRANSACTIONS.slice(0, 4);
+  const [wallet, setWallet] = useState<any>(null);
+  const [recent, setRecent] = useState<any[]>(TRANSACTIONS.slice(0, 4));
+
+  React.useEffect(() => {
+    if (user) {
+      api.get('/wallet').then(res => setWallet(res)).catch(() => {});
+      api.get('/transactions').then(res => {
+        if (res.data) setRecent(res.data.slice(0, 4));
+      }).catch(() => {});
+    }
+  }, [user]);
 
   return (
     <PageWrap
       title="Dashboard"
-      subtitle={`Good afternoon, Kofi 👋  — Friday, 4 July 2026`}
+      subtitle={`Good afternoon, ${user?.name?.split(' ')[0] || 'User'} 👋  — ${new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`}
     >
       <style>{`
         .trow:hover { background: ${T.tableHover} !important; }
@@ -69,9 +82,9 @@ export default function DashboardPage() {
             </button>
           </div>
           <div style={{ fontSize: 30, fontWeight: 800, margin: '12px 0 4px', letterSpacing: -1 }}>
-            {balanceHidden ? '₵ ••••••' : '₵4,250.00'}
+            {balanceHidden ? '₵ ••••••' : `₵${wallet?.balance?.toFixed(2) || '0.00'}`}
           </div>
-          <div style={{ fontSize: 12, opacity: 0.65 }}>GHP-2026-00182 · Tier 2</div>
+          <div style={{ fontSize: 12, opacity: 0.65 }}>{wallet?.walletId || 'Loading...'} · Tier {user?.tier || 1}</div>
           <div style={{ marginTop: 12, fontSize: 12, color: T.gold, fontWeight: 600 }}>▲ 12.4% vs last month</div>
         </Card>
 

@@ -1,21 +1,33 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { SCHEDULED } from '@/lib/mock-data';
 import { formatCurrency } from '@/lib/utils';
+import { api } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
 import type { ScheduledPayment } from '@/types/transaction';
-import {
   FaPlus, FaCalendarDays, FaRepeat, FaPause, FaPlay, FaTrashCan, FaXmark
 } from 'react-icons/fa6';
+import T from '@/lib/tokens';
 
 export default function ScheduledPage() {
-  const [payments, setPayments] = useState<ScheduledPayment[]>(SCHEDULED);
+  const { user } = useAuth();
+  const [payments, setPayments] = useState<ScheduledPayment[]>([]);
   const [showNew, setShowNew] = useState(false);
   const [deleted, setDeleted] = useState<number[]>([]);
+
+  React.useEffect(() => {
+    if (user) {
+      api.get('/scheduled').then(res => {
+        if (res.data) setPayments(res.data);
+      }).catch(() => {
+        setPayments(SCHEDULED);
+      });
+    }
+  }, [user]);
 
   function toggleStatus(id: number) {
     setPayments(prev => prev.map(p =>

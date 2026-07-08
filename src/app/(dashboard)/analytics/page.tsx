@@ -1,8 +1,9 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { SPENDING_DATA, CATEGORIES } from '@/lib/mock-data';
 import { formatCurrency } from '@/lib/utils';
+import { api } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
@@ -11,9 +12,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
-import {
   FaCreditCard, FaInbox, FaHouse, FaLightbulb, FaCar, FaShieldHalved
 } from 'react-icons/fa6';
+import T from '@/lib/tokens';
 
 const PERIOD_TABS = ['Week', 'Month', '3M'];
 
@@ -30,9 +31,22 @@ const SAVINGS_GOALS = [
 ];
 
 export default function AnalyticsPage() {
+  const { user } = useAuth();
   const [period, setPeriod] = useState('Month');
+  const [analytics, setAnalytics] = useState<any>(null);
 
-  const kpiCards = [
+  React.useEffect(() => {
+    if (user) {
+      api.get('/analytics/summary').then(res => setAnalytics(res)).catch(() => {});
+    }
+  }, [user]);
+
+  const kpiCards = analytics ? [
+    { label: 'Total Spent',       value: formatCurrency(analytics.totalSpent || 0), delta: '▼ vs last month', deltaColor: T.success, icon: <FaCreditCard /> },
+    { label: 'Total Received',    value: formatCurrency(analytics.totalReceived || 0), delta: '▲ vs last month', deltaColor: T.success, icon: <FaInbox /> },
+    { label: 'Largest Expense',   value: formatCurrency(analytics.largestExpense || 0), delta: 'Recent', deltaColor: T.textMuted, icon: <FaHouse /> },
+    { label: 'Health Score',      value: `${analytics.healthScore || 82}/100`, delta: 'Good', deltaColor: T.info, icon: <FaLightbulb /> },
+  ] : [
     { label: 'Total Spent',       value: '₵2,000', delta: '▼ 8% vs last month', deltaColor: T.success, icon: <FaCreditCard /> },
     { label: 'Total Received',    value: '₵5,400', delta: '▲ 15% vs last month', deltaColor: T.success, icon: <FaInbox /> },
     { label: 'Largest Expense',   value: '₵1,500', delta: 'Rent · Jun 14', deltaColor: T.textMuted, icon: <FaHouse /> },

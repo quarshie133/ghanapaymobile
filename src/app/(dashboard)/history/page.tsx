@@ -1,8 +1,9 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { TRANSACTIONS } from '@/lib/mock-data';
 import { formatCurrency, getInitials } from '@/lib/utils';
+import { useAuth } from '@/lib/AuthContext';
+import { api } from '@/lib/api';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
@@ -12,6 +13,7 @@ import type { Transaction } from '@/types/transaction';
 import {
   FaDownload, FaMagnifyingGlass, FaClipboard, FaFileInvoice, FaXmark, FaArrowRight
 } from 'react-icons/fa6';
+import T from '@/lib/tokens';
 
 type FilterTab = 'All' | 'Sent' | 'Received' | 'Bills' | 'Airtime';
 
@@ -32,11 +34,42 @@ function statusBadge(s: string) {
 }
 
 export default function HistoryPage() {
+  const { user } = useAuth();
   const [tab, setTab]         = useState<FilterTab>('All');
   const [search, setSearch]   = useState('');
   const [selected, setSelected] = useState<Transaction | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  const filtered = TRANSACTIONS.filter(t => {
+  React.useEffect(() => {
+    if (user) {
+      api.get('/transactions').then(res => {
+        if (res.data) {
+          const mapped = res.data.map((t: any) => {
+            const isSent = t.type === 'TRANSFER' && t.sender?.user?.id === user.id;
+            return {
+              id: t.id,
+              ref: t.id.slice(0, 8).toUpperCase(),
+              name: isSent ? (t.recipientWallet?.user?.name || 'Unknown User') : (t.sender?.user?.name || 'Unknown User'),
+              date: new Date(t.createdAt).toLocaleDateString(),
+              time: new Date(t.createdAt).toLocaleTimeString(),
+              amount: isSent ? -Number(t.amount) : Number(t.amount),
+              type: isSent ? 'Sent' : 'Received',
+              status: t.status === 'COMPLETED' ? 'completed' : t.status === 'FAILED' ? 'failed' : 'pending',
+              method: 'Internal Transfer',
+              fee: 0,
+              note: t.metadata?.note || '',
+            };
+          });
+          setTransactions(mapped);
+        }
+      }).catch(() => {
+        // Fallback to mock data if API fails or backend is empty
+        setTransactions(TRANSACTIONS);
+      });
+    }
+  }, [user]);
+
+  const filtered = transactions.filter(t => {
     const matchTab    = tabMap[tab](t);
     const matchSearch = !search || t.name.toLowerCase().includes(search.toLowerCase()) || t.ref.includes(search);
     return matchTab && matchSearch;
@@ -140,7 +173,7 @@ export default function HistoryPage() {
 
           {/* Pagination hint */}
           <div style={{ padding: '14px 16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${T.border}`, marginTop: 8 }}>
-            <span style={{ fontSize: 12, color: T.textMuted }}>Showing {filtered.length} of {TRANSACTIONS.length} transactions</span>
+            <span style={{ fontSize: 12, color: T.textMuted }}>Showing {filtered.length} of {transactions.length} transactions</span>
             <div style={{ display: 'flex', gap: 6 }}>
               {[1, 2, 3].map(n => (
                 <button key={n} style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${n === 1 ? T.navyMid : T.border}`, background: n === 1 ? T.navyMid : 'transparent', color: n === 1 ? '#fff' : T.textMuted, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>{n}</button>

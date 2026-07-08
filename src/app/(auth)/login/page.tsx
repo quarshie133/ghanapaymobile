@@ -1,27 +1,32 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/AuthContext";
 import T from "@/lib/tokens";
 import Input from "@/components/ui/Input";
 import {
-  FaLock, FaUser, FaEye, FaEyeSlash, FaArrowRight, FaKey, FaShieldHalved, FaCircleCheck, FaGlobe, FaSignal
+  FaLock, FaUser, FaEye, FaEyeSlash, FaArrowRight, FaKey, FaShieldHalved, FaCircleCheck, FaGlobe, FaSignal, FaGoogle
 } from 'react-icons/fa6';
 
 export default function LoginPage() {
-  const router = useRouter();
+  const { login, loading: authLoading } = useAuth();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!phone || !password) return;
     setLoading(true);
-    setTimeout(() => {
+    setError("");
+    try {
+      await login({ phone, password });
+    } catch (err: any) {
+      setError(err.message || "Failed to log in");
       setLoading(false);
-      router.push("/dashboard");
-    }, 1200);
+    }
   };
 
   const canSubmit = phone.length > 0 && password.length > 0;
@@ -113,6 +118,7 @@ export default function LoginPage() {
                 </span>
               }
             />
+            {error && <div style={{ color: '#E74C3C', fontSize: 13, marginTop: -8 }}>{error}</div>}
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "16px 0" }}>
@@ -148,9 +154,24 @@ export default function LoginPage() {
           {/* Divider */}
           <div style={{ margin: "24px 0", display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ flex: 1, height: 1, background: T.border }} />
-            <span style={{ fontSize: 12, color: T.textMuted }}>secured by</span>
+            <span style={{ fontSize: 12, color: T.textMuted }}>or</span>
             <div style={{ flex: 1, height: 1, background: T.border }} />
           </div>
+
+          <button
+            onClick={() => window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/google`}
+            style={{
+              width: "100%", height: 52,
+              background: "#fff",
+              color: T.navy, border: `1px solid ${T.border}`, borderRadius: 12,
+              fontSize: 16, fontWeight: 600,
+              cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+              transition: "all 0.15s",
+              marginBottom: 24,
+            }}>
+            <FaGoogle size={20} color="#DB4437" /> Continue with Google
+          </button>
 
           {/* Security badges */}
           <div style={{ display: "flex", justifyContent: "center", gap: 32 }}>

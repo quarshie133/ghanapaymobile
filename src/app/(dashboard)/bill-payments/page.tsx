@@ -1,16 +1,17 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { TRANSACTIONS } from '@/lib/mock-data';
 import { formatCurrency } from '@/lib/utils';
+import { api } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Input from '@/components/ui/Input';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
-import {
   FaBolt, FaDroplet, FaTv, FaGlobe, FaShieldHalved, FaGraduationCap, FaCircleCheck, FaHashtag, FaCediSign, FaFileInvoiceDollar
 } from 'react-icons/fa6';
+import T from '@/lib/tokens';
 
 type BillCategory = {
   id: string;
@@ -33,14 +34,29 @@ const CATEGORIES: BillCategory[] = [
 const RECENT_BILLS = TRANSACTIONS.filter(t => t.type === 'Bill');
 
 export default function BillPaymentsPage() {
+  const { user } = useAuth();
   const [selected, setSelected] = useState<BillCategory | null>(null);
   const [acctNo, setAcctNo]   = useState('');
   const [amount, setAmount]   = useState('');
   const [paid, setPaid]       = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function handlePay() {
-    setPaid(true);
-    setTimeout(() => { setPaid(false); setAcctNo(''); setAmount(''); setSelected(null); }, 3000);
+  async function handlePay() {
+    setLoading(true);
+    try {
+      await api.post('/bills/pay', {
+        categoryId: selected?.id,
+        billerCode: selected?.provider,
+        accountNumber: acctNo,
+        amount: parseFloat(amount),
+      });
+      setPaid(true);
+      setTimeout(() => { setPaid(false); setAcctNo(''); setAmount(''); setSelected(null); }, 3000);
+    } catch (error) {
+      alert('Payment failed');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -132,11 +148,11 @@ export default function BillPaymentsPage() {
 
                 <Btn
                   variant="primary"
-                  disabled={!acctNo || !amount}
+                  disabled={!acctNo || !amount || loading}
                   onClick={handlePay}
                   style={{ width: '100%', justifyContent: 'center', fontSize: 15, padding: '13px' }}
                 >
-                  Pay {selected.name} {amount ? `— ${formatCurrency(parseFloat(amount || '0'))}` : ''}
+                  {loading ? 'Processing...' : `Pay ${selected.name} ${amount ? `— ${formatCurrency(parseFloat(amount || '0'))}` : ''}`}
                 </Btn>
               </div>
             </Card>

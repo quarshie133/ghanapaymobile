@@ -1,5 +1,10 @@
 import Shell from "@/components/layout/Shell";
+import DashboardProtectedRoute from "@/components/layout/DashboardProtectedRoute";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return <Shell isAdmin={false}>{children}</Shell>;
+  return (
+    <DashboardProtectedRoute>
+      <Shell isAdmin={false}>{children}</Shell>
+    </DashboardProtectedRoute>
+  );
 }

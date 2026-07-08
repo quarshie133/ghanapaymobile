@@ -1,14 +1,15 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { formatCurrency } from '@/lib/utils';
+import { useAuth } from '@/lib/AuthContext';
+import { api } from '@/lib/api';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, Divider, PageWrap } from '@/components/ui/Layout';
-import {
   FaIdCard, FaCamera, FaHouse, FaBuildingColumns, FaCircleCheck, FaLock
 } from 'react-icons/fa6';
+import T from '@/lib/tokens';
 
 type KycStepStatus = 'done' | 'active' | 'pending';
 
@@ -41,12 +42,24 @@ const TIER3_STEPS: KycStep[] = [
 ];
 
 export default function KycPage() {
+  const { user } = useAuth();
   const [steps, setSteps] = useState<KycStep[]>(TIER3_STEPS);
+  const [kycApplication, setKycApplication] = useState<any>(null);
+
+  React.useEffect(() => {
+    if (user) {
+      api.get('/kyc/status').then(res => setKycApplication(res)).catch(() => {});
+    }
+  }, [user]);
 
   function advanceStep() {
+    const activeIdx = steps.findIndex(s => s.status === 'active');
+    if (activeIdx === -1) return;
+    
+    // Simulate API call for the step
+    api.post('/kyc/document', { type: steps[activeIdx].title, url: 'mock-url' }).catch(() => {});
+
     setSteps(prev => {
-      const activeIdx = prev.findIndex(s => s.status === 'active');
-      if (activeIdx === -1) return prev;
       return prev.map((s, i) => {
         if (i === activeIdx)     return { ...s, status: 'done' };
         if (i === activeIdx + 1) return { ...s, status: 'active' };
@@ -72,7 +85,7 @@ export default function KycPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 12, opacity: 0.65, fontWeight: 600, letterSpacing: 0.5, marginBottom: 8 }}>CURRENT TIER</div>
-                <div style={{ fontSize: 28, fontWeight: 800 }}>Tier 2</div>
+                <div style={{ fontSize: 28, fontWeight: 800 }}>Tier {user?.tier || 2}</div>
                 <div style={{ fontSize: 13, opacity: 0.75, marginTop: 4 }}>Verified · Active since Jan 2026</div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
