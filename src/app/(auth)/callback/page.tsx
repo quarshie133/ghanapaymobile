@@ -24,7 +24,7 @@ export default function CallbackPage() {
     } else {
       router.push("/login?error=auth_failed");
     }
-  }, [searchParams, router, setTokens]);
+  }, [searchParams, router]);
 
   return (
     <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", background: T.white }}>
