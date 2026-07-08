@@ -1,10 +1,10 @@
 "use client";
-import { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import T from "@/lib/tokens";
 
-export default function CallbackPage() {
+function CallbackHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -26,6 +26,10 @@ export default function CallbackPage() {
     }
   }, [searchParams, router]);
 
+  return null;
+}
+
+export default function CallbackPage() {
   return (
     <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", background: T.white }}>
       <div style={{ textAlign: "center" }}>
@@ -33,6 +37,10 @@ export default function CallbackPage() {
         <h2 style={{ color: T.navy, marginBottom: 8 }}>Authenticating...</h2>
         <p style={{ color: T.textMuted }}>Please wait while we log you into GhanaPay.</p>
       </div>
+      
+      <Suspense fallback={null}>
+        <CallbackHandler />
+      </Suspense>
     </div>
   );
 }
