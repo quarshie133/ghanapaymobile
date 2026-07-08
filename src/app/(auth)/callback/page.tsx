@@ -7,7 +7,6 @@ import T from "@/lib/tokens";
 export default function CallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setTokens } = useAuth(); // Assuming setTokens exists in AuthContext
 
   useEffect(() => {
     const accessToken = searchParams.get("accessToken");
@@ -19,11 +18,8 @@ export default function CallbackPage() {
       localStorage.setItem("ghana_pay_access", accessToken);
       localStorage.setItem("ghana_pay_refresh", refreshToken);
       
-      // Update the AuthContext (if applicable) and redirect to dashboard
-      if (setTokens) {
-        setTokens(accessToken, refreshToken);
-      }
-      
+      // Since AuthContext doesn't have setTokens, we just redirect.
+      // Next time apiFetch runs, it should ideally grab this from localStorage.
       window.location.href = "/dashboard";
     } else {
       router.push("/login?error=auth_failed");
