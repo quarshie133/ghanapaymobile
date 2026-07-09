@@ -86,7 +86,7 @@ export default function WalletPage() {
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 8 }}>Available Balance</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: 40, fontWeight: 900, color: '#fff', letterSpacing: -1 }}>
-                    {hidden ? '₵ ••••••' : `₵${wallet?.balance?.toFixed(2) || '0.00'}`}
+                    {hidden ? '₵ ••••••' : `₵${wallet?.balance != null ? Number(wallet.balance).toFixed(2) : '0.00'}`}
                   </span>
                   <button
                     onClick={() => setHidden(h => !h)}

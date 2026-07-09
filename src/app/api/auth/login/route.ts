@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       return NextResponse.json(data, { status: backendRes.status });
     }
 
-    const { accessToken, refreshToken, user } = data;
+    const { accessToken, refreshToken, user } = data.data || data || {};
 
     // Create NextResponse and set the HttpOnly cookie
     const response = NextResponse.json({ success: true, user, accessToken, refreshToken });

@@ -24,6 +24,9 @@ import {
   FaClipboardList
 } from "react-icons/fa6";
 
+import { useAuth } from "@/lib/AuthContext";
+import { getInitials } from "@/lib/utils";
+
 interface NavItem {
   group?: string;
   key?: string;
@@ -71,6 +74,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavClick }: SidebarProps) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const navItems = isAdmin ? ADMIN_NAV : USER_NAV;
   const sidebarW = collapsed ? 72 : 240;
 
@@ -186,7 +190,7 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavCli
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0,
           }}>
-            {isAdmin ? "EA" : "AO"}
+            {user?.name ? getInitials(user.name) : (isAdmin ? "EA" : "US")}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
@@ -194,10 +198,10 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavCli
               color: isAdmin ? "#fff" : T.navy,
               whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
             }}>
-              {isAdmin ? "Esi Amankwah" : "Abena Owusu"}
+              {user?.name || (isAdmin ? "Esi Amankwah" : "User")}
             </div>
             <div style={{ fontSize: 11, color: isAdmin ? "#94A3B8" : T.textMuted }}>
-              {isAdmin ? "Compliance Admin" : "Personal Account"}
+              {isAdmin ? "Compliance Admin" : `Tier ${user?.tier || 1} Account`}
             </div>
           </div>
         </div>

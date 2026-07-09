@@ -36,12 +36,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      if (pathname === '/callback') {
+        setLoading(false);
+        return;
+      }
       try {
         const data = await api.get('/user/me');
-        setUser(data);
-      } catch (error) {
+        console.log('AuthContext checkAuth user data:', data);
+        const userProfile = data.data || data;
+        setUser(userProfile);
+      } catch (error: any) {
+        if (error.status === 401) {
+          fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+          localStorage.removeItem("ghana_pay_access");
+          localStorage.removeItem("ghana_pay_refresh");
+        }
+        if (error.message === 'Failed to fetch') {
+          console.warn('⚠️ API Server is offline or unreachable. Please ensure the NestJS backend is running on http://localhost:3001 and CORS is configured.');
+        }
+        console.error('❌ AuthContext checkAuth failed!');
+        console.error('Error Message:', error.message || 'Unknown error');
+        if (error.status) console.error('HTTP Status:', error.status);
+        if (error.data) console.error('Response Data:', error.data);
+        if (error.stack) console.error('Stack Trace:', error.stack);
+        
         setUser(null);
-        if (pathname !== '/login' && pathname !== '/register') {
+        if (pathname !== '/login' && pathname !== '/register' && pathname !== '/callback') {
           router.push('/login');
         }
       } finally {

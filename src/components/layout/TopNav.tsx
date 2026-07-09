@@ -3,12 +3,17 @@ import Link from "next/link";
 import T from "@/lib/tokens";
 import { FaBars, FaMagnifyingGlass, FaBell, FaChevronDown, FaUpRightFromSquare } from "react-icons/fa6";
 
+import { useAuth } from "@/lib/AuthContext";
+import { getInitials } from "@/lib/utils";
+
 interface TopNavProps {
   onMenuToggle: () => void;
   isAdmin?: boolean;
 }
 
 export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
+  const { user } = useAuth();
+  
   return (
     <div style={{
       height: 64, background: T.white, borderBottom: `1px solid ${T.border}`,
@@ -86,10 +91,10 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
           color: "#fff", display: "flex", alignItems: "center",
           justifyContent: "center", fontWeight: 700, fontSize: 13, flexShrink: 0,
         }}>
-          {isAdmin ? "EA" : "AO"}
+          {user?.name ? getInitials(user.name) : (isAdmin ? "EA" : "US")}
         </div>
         <span style={{ fontSize: 14, fontWeight: 500, color: T.textPrimary, display: "flex", alignItems: "center" }}>
-          {isAdmin ? "Esi A." : "Abena O."}
+          {user?.name?.split(' ')[0] || (isAdmin ? "Esi A." : "User")}
         </span>
         <FaChevronDown size={14} style={{ color: T.textMuted }} />
       </div>
@@ -102,7 +107,7 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
           color: "#fff", display: "flex", alignItems: "center",
           justifyContent: "center", fontWeight: 700, fontSize: 12,
         }}>
-          {isAdmin ? "EA" : "AO"}
+          {user?.name ? getInitials(user.name) : (isAdmin ? "EA" : "US")}
         </div>
       </div>
 

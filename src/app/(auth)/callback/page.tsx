@@ -18,9 +18,16 @@ function CallbackHandler() {
       localStorage.setItem("ghana_pay_access", accessToken);
       localStorage.setItem("ghana_pay_refresh", refreshToken);
       
-      // Since AuthContext doesn't have setTokens, we just redirect.
-      // Next time apiFetch runs, it should ideally grab this from localStorage.
-      window.location.href = "/dashboard";
+      // Set HttpOnly cookie using a Next.js API route
+      fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: accessToken }),
+      }).then(() => {
+        window.location.href = "/dashboard";
+      }).catch(() => {
+        window.location.href = "/dashboard"; // Fallback to ensure redirect happens
+      });
     } else {
       router.push("/login?error=auth_failed");
     }

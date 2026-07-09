@@ -50,7 +50,7 @@ export default function DashboardPage() {
 
   React.useEffect(() => {
     if (user) {
-      api.get('/wallet').then(res => setWallet(res)).catch(() => {});
+      api.get('/wallet').then(res => setWallet(res.data || res)).catch(() => {});
       api.get('/transactions').then(res => {
         if (res.data) setRecent(res.data.slice(0, 4));
       }).catch(() => {});
@@ -82,7 +82,7 @@ export default function DashboardPage() {
             </button>
           </div>
           <div style={{ fontSize: 30, fontWeight: 800, margin: '12px 0 4px', letterSpacing: -1 }}>
-            {balanceHidden ? '₵ ••••••' : `₵${wallet?.balance?.toFixed(2) || '0.00'}`}
+            {balanceHidden ? '₵ ••••••' : `₵${wallet?.balance != null ? Number(wallet.balance).toFixed(2) : '0.00'}`}
           </div>
           <div style={{ fontSize: 12, opacity: 0.65 }}>{wallet?.walletId || 'Loading...'} · Tier {user?.tier || 1}</div>
           <div style={{ marginTop: 12, fontSize: 12, color: T.gold, fontWeight: 600 }}>▲ 12.4% vs last month</div>

@@ -1,3 +1,16 @@
+export class ApiError extends Error {
+  status: number;
+  data: any;
+
+  constructor(status: number, message: string, data: any) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+    Object.setPrototypeOf(this, ApiError.prototype);
+  }
+}
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 /**
@@ -40,11 +53,27 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   }
 
   if (!response.ok) {
-    throw {
-      status: response.status,
-      message: data.message || data.error || 'API Request Failed',
-      data,
-    };
+    throw new ApiError(
+      response.status,
+      data.message || data.error || 'API Request Failed',
+      data
+    );
+  }
+
+  if (data && typeof data === 'object' && data.success === true && 'data' in data) {
+    const unwrapped = data.data;
+    if (unwrapped && (typeof unwrapped === 'object' || Array.isArray(unwrapped))) {
+      try {
+        Object.defineProperty(unwrapped, 'data', {
+          get() { return unwrapped; },
+          configurable: true,
+          enumerable: false,
+        });
+      } catch (e) {
+        // Ignore errors if object is not extensible
+      }
+    }
+    return unwrapped;
   }
 
   return data;
