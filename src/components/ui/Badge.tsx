@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import T from "@/lib/tokens";
 
 type BadgeType = "success" | "error" | "warning" | "info" | "default" | "gold" | "navy";
 
@@ -9,25 +8,23 @@ interface BadgeProps {
   type?: BadgeType;
 }
 
-const badgeMap: Record<BadgeType, { bg: string; color: string }> = {
-  success: { bg: T.successBg, color: T.success },
-  error:   { bg: T.errorBg,   color: T.error   },
-  warning: { bg: T.warningBg, color: T.warning  },
-  info:    { bg: T.infoBg,    color: T.info     },
-  default: { bg: T.border,    color: T.textSec  },
-  gold:    { bg: "#FBF3D9",   color: T.goldDark },
-  navy:    { bg: "#e0e0ff",   color: T.navy     },
+const badgeClassMap: Record<BadgeType, string> = {
+  success: "bg-[#E5F5ED] text-[#1E8449]",
+  error:   "bg-error-container text-error",
+  warning: "bg-[#FFF4E5] text-[#D35400]",
+  info:    "bg-[#EBF0FF] text-primary",
+  default: "bg-surface-variant text-secondary",
+  gold:    "bg-tertiary-fixed text-tertiary",
+  navy:    "bg-primary-fixed text-primary",
 };
 
 export default function Badge({ label, type = "default" }: BadgeProps) {
-  const { bg, color } = badgeMap[type] ?? badgeMap.default;
+  const badgeClass = badgeClassMap[type] ?? badgeClassMap.default;
   return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: 4,
-      background: bg, color,
-      fontSize: 11, fontWeight: 600,
-      padding: "3px 10px", borderRadius: 9999, whiteSpace: "nowrap",
-    }}>
+    <span
+      className={`inline-flex items-center px-2.5 py-1 rounded-full font-badge text-badge gap-1 whiteSpace-nowrap ${badgeClass}`}
+    >
+      <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
       {label}
     </span>
   );

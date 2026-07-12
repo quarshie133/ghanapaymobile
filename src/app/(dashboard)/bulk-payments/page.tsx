@@ -1,14 +1,10 @@
 'use client';
 import React, { useState } from 'react';
-import T from '@/lib/tokens';
 import { formatCurrency } from '@/lib/utils';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
-import {
-  FaFolderOpen, FaCircleInfo, FaBolt, FaCalendarDays, FaCheck, FaCircleCheck, FaTriangleExclamation, FaDownload
-} from 'react-icons/fa6';
 
 const SAMPLE_ENTRIES = [
   { name: 'Kwame Mensah',   phone: '0244 567 890', amount: 500,  status: 'ready'   },
@@ -22,6 +18,7 @@ export default function BulkPaymentsPage() {
   const [dragging, setDragging] = useState(false);
   const [uploaded, setUploaded] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [scheduleOpt, setScheduleOpt] = useState<'now' | 'later'>('now');
 
   const total = SAMPLE_ENTRIES.reduce((s, e) => s + e.amount, 0);
   const ready = SAMPLE_ENTRIES.filter(e => e.status === 'ready').length;
@@ -30,53 +27,52 @@ export default function BulkPaymentsPage() {
     <PageWrap
       title="Bulk Payments"
       subtitle="Send payments to multiple recipients at once"
-      breadcrumb="Dashboard / Bulk Payments"
+      breadcrumb="Bulk Payments"
       action={
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="flex items-center gap-3">
           <Badge label="Business" type="navy" />
-          <Btn size="sm" variant="secondary" icon={<FaDownload />}>Download Template</Btn>
+          <Btn size="sm" variant="secondary" className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[16px]">download</span>
+            Template
+          </Btn>
         </div>
       }
     >
-      <style>{`
-        .trow:hover { background: ${T.tableHover} !important; }
-        .dz-hover { border-color: ${T.navyMid} !important; background: ${T.sidebarActive} !important; }
-      `}</style>
-
-      <div className="bulk-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Side: Upload or Preview Recipients (Span 8) */}
+        <div className="col-span-12 lg:col-span-8 space-y-6">
           {/* Upload Section */}
           {!uploaded && (
             <Card>
               <SectionTitle>Upload CSV File</SectionTitle>
               <div
-                className={dragging ? 'dz-hover' : ''}
-                onDragOver={e => { e.preventDefault(); setDragging(true); }}
+                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
                 onDragLeave={() => setDragging(false)}
-                onDrop={e => { e.preventDefault(); setDragging(false); setUploaded(true); }}
-                style={{
-                  border: `2px dashed ${T.border}`,
-                  borderRadius: 16, padding: '48px 24px',
-                  textAlign: 'center', cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
+                onDrop={(e) => { e.preventDefault(); setDragging(false); setUploaded(true); }}
                 onClick={() => setUploaded(true)}
+                className={`border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-200 ${
+                  dragging
+                    ? 'border-primary bg-sidebar-active-light'
+                    : 'border-border-subtle hover:border-primary/50 bg-white'
+                }`}
               >
-                <div style={{ fontSize: 48, marginBottom: 16, color: T.navyMid, display: 'flex', justifyContent: 'center' }}><FaFolderOpen /></div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: T.textPrimary, marginBottom: 8 }}>
+                <span className="material-symbols-outlined text-primary text-[48px] block mb-4">
+                  folder_open
+                </span>
+                <div className="text-base font-extrabold text-primary mb-2">
                   Drop your CSV file here
                 </div>
-                <div style={{ fontSize: 13, color: T.textMuted, marginBottom: 20 }}>
+                <div className="text-sm text-secondary mb-6">
                   or click to browse. Supports .csv and .xlsx
                 </div>
                 <Btn variant="secondary" size="sm">Browse Files</Btn>
               </div>
-              <div style={{ marginTop: 16, padding: 14, borderRadius: 10, background: T.infoBg, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                <span style={{ fontSize: 16, color: T.info }}><FaCircleInfo /></span>
-                <div style={{ fontSize: 12, color: T.info, lineHeight: 1.6 }}>
-                  Your CSV must include columns: <strong>Name, Phone, Amount</strong> (in cedis). Download our template above to get started.
-                </div>
+
+              <div className="mt-6 p-4 rounded-xl bg-[#EBF0FF] flex gap-3 items-start">
+                <span className="material-symbols-outlined text-primary text-[20px]">info</span>
+                <p className="text-xs text-primary leading-relaxed">
+                  Your CSV must include columns: <strong>Name, Phone, Amount</strong> (in GHS). Download our template above to get started.
+                </p>
               </div>
             </Card>
           )}
@@ -86,7 +82,7 @@ export default function BulkPaymentsPage() {
             <Card>
               <SectionTitle
                 action={
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  <div className="flex items-center gap-3">
                     <Btn size="sm" variant="ghost" onClick={() => setUploaded(false)}>Re-upload</Btn>
                     <Badge label={`${ready}/${SAMPLE_ENTRIES.length} ready`} type="success" />
                   </div>
@@ -94,27 +90,29 @@ export default function BulkPaymentsPage() {
               >
                 Preview Recipients
               </SectionTitle>
-              <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[500px]">
                   <thead>
-                    <tr style={{ background: T.surfaceLow }}>
+                    <tr className="bg-surface border-b border-border-subtle">
                       {['#', 'Name', 'Phone', 'Amount', 'Status'].map(h => (
-                        <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: 0.5 }}>{h}</th>
+                        <th key={h} className="px-6 py-3 font-table-header text-table-header text-secondary uppercase">
+                          {h}
+                        </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border-subtle text-sm">
                     {SAMPLE_ENTRIES.map((e, i) => (
-                      <tr key={i} className="trow" style={{ borderBottom: `1px solid ${T.border}` }}>
-                        <td style={{ padding: '12px 14px', color: T.textMuted }}>{i + 1}</td>
-                        <td style={{ padding: '12px 14px', fontWeight: 600, color: T.textPrimary }}>{e.name}</td>
-                        <td style={{ padding: '12px 14px', color: T.textSec }}>{e.phone}</td>
-                        <td style={{ padding: '12px 14px', fontWeight: 700, color: T.textPrimary }}>{formatCurrency(e.amount)}</td>
-                        <td style={{ padding: '12px 14px' }}>
-                          {e.status === 'ready'
-                            ? <Badge label="Ready" type="success" />
-                            : <Badge label="Check" type="warning" />
-                          }
+                      <tr key={i} className="hover:bg-table-hover transition-colors duration-150">
+                        <td className="px-6 py-3.5 text-secondary">{i + 1}</td>
+                        <td className="px-6 py-3.5 font-bold text-primary">{e.name}</td>
+                        <td className="px-6 py-3.5 text-secondary">{e.phone}</td>
+                        <td className="px-6 py-3.5 font-bold text-primary">{formatCurrency(e.amount)}</td>
+                        <td className="px-6 py-3.5">
+                          <Badge
+                            label={e.status === 'ready' ? 'Ready' : 'Check'}
+                            type={e.status === 'ready' ? 'success' : 'warning'}
+                          />
                         </td>
                       </tr>
                     ))}
@@ -125,72 +123,99 @@ export default function BulkPaymentsPage() {
           )}
         </div>
 
-        {/* Right Summary Panel */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <Card style={{ background: `linear-gradient(135deg, ${T.navy}, ${T.navyMid})`, border: 'none', color: '#fff' }}>
-            <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 4, fontWeight: 600, letterSpacing: 0.5 }}>BATCH SUMMARY</div>
-            <div style={{ fontSize: 34, fontWeight: 800, margin: '8px 0', color: T.gold }}>{formatCurrency(total)}</div>
-            <div style={{ fontSize: 13, opacity: 0.8 }}>Total payout amount</div>
-            <div style={{ height: 1, background: 'rgba(255,255,255,0.15)', margin: '16px 0' }} />
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        {/* Right Side: Batch Summary & Scheduling (Span 4) */}
+        <div className="col-span-12 lg:col-span-4 space-y-6">
+          {/* Summary */}
+          <div className="rounded-2xl bg-gradient-to-br from-primary to-primary-container p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="absolute right-[-20px] top-[-20px] w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
+            <div className="text-xs font-bold text-white/70 uppercase tracking-widest mb-1">BATCH SUMMARY</div>
+            <div className="font-metric-value text-[34px] font-black text-tertiary-fixed leading-tight my-2">
+              {formatCurrency(total)}
+            </div>
+            <div className="text-xs text-white/70">Total payout amount</div>
+            <div className="h-px bg-white/10 w-full my-4" />
+            <div className="grid grid-cols-2 gap-4">
               {[
                 ['Recipients', SAMPLE_ENTRIES.length],
                 ['Ready', ready],
                 ['Warnings', SAMPLE_ENTRIES.length - ready],
-                ['Est. Fee', 'Free'],
-              ].map(([k, v]) => (
-                <div key={k}>
-                  <div style={{ fontSize: 11, opacity: 0.6 }}>{k}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700 }}>{v}</div>
+                ['Est. Fee', 'Free GHS'],
+              ].map(([k, v], idx) => (
+                <div key={idx}>
+                  <div className="text-[11px] text-white/50">{k}</div>
+                  <div className="text-base font-bold text-white mt-0.5">{v}</div>
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
 
+          {/* Schedule */}
           <Card>
             <SectionTitle>Schedule</SectionTitle>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="space-y-3">
               {[
-                { label: 'Send Now', icon: <FaBolt />, desc: 'Process immediately', active: true },
-                { label: 'Schedule Later', icon: <FaCalendarDays />, desc: 'Pick a date & time', active: false },
-              ].map(opt => (
-                <div key={opt.label} style={{
-                  padding: 14, borderRadius: 10, cursor: 'pointer',
-                  border: `2px solid ${opt.active ? T.navyMid : T.border}`,
-                  background: opt.active ? T.sidebarActive : T.white,
-                }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: opt.active ? T.navyMid : T.textPrimary, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {opt.icon} {opt.label}
+                { type: 'now' as const, label: 'Send Now', icon: 'bolt', desc: 'Process immediately' },
+                { type: 'later' as const, label: 'Schedule Later', icon: 'calendar_today', desc: 'Pick a date & time' },
+              ].map((opt, i) => (
+                <div
+                  key={i}
+                  onClick={() => setScheduleOpt(opt.type)}
+                  className={`p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                    scheduleOpt === opt.type
+                      ? 'border-primary bg-sidebar-active-light'
+                      : 'border-border-subtle bg-white hover:border-primary/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className={`material-symbols-outlined text-[20px] ${
+                      scheduleOpt === opt.type ? 'text-primary' : 'text-secondary'
+                    }`}>
+                      {opt.icon}
+                    </span>
+                    <span className={`text-sm font-bold ${
+                      scheduleOpt === opt.type ? 'text-primary' : 'text-primary'
+                    }`}>
+                      {opt.label}
+                    </span>
                   </div>
-                  <div style={{ fontSize: 12, color: T.textMuted, marginTop: 2 }}>{opt.desc}</div>
+                  <div className="text-xs text-secondary mt-1">{opt.desc}</div>
                 </div>
               ))}
             </div>
           </Card>
 
+          {/* Action button */}
           {!confirmed ? (
             <Btn
               variant="success"
               disabled={!uploaded}
               onClick={() => setConfirmed(true)}
-              style={{ width: '100%', justifyContent: 'center', fontSize: 15, padding: '14px' }}
+              className="w-full py-4 text-base font-bold flex items-center justify-center gap-2"
             >
-              <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}><FaCheck /> Validate &amp; Send Batch</span>
+              <span className="material-symbols-outlined">check</span>
+              Validate & Send Batch
             </Btn>
           ) : (
-            <Card style={{ textAlign: 'center', padding: 32 }}>
-              <div style={{ fontSize: 48, marginBottom: 12, color: T.success, display: 'flex', justifyContent: 'center' }}><FaCircleCheck /></div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: T.success }}>Batch Submitted!</div>
-              <div style={{ fontSize: 13, color: T.textMuted, marginTop: 6 }}>Processing {SAMPLE_ENTRIES.length} payments of {formatCurrency(total)}</div>
+            <Card className="text-center p-6 bg-white border border-border-subtle shadow-sm">
+              <span className="material-symbols-outlined text-[48px] text-success animate-bounce block mb-2">
+                check_circle
+              </span>
+              <h4 className="text-base font-bold text-success">Batch Submitted!</h4>
+              <p className="text-xs text-secondary mt-2 leading-relaxed">
+                Processing {SAMPLE_ENTRIES.length} payments of {formatCurrency(total)}.
+              </p>
             </Card>
           )}
 
-          <Card style={{ background: T.warningBg, border: `1px solid ${T.warning}22` }}>
-            <div style={{ fontSize: 12, color: T.warning, fontWeight: 600, display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 16 }}><FaTriangleExclamation /></span>
-              <span>Bulk payments above ₵10,000 require additional authorization from your account admin.</span>
+          {/* Warning Banner */}
+          <div className="p-4 rounded-xl bg-orange-50 border border-orange-200">
+            <div className="flex gap-3 items-start">
+              <span className="material-symbols-outlined text-orange-600 text-[20px]">warning</span>
+              <p className="text-xs text-orange-700 leading-relaxed font-semibold">
+                Bulk payments above ₵10,000 require additional authorization from your account admin.
+              </p>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </PageWrap>

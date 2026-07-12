@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TRANSACTIONS } from '@/lib/mock-data';
 import { formatCurrency, getInitials } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
@@ -7,13 +7,8 @@ import { api } from '@/lib/api';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
-import Input from '@/components/ui/Input';
-import { SectionTitle, PageWrap } from '@/components/ui/Layout';
+import { PageWrap } from '@/components/ui/Layout';
 import type { Transaction } from '@/types/transaction';
-import {
-  FaDownload, FaMagnifyingGlass, FaClipboard, FaFileInvoice, FaXmark, FaArrowRight
-} from 'react-icons/fa6';
-import T from '@/lib/tokens';
 
 type FilterTab = 'All' | 'Sent' | 'Received' | 'Bills' | 'Airtime';
 
@@ -27,12 +22,6 @@ const tabMap: Record<FilterTab, (t: Transaction) => boolean> = {
   Airtime:  t => t.type === 'Airtime',
 };
 
-function statusBadge(s: string) {
-  if (s === 'completed') return <Badge label="Completed" type="success" />;
-  if (s === 'pending')   return <Badge label="Pending"   type="warning" />;
-  return <Badge label="Failed" type="error" />;
-}
-
 export default function HistoryPage() {
   const { user } = useAuth();
   const [tab, setTab]         = useState<FilterTab>('All');
@@ -40,7 +29,7 @@ export default function HistoryPage() {
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       api.get('/transactions').then(res => {
         if (res.data) {
@@ -63,7 +52,6 @@ export default function HistoryPage() {
           setTransactions(mapped);
         }
       }).catch(() => {
-        // Fallback to mock data if API fails or backend is empty
         setTransactions(TRANSACTIONS);
       });
     }
@@ -79,161 +67,231 @@ export default function HistoryPage() {
     <PageWrap
       title="Transaction History"
       subtitle="Full record of all your GhanaPay transactions"
-      action={<Btn variant="secondary" size="sm" icon={<FaDownload />}>Export CSV</Btn>}
+      breadcrumb="History"
+      action={
+        <Btn variant="secondary" size="sm" icon={<span className="material-symbols-outlined text-[18px]">download</span>}>
+          Export CSV
+        </Btn>
+      }
     >
-      <style>{`.trow:hover { background: ${T.tableHover} !important; cursor: pointer; }`}</style>
-
-      <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 360px' : '1fr', gap: 24, transition: 'all 0.3s' }}>
+      <div className={`grid grid-cols-1 gap-6 transition-all duration-300 ${selected ? 'lg:grid-cols-12' : 'grid-cols-1'}`}>
         {/* Main Table Card */}
-        <Card>
-          {/* Filter Bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {TABS.map(t => (
-                <button key={t} onClick={() => setTab(t)} style={{
-                  padding: '6px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                  background: tab === t ? T.navyMid : T.surfaceLow,
-                  color: tab === t ? '#fff' : T.textMuted, transition: 'all 0.15s',
-                }}>
-                  {t}
-                </button>
-              ))}
-            </div>
-            <div style={{ width: 240 }}>
-              <Input placeholder="Search transactions…" value={search} onChange={e => setSearch(e.target.value)} icon={<FaMagnifyingGlass />} />
-            </div>
-          </div>
-
-          <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: T.surfaceLow }}>
-                  {['Date', 'Recipient / Type', 'Method', 'Amount', 'Status', 'Action'].map(h => (
-                    <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: 0.5 }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map(tx => (
-                  <tr
-                    key={tx.id}
-                    className="trow"
-                    onClick={() => setSelected(s => s?.id === tx.id ? null : tx)}
-                    style={{
-                      borderBottom: `1px solid ${T.border}`,
-                      background: selected?.id === tx.id ? T.sidebarActive : undefined,
-                    }}
+        <div className={selected ? 'lg:col-span-8' : 'w-full'}>
+          <Card className="overflow-hidden">
+            {/* Filter Bar */}
+            <div className="flex justify-between items-center mb-6 flex-wrap gap-4 px-2">
+              <div className="flex gap-2 flex-wrap">
+                {TABS.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 focus:outline-none ${
+                      tab === t
+                        ? 'bg-primary text-white'
+                        : 'bg-surface-container-low text-secondary hover:bg-surface-container'
+                    }`}
                   >
-                    <td style={{ padding: '13px 16px' }}>
-                      <div style={{ fontWeight: 600, color: T.textPrimary, fontSize: 12 }}>{tx.date}</div>
-                      <div style={{ fontSize: 11, color: T.textMuted }}>{tx.time}</div>
-                    </td>
-                    <td style={{ padding: '13px 16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{
-                          width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-                          background: tx.amount > 0 ? T.successBg : T.errorBg,
-                          color:      tx.amount > 0 ? T.success   : T.error,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 11, fontWeight: 800,
-                        }}>
-                          {getInitials(tx.name)}
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 700, color: T.textPrimary }}>{tx.name}</div>
-                          <div style={{ fontSize: 11, color: T.textMuted }}>{tx.type}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '13px 16px', color: T.textSec }}>{tx.method}</td>
-                    <td style={{ padding: '13px 16px' }}>
-                      <span style={{ fontWeight: 800, fontSize: 14, color: tx.amount > 0 ? T.success : T.error }}>
-                        {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
-                      </span>
-                    </td>
-                    <td style={{ padding: '13px 16px' }}>{statusBadge(tx.status)}</td>
-                    <td style={{ padding: '13px 16px' }}>
-                      <button
-                        onClick={e => { e.stopPropagation(); setSelected(s => s?.id === tx.id ? null : tx); }}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: T.textMuted }}
-                      >
-                        {selected?.id === tx.id ? <FaXmark /> : <FaArrowRight />}
-                      </button>
-                    </td>
-                  </tr>
+                    {t}
+                  </button>
                 ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={6} style={{ padding: 40, textAlign: 'center', color: T.textMuted }}>No transactions found.</td>
+              </div>
+              <div className="relative w-64">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">
+                  search
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search transactions..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full h-10 pl-10 pr-4 rounded-xl border border-border-subtle bg-surface-bright focus:border-primary focus:ring-1 focus:ring-primary outline-none text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[600px]">
+                <thead>
+                  <tr className="bg-surface border-b border-border-subtle">
+                    {['Date & Time', 'Recipient / Type', 'Method', 'Amount', 'Status', 'Action'].map((h) => (
+                      <th
+                        key={h}
+                        className="px-6 py-3 font-table-header text-table-header text-secondary uppercase tracking-wider"
+                      >
+                        {h}
+                      </th>
+                    ))}
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination hint */}
-          <div style={{ padding: '14px 16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${T.border}`, marginTop: 8 }}>
-            <span style={{ fontSize: 12, color: T.textMuted }}>Showing {filtered.length} of {transactions.length} transactions</span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {[1, 2, 3].map(n => (
-                <button key={n} style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${n === 1 ? T.navyMid : T.border}`, background: n === 1 ? T.navyMid : 'transparent', color: n === 1 ? '#fff' : T.textMuted, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>{n}</button>
-              ))}
+                </thead>
+                <tbody className="divide-y divide-border-subtle">
+                  {filtered.map((tx) => (
+                    <tr
+                      key={tx.id}
+                      onClick={() => setSelected(selected?.id === tx.id ? null : tx)}
+                      className={`group hover:bg-table-hover transition-colors duration-150 cursor-pointer ${
+                        selected?.id === tx.id ? 'bg-sidebar-active-light' : ''
+                      }`}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-primary text-sm">{tx.date}</div>
+                        <div className="text-xs text-secondary mt-0.5">{tx.time}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-9 h-9 rounded-full font-bold flex items-center justify-center shrink-0 text-sm ${
+                              tx.amount > 0 ? 'bg-[#E5F5ED] text-[#1E8449]' : 'bg-error-container text-error'
+                            }`}
+                          >
+                            {getInitials(tx.name)}
+                          </div>
+                          <div>
+                            <div className="font-bold text-primary">{tx.name}</div>
+                            <div className="text-xs text-secondary">{tx.type}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-secondary text-sm">{tx.method}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`font-extrabold text-base ${
+                            tx.amount > 0 ? 'text-success' : 'text-error'
+                          }`}
+                        >
+                          {tx.amount > 0 ? '+' : ''}
+                          {formatCurrency(tx.amount)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <Badge
+                          label={tx.status}
+                          type={tx.status === 'completed' ? 'success' : tx.status === 'pending' ? 'warning' : 'error'}
+                        />
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelected(selected?.id === tx.id ? null : tx);
+                          }}
+                          className="text-secondary hover:text-primary transition-colors focus:outline-none"
+                        >
+                          <span className="material-symbols-outlined text-md">
+                            {selected?.id === tx.id ? 'close' : 'arrow_forward'}
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-10 text-center text-secondary text-sm">
+                        No transactions found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </Card>
 
-        {/* Detail Panel */}
-        {selected && (
-          <Card className="history-detail-panel" style={{ borderLeft: `3px solid ${T.navyMid}`, height: 'fit-content', position: 'sticky', top: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: T.navy }}>Transaction Details</h3>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: T.textMuted }}><FaXmark /></button>
-            </div>
-
-            {/* Avatar + Name */}
-            <div style={{ textAlign: 'center', marginBottom: 20 }}>
-              <div style={{
-                width: 60, height: 60, borderRadius: '50%', margin: '0 auto 10px',
-                background: selected.amount > 0 ? T.successBg : T.errorBg,
-                color: selected.amount > 0 ? T.success : T.error,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 20, fontWeight: 800,
-              }}>
-                {getInitials(selected.name)}
+            {/* Pagination */}
+            <div className="mt-4 px-6 py-4 border-t border-border-subtle flex items-center justify-between bg-surface-container-lowest">
+              <span className="text-sm text-secondary">
+                Showing 1 to {filtered.length} of {transactions.length} entries
+              </span>
+              <div className="flex gap-1">
+                {[1, 2, 3].map((n) => (
+                  <button
+                    key={n}
+                    className={`w-8 h-8 rounded flex items-center justify-center border border-border-subtle text-sm font-bold focus:outline-none ${
+                      n === 1
+                        ? 'bg-primary text-white border-primary'
+                        : 'text-secondary hover:bg-surface-container'
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
               </div>
-              <div style={{ fontSize: 17, fontWeight: 700, color: T.textPrimary }}>{selected.name}</div>
-              <div style={{ fontSize: 30, fontWeight: 900, color: selected.amount > 0 ? T.success : T.error, margin: '8px 0 4px' }}>
-                {selected.amount > 0 ? '+' : ''}{formatCurrency(selected.amount)}
-              </div>
-              {statusBadge(selected.status)}
-            </div>
-
-            {/* Details Grid */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0, borderRadius: 12, border: `1px solid ${T.border}`, overflow: 'hidden' }}>
-              {[
-                ['Reference',  selected.ref],
-                ['Date',       `${selected.date} · ${selected.time}`],
-                ['Type',       selected.type],
-                ['Method',     selected.method],
-                ['Fee',        selected.fee > 0 ? formatCurrency(selected.fee) : 'Free'],
-                ['Note',       selected.note || '—'],
-              ].map(([k, v], i) => (
-                <div key={k} style={{
-                  display: 'flex', justifyContent: 'space-between', padding: '11px 14px',
-                  background: i % 2 === 0 ? T.surfaceLow : T.white,
-                  borderBottom: i < 5 ? `1px solid ${T.border}` : 'none',
-                }}>
-                  <span style={{ fontSize: 12, color: T.textMuted, fontWeight: 600 }}>{k}</span>
-                  <span style={{ fontSize: 12, color: T.textPrimary, fontWeight: 700, textAlign: 'right', maxWidth: '55%', wordBreak: 'break-all' }}>{v}</span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <Btn variant="secondary" size="sm" style={{ flex: 1, justifyContent: 'center' }} icon={<FaClipboard />}>Copy Ref</Btn>
-              <Btn variant="primary" size="sm" style={{ flex: 2, justifyContent: 'center' }} icon={<FaFileInvoice />}>Download Receipt</Btn>
             </div>
           </Card>
+        </div>
+
+        {/* Sidebar Detail Panel (Span 4) */}
+        {selected && (
+          <div className="lg:col-span-4 sticky top-6">
+            <Card className="border-l-4 border-primary">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-section-title text-section-title text-primary">
+                  Transaction Details
+                </h3>
+                <button
+                  onClick={() => setSelected(null)}
+                  className="text-secondary hover:text-primary transition-colors focus:outline-none"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <div className="text-center mb-6">
+                <div
+                  className={`w-16 h-16 rounded-full font-black flex items-center justify-center mx-auto mb-3 text-lg ${
+                    selected.amount > 0 ? 'bg-[#E5F5ED] text-[#1E8449]' : 'bg-error-container text-error'
+                  }`}
+                >
+                  {getInitials(selected.name)}
+                </div>
+                <div className="text-lg font-bold text-primary">{selected.name}</div>
+                <div
+                  className={`text-[30px] font-black my-2 ${
+                    selected.amount > 0 ? 'text-[#1E8449]' : 'text-error'
+                  }`}
+                >
+                  {selected.amount > 0 ? '+' : ''}
+                  {formatCurrency(selected.amount)}
+                </div>
+                <Badge
+                  label={selected.status}
+                  type={selected.status === 'completed' ? 'success' : selected.status === 'pending' ? 'warning' : 'error'}
+                />
+              </div>
+
+              <div className="rounded-xl border border-border-subtle overflow-hidden divide-y divide-border-subtle">
+                {[
+                  ['Reference ID', selected.ref],
+                  ['Timestamp', `${selected.date} • ${selected.time}`],
+                  ['Transaction Type', selected.type],
+                  ['Payment Method', selected.method],
+                  ['Service Fee', selected.fee > 0 ? formatCurrency(selected.fee) : 'Free GHS'],
+                  ['Description / Note', selected.note || 'None'],
+                ].map(([k, v], i) => (
+                  <div
+                    key={i}
+                    className={`flex justify-between p-3.5 text-xs ${
+                      i % 2 === 0 ? 'bg-surface-container-low' : 'bg-white'
+                    }`}
+                  >
+                    <span className="font-bold text-secondary">{k}</span>
+                    <span className="font-bold text-primary text-right max-w-[60%] truncate">
+                      {v}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <Btn variant="secondary" size="sm" className="flex-1">
+                  <span className="material-symbols-outlined text-[16px] mr-1">content_copy</span>
+                  Copy Ref
+                </Btn>
+                <Btn variant="primary" size="sm" className="flex-2">
+                  <span className="material-symbols-outlined text-[16px] mr-1">receipt</span>
+                  Get Receipt
+                </Btn>
+              </div>
+            </Card>
+          </div>
         )}
       </div>
     </PageWrap>

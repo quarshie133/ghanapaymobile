@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TRANSACTIONS } from '@/lib/mock-data';
 import { formatCurrency, getInitials } from '@/lib/utils';
 import { api } from '@/lib/api';
@@ -8,10 +8,6 @@ import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, Divider, PageWrap } from '@/components/ui/Layout';
-import {
-  FaFilePdf, FaFileCsv, FaEnvelope, FaClipboardList
-} from 'react-icons/fa6';
-import T from '@/lib/tokens';
 
 const MONTHS = [
   { label: 'Jun 2026', key: 'jun', opening: 3750, closing: 4250, debits: 2300, credits: 2800 },
@@ -27,7 +23,7 @@ export default function StatementsPage() {
   const [selectedKey, setSelectedKey] = useState('jun');
   const [statements, setStatements] = useState<any[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       api.get('/statements').then(res => setStatements(res)).catch(() => {});
     }
@@ -42,30 +38,33 @@ export default function StatementsPage() {
     <PageWrap
       title="Statements"
       subtitle="Download and review monthly account statements"
+      breadcrumb="Statements"
       action={
-        <div style={{ display: 'flex', gap: 10 }}>
-          <Btn variant="secondary" size="sm" icon={<FaFilePdf />}>Download PDF</Btn>
-          <Btn variant="ghost" size="sm" icon={<FaFileCsv />}>Download CSV</Btn>
+        <div className="flex items-center gap-3">
+          <Btn variant="secondary" size="sm" className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+            PDF
+          </Btn>
+          <Btn variant="ghost" size="sm" className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[16px]">download</span>
+            CSV
+          </Btn>
         </div>
       }
     >
-      <style>{`.trow:hover { background: ${T.tableHover} !important; }`}</style>
-
       {/* Month Selector */}
-      <Card style={{ marginBottom: 24 }}>
+      <Card className="mb-6">
         <SectionTitle>Select Month</SectionTitle>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div className="flex gap-2 flex-wrap">
           {MONTHS.map(m => (
             <button
               key={m.key}
               onClick={() => setSelectedKey(m.key)}
-              style={{
-                padding: '8px 20px', borderRadius: 20, cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                border: `2px solid ${selectedKey === m.key ? T.navyMid : T.border}`,
-                background: selectedKey === m.key ? T.navyMid : T.white,
-                color: selectedKey === m.key ? '#fff' : T.textSec,
-                transition: 'all 0.15s',
-              }}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-200 focus:outline-none border-2 ${
+                selectedKey === m.key
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-border-subtle hover:border-primary/30 text-secondary bg-white'
+              }`}
             >
               {m.label}
             </button>
@@ -73,30 +72,33 @@ export default function StatementsPage() {
         </div>
       </Card>
 
-      <div className="statement-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
-        {/* Statement Summary */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Main Content Area (Span 8) */}
+        <div className="col-span-12 lg:col-span-8 space-y-6">
           {/* KPI Row */}
-          <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-            <Card style={{ background: T.surfaceLow }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: 0.5, marginBottom: 8 }}>OPENING BALANCE</div>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.textPrimary }}>{formatCurrency(active.opening)}</div>
-              <div style={{ fontSize: 12, color: T.textMuted, marginTop: 4 }}>Start of {active.label}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <Card className="bg-surface-container-low">
+              <div className="text-[11px] font-bold text-secondary uppercase tracking-widest mb-2">OPENING BALANCE</div>
+              <div className="text-2xl font-extrabold text-primary">{formatCurrency(active.opening)}</div>
+              <div className="text-xs text-secondary mt-1">Start of {active.label}</div>
             </Card>
-            <Card style={{ background: `linear-gradient(135deg, ${T.navy}, ${T.navyMid})`, color: '#fff', border: 'none' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, opacity: 0.7, letterSpacing: 0.5, marginBottom: 8 }}>CLOSING BALANCE</div>
-              <div style={{ fontSize: 28, fontWeight: 800, color: T.gold }}>{formatCurrency(active.closing)}</div>
-              <div style={{ fontSize: 12, opacity: 0.65, marginTop: 4 }}>End of {active.label}</div>
+
+            <Card className="bg-gradient-to-br from-primary to-primary-container text-white border-none">
+              <div className="text-[11px] font-bold text-white/70 uppercase tracking-widest mb-2">CLOSING BALANCE</div>
+              <div className="text-2xl font-extrabold text-tertiary-fixed">{formatCurrency(active.closing)}</div>
+              <div className="text-xs text-white/70 mt-1">End of {active.label}</div>
             </Card>
+
             <Card>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: 0.5, marginBottom: 8 }}>TOTAL DEBITS</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: T.error }}>{formatCurrency(active.debits)}</div>
-              <div style={{ fontSize: 12, color: T.textMuted, marginTop: 4 }}>Money out</div>
+              <div className="text-[11px] font-bold text-secondary uppercase tracking-widest mb-2">TOTAL DEBITS</div>
+              <div className="text-2xl font-extrabold text-error">{formatCurrency(active.debits)}</div>
+              <div className="text-xs text-secondary mt-1">Money out</div>
             </Card>
+
             <Card>
-              <div style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: 0.5, marginBottom: 8 }}>TOTAL CREDITS</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: T.success }}>{formatCurrency(active.credits)}</div>
-              <div style={{ fontSize: 12, color: T.textMuted, marginTop: 4 }}>Money in</div>
+              <div className="text-[11px] font-bold text-secondary uppercase tracking-widest mb-2">TOTAL CREDITS</div>
+              <div className="text-2xl font-extrabold text-success">{formatCurrency(active.credits)}</div>
+              <div className="text-xs text-secondary mt-1">Money in</div>
             </Card>
           </div>
 
@@ -105,47 +107,47 @@ export default function StatementsPage() {
             <SectionTitle action={<Badge label={active.label} type="navy" />}>
               Transactions — {active.label}
             </SectionTitle>
-            <div className="responsive-table-wrap" style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[500px]">
                 <thead>
-                  <tr style={{ background: T.surfaceLow }}>
+                  <tr className="bg-surface border-b border-border-subtle">
                     {['Date', 'Description', 'Type', 'Amount'].map(h => (
-                      <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: 0.5 }}>{h}</th>
+                      <th key={h} className="px-6 py-3 font-table-header text-table-header text-secondary uppercase">
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border-subtle text-sm">
                   {txList.map(tx => (
-                    <tr key={tx.id} className="trow" style={{ borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: T.textPrimary }}>{tx.date}</div>
-                        <div style={{ fontSize: 11, color: T.textMuted }}>{tx.time}</div>
+                    <tr key={tx.id} className="hover:bg-table-hover transition-colors duration-150">
+                      <td className="px-6 py-3.5">
+                        <div className="font-semibold text-primary">{tx.date}</div>
+                        <div className="text-xs text-secondary mt-0.5">{tx.time}</div>
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{
-                            width: 30, height: 30, borderRadius: '50%',
-                            background: tx.amount > 0 ? T.successBg : T.errorBg,
-                            color: tx.amount > 0 ? T.success : T.error,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 10, fontWeight: 800, flexShrink: 0,
-                          }}>
+                      <td className="px-6 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-8 h-8 rounded-full font-bold flex items-center justify-center shrink-0 text-[10px] ${
+                              tx.amount > 0 ? 'bg-[#E5F5ED] text-[#1E8449]' : 'bg-error-container text-error'
+                            }`}
+                          >
                             {getInitials(tx.name)}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 600, color: T.textPrimary }}>{tx.name}</div>
-                            <div style={{ fontSize: 11, color: T.textMuted }}>{tx.note}</div>
+                            <div className="font-bold text-primary">{tx.name}</div>
+                            <div className="text-xs text-secondary">{tx.note}</div>
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td className="px-6 py-3.5">
                         <Badge
                           label={tx.type}
                           type={tx.type === 'Received' ? 'success' : tx.type === 'Sent' ? 'error' : tx.type === 'Bill' ? 'warning' : 'info'}
                         />
                       </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <span style={{ fontSize: 14, fontWeight: 800, color: tx.amount > 0 ? T.success : T.error }}>
+                      <td className="px-6 py-3.5">
+                        <span className={`font-extrabold text-sm ${tx.amount > 0 ? 'text-success' : 'text-error'}`}>
                           {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
                         </span>
                       </td>
@@ -157,59 +159,70 @@ export default function StatementsPage() {
           </Card>
         </div>
 
-        {/* Right: Download & Summary */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <Card style={{ background: `linear-gradient(135deg, ${T.navy}, ${T.navyLight})`, border: 'none', color: '#fff' }}>
-            <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 600, letterSpacing: 0.5, marginBottom: 16 }}>STATEMENT DOWNLOAD</div>
-            <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 6 }}>{active.label} Statement</div>
-            <div style={{ fontSize: 13, opacity: 0.75, marginBottom: 20 }}>Account: GHP-2026-00182</div>
+        {/* Right Sidebar Columns (Span 4) */}
+        <div className="col-span-12 lg:col-span-4 space-y-6">
+          {/* Download Box */}
+          <div className="rounded-2xl bg-gradient-to-br from-primary via-primary-container to-surface-tint p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="absolute right-[-20px] top-[-20px] w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
+            <div className="text-xs font-bold text-white/70 uppercase tracking-widest mb-4">STATEMENT DOWNLOAD</div>
+            <div className="text-xl font-bold mb-2">{active.label} Statement</div>
+            <div className="text-xs text-white/50 mb-6 font-mono">Account: GHP-2026-00182</div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <Btn variant="gold" style={{ width: '100%', justifyContent: 'center' }} icon={<FaFilePdf />}>
+            <div className="space-y-3">
+              <Btn variant="gold" className="w-full justify-center">
+                <span className="material-symbols-outlined text-[18px] mr-1">picture_as_pdf</span>
                 Download PDF
               </Btn>
-              <Btn variant="ghost" style={{ width: '100%', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }} icon={<FaFileCsv />}>
+              <button className="w-full h-11 border border-white/30 rounded-xl hover:bg-white/10 transition-all font-bold text-sm flex items-center justify-center gap-1.5 focus:outline-none">
+                <span className="material-symbols-outlined text-[18px]">download</span>
                 Download CSV
-              </Btn>
-              <Btn variant="ghost" style={{ width: '100%', justifyContent: 'center', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }} icon={<FaEnvelope />}>
+              </button>
+              <button className="w-full h-11 border border-white/30 rounded-xl hover:bg-white/10 transition-all font-bold text-sm flex items-center justify-center gap-1.5 focus:outline-none">
+                <span className="material-symbols-outlined text-[18px]">mail</span>
                 Email Statement
-              </Btn>
+              </button>
             </div>
-          </Card>
+          </div>
 
+          {/* Net Position */}
           <Card>
             <SectionTitle>Net Position</SectionTitle>
-            <div style={{ textAlign: 'center', padding: '16px 0' }}>
-              <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 6 }}>Net Cash Flow</div>
-              <div style={{ fontSize: 36, fontWeight: 900, color: active.credits - active.debits >= 0 ? T.success : T.error }}>
-                {active.credits - active.debits >= 0 ? '+' : ''}{formatCurrency(active.credits - active.debits)}
+            <div className="text-center py-4">
+              <div className="text-xs text-secondary mb-1">Net Cash Flow</div>
+              <div className={`text-3xl font-black ${
+                active.credits - active.debits >= 0 ? 'text-success' : 'text-error'
+              }`}>
+                {active.credits - active.debits >= 0 ? '+' : ''}
+                {formatCurrency(active.credits - active.debits)}
               </div>
-              <div style={{ fontSize: 13, color: T.textMuted, marginTop: 6 }}>Credits − Debits</div>
+              <div className="text-xs text-secondary mt-1">Credits − Debits</div>
             </div>
             <Divider />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="space-y-3 text-xs">
               {[
                 ['Transactions', txList.length],
                 ['Avg Transaction', `₵${Math.round((active.debits + active.credits) / txList.length)}`],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                  <span style={{ color: T.textMuted }}>{k}</span>
-                  <span style={{ fontWeight: 700, color: T.textPrimary }}>{v}</span>
+              ].map(([k, v], i) => (
+                <div key={i} className="flex justify-between items-center">
+                  <span className="text-secondary">{k}</span>
+                  <span className="font-bold text-primary">{v}</span>
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card style={{ background: T.successBg, border: `1px solid ${T.success}33` }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.success, marginBottom: 8, display: 'flex', gap: 6, alignItems: 'center' }}>
-              <FaClipboardList /> Statement Tips
+          {/* Tips */}
+          <div className="p-5 rounded-xl bg-green-50 border border-green-200">
+            <div className="flex gap-2 text-success font-bold mb-3 items-center text-sm">
+              <span className="material-symbols-outlined">description</span>
+              Statement Tips
             </div>
-            <ul style={{ margin: 0, padding: '0 0 0 16px', fontSize: 12, color: T.textSec, lineHeight: 2 }}>
+            <ul className="list-disc pl-5 text-xs text-secondary space-y-2 leading-relaxed font-semibold">
               <li>Statements are available for the last 12 months</li>
               <li>PDF statements are bank-certified</li>
               <li>Share directly with employers or lenders</li>
             </ul>
-          </Card>
+          </div>
         </div>
       </div>
     </PageWrap>

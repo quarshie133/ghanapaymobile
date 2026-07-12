@@ -1,0 +1,389 @@
+﻿<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GhanaPay Admin - KYC Review Queue</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Syne:wght@700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#131d21",
+                        "outline-variant": "#c7c5d2",
+                        "surface-tint": "#5257a3",
+                        "on-primary-container": "#858ada",
+                        "surface-container-low": "#f0f4f8",
+                        "primary-container": "#1b1f6b",
+                        "table-hover": "#F5F7FF",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-background": "#171c1f",
+                        "sidebar-light": "#F8F9FE",
+                        "success": "#1E8449",
+                        "secondary-fixed-dim": "#bec8ce",
+                        "surface-bright": "#f6fafe",
+                        "surface-dim": "#d6dade",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#3a3f8a",
+                        "secondary": "#566065",
+                        "error": "#C0392B",
+                        "surface": "#f6fafe",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#171c1f",
+                        "surface-variant": "#dfe3e7",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#464651",
+                        "primary-fixed-dim": "#bfc2ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "border-subtle": "#E8ECF0",
+                        "surface-container-high": "#e4e9ed",
+                        "secondary-container": "#dae4ea",
+                        "outline": "#777682",
+                        "inverse-primary": "#bfc2ff",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#3f484d",
+                        "on-secondary-container": "#5c666b",
+                        "on-primary": "#ffffff",
+                        "background": "#f6fafe",
+                        "surface-container-highest": "#dfe3e7",
+                        "primary": "#020259",
+                        "admin-bg": "#0D1120",
+                        "tertiary": "#755b00",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#e0e0ff",
+                        "inverse-on-surface": "#edf1f5",
+                        "tertiary-container": "#cea62c",
+                        "sidebar-active-light": "#ECEFFE",
+                        "on-primary-fixed": "#090c5e",
+                        "inverse-surface": "#2c3134",
+                        "surface-container": "#eaeef2",
+                        "secondary-fixed": "#dae4ea",
+                        "admin-accent": "#4A6CF7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding": "32px",
+                        "topnav-height": "64px",
+                        "gutter": "24px",
+                        "card-padding": "20px",
+                        "input-height": "44px",
+                        "sidebar-width": "240px"
+                    },
+                    "fontFamily": {
+                        "table-header": ["Inter"],
+                        "page-title-mobile": ["Inter"],
+                        "page-title": ["Inter"],
+                        "metric-value": ["Syne"],
+                        "badge": ["Inter"],
+                        "nav-link": ["Inter"],
+                        "sidebar-label": ["Inter"],
+                        "section-title": ["Inter"],
+                        "table-cell": ["Inter"]
+                    },
+                    "fontSize": {
+                        "table-header": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "page-title-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "page-title": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "metric-value": ["36px", { "lineHeight": "44px", "fontWeight": "700" }],
+                        "badge": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+                        "nav-link": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "sidebar-label": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "section-title": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "table-cell": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface dark:bg-admin-bg text-on-surface dark:text-on-secondary font-sans antialiased overflow-hidden flex h-screen">
+<!-- Sidebar -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width border-r border-border-subtle dark:border-outline-variant bg-sidebar-light dark:bg-admin-bg flex flex-col py-gutter z-50">
+<div class="px-gutter mb-8 flex flex-col gap-1">
+<h1 class="font-page-title text-page-title font-bold text-primary dark:text-inverse-primary">GhanaPay</h1>
+<p class="font-sidebar-label text-sidebar-label text-secondary dark:text-on-surface-variant">Enterprise Portal</p>
+</div>
+<nav class="flex-1 overflow-y-auto w-full">
+<ul class="flex flex-col w-full">
+<li>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                        Dashboard
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+                        Analytics
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined">description</span>
+                        Statements
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 bg-sidebar-active-light dark:bg-primary-container text-primary dark:text-on-primary-container border-l-4 border-primary dark:border-inverse-primary px-4 py-3 transition-all duration-200 ease-in-out font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+                        KYC Queue
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined">settings</span>
+                        Settings
+                    </a>
+</li>
+</ul>
+</nav>
+<div class="px-gutter mt-auto">
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-sidebar-width flex-1 flex flex-col h-screen overflow-hidden relative">
+<!-- Top App Bar -->
+<header class="h-topnav-height w-full border-b border-border-subtle dark:border-outline-variant bg-surface dark:bg-admin-bg flex justify-between items-center px-gutter flex-shrink-0 z-40">
+<div class="flex items-center gap-4">
+<h2 class="font-page-title text-page-title font-bold text-primary dark:text-inverse-primary">KYC Review Queue</h2>
+<div class="h-6 w-px bg-border-subtle dark:bg-outline-variant mx-2"></div>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="font-badge text-badge text-secondary dark:text-on-surface-variant">PENDING</span>
+<span class="font-table-cell text-table-cell font-semibold text-admin-accent">47</span>
+</div>
+<div class="flex flex-col">
+<span class="font-badge text-badge text-secondary dark:text-on-surface-variant">URGENT</span>
+<span class="font-table-cell text-table-cell font-semibold text-error">3</span>
+</div>
+<div class="flex flex-col">
+<span class="font-badge text-badge text-secondary dark:text-on-surface-variant">APPROVED TODAY</span>
+<span class="font-table-cell text-table-cell font-semibold text-success">142</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest rounded-full p-2 transition-colors scale-95 active:scale-90 flex items-center justify-center">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest rounded-full p-2 transition-colors scale-95 active:scale-90 flex items-center justify-center relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-subtle dark:border-outline-variant">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A detailed professional headshot of an African business administrator in a modern office setting. The lighting is bright and clean, with a corporate dark blue aesthetic. The mood is confident and authoritative. 50-100 words minimum to describe this avatar image in detail for AI generation, ensuring it fits the high-trust fintech vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEo_yn80CT3VsU91JyNd7MuUXXNltZoO27nu_MtNEv13KJOz35mN9xI-KgOtEK_bmgwjka8ZjOGbndZXV05T4-wY2yYqtqnOA2IG9sSjHFFzkbs-9qzzhHPSj9_cHDsds24X1QrmNxwgojVTkE4BG8umOw7qikwrvnWuXkLOIkiEtEPBGCpmWjLq-wba-TV79YY_GG0VfDlmvm2fsZFfW2_4sw-PQ5m_piSDADd52N6TfTDpMtcYzuC_39Rb9VNy4XHJun_PHISkA"/>
+</div>
+</div>
+</header>
+<!-- Two Panel Layout -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left Panel: Queue List -->
+<section class="w-1/3 border-r border-border-subtle dark:border-outline-variant bg-surface-container-lowest dark:bg-inverse-surface flex flex-col">
+<div class="p-4 border-b border-border-subtle dark:border-outline-variant">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 h-input-height rounded bg-surface dark:bg-admin-bg border border-border-subtle dark:border-outline-variant focus:border-admin-accent focus:ring-1 focus:ring-admin-accent text-table-cell font-table-cell text-on-surface dark:text-on-secondary placeholder-outline transition-all" placeholder="Search by name or ID..." type="text"/>
+</div>
+<div class="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-3 py-1 rounded-full bg-admin-accent/20 text-admin-accent border border-admin-accent font-badge text-badge whitespace-nowrap">All (47)</button>
+<button class="px-3 py-1 rounded-full bg-transparent text-secondary dark:text-on-surface-variant border border-border-subtle dark:border-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest font-badge text-badge whitespace-nowrap">Tier 1 (21)</button>
+<button class="px-3 py-1 rounded-full bg-transparent text-secondary dark:text-on-surface-variant border border-border-subtle dark:border-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest font-badge text-badge whitespace-nowrap">Tier 2 (26)</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="divide-y divide-border-subtle dark:divide-outline-variant/30">
+<!-- Active Item -->
+<li class="p-4 bg-table-hover dark:bg-surface-container-highest cursor-pointer border-l-4 border-admin-accent">
+<div class="flex justify-between items-start mb-1">
+<span class="font-table-cell text-table-cell font-semibold text-primary dark:text-inverse-primary">Abena Owusu</span>
+<span class="font-badge text-badge bg-surface-variant dark:bg-surface-container text-on-surface-variant dark:text-outline-variant px-2 py-0.5 rounded">Tier 2</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-sidebar-label text-sidebar-label text-secondary dark:text-on-surface-variant">ID: GP-8472-X</span>
+<span class="font-sidebar-label text-sidebar-label text-secondary dark:text-on-surface-variant">2 mins ago</span>
+</div>
+</li>
+<!-- Urgent Item -->
+<li class="p-4 hover:bg-surface-container-low dark:hover:bg-surface-container-highest cursor-pointer transition-colors border-l-4 border-transparent hover:border-outline-variant">
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<span class="font-table-cell text-table-cell font-semibold text-on-surface dark:text-on-secondary">Ama Atta</span>
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+</div>
+<span class="font-badge text-badge bg-error/10 text-error px-2 py-0.5 rounded border border-error/30">URGENT</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-sidebar-label text-sidebar-label text-secondary dark:text-on-surface-variant">ID: GP-9102-Y</span>
+<span class="font-sidebar-label text-sidebar-label text-error">Re-submission</span>
+</div>
+</li>
+<!-- Normal Item -->
+<li class="p-4 hover:bg-surface-container-low dark:hover:bg-surface-container-highest cursor-pointer transition-colors border-l-4 border-transparent hover:border-outline-variant">
+<div class="flex justify-between items-start mb-1">
+<span class="font-table-cell text-table-cell font-semibold text-on-surface dark:text-on-secondary">Kofi Mensah</span>
+<span class="font-badge text-badge bg-surface-variant dark:bg-surface-container text-on-surface-variant dark:text-outline-variant px-2 py-0.5 rounded">Tier 1</span>
+</div>
+<div class="flex justify-between items-center mt-2">
+<span class="font-sidebar-label text-sidebar-label text-secondary dark:text-on-surface-variant">ID: GP-3321-A</span>
+<span class="font-sidebar-label text-sidebar-label text-secondary dark:text-on-surface-variant">15 mins ago</span>
+</div>
+</li>
+</ul>
+</div>
+</section>
+<!-- Right Panel: Review Detail -->
+<section class="flex-1 flex flex-col bg-surface dark:bg-admin-bg relative">
+<div class="flex-1 overflow-y-auto p-page-padding">
+<div class="max-w-4xl mx-auto">
+<div class="mb-8 pb-4 border-b border-border-subtle dark:border-outline-variant flex justify-between items-end">
+<div>
+<h3 class="font-section-title text-section-title text-primary dark:text-inverse-primary mb-1">Reviewing: Abena Owusu</h3>
+<p class="font-table-cell text-table-cell text-secondary dark:text-on-surface-variant">Application ID: GP-8472-X â¢ Submitted: Oct 24, 2023, 10:14 AM</p>
+</div>
+<button class="flex items-center gap-2 text-admin-accent font-nav-link text-nav-link hover:underline">
+<span class="material-symbols-outlined">history</span> View History
+                            </button>
+</div>
+<div class="grid grid-cols-12 gap-gutter mb-8">
+<!-- Personal Info & AI Results -->
+<div class="col-span-12 lg:col-span-5 flex flex-col gap-gutter">
+<!-- Personal Info Card -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-xl p-card-padding border border-border-subtle dark:border-outline-variant shadow-sm dark:shadow-none">
+<h4 class="font-table-header text-table-header text-secondary dark:text-on-surface-variant mb-4 uppercase">Personal Information</h4>
+<div class="space-y-4">
+<div>
+<span class="block font-sidebar-label text-sidebar-label text-outline mb-1">Full Name</span>
+<span class="block font-table-cell text-table-cell font-medium">Abena Serwaa Owusu</span>
+</div>
+<div>
+<span class="block font-sidebar-label text-sidebar-label text-outline mb-1">Date of Birth</span>
+<span class="block font-table-cell text-table-cell font-medium">14 May 1990 (33 years)</span>
+</div>
+<div>
+<span class="block font-sidebar-label text-sidebar-label text-outline mb-1">Phone Number</span>
+<span class="block font-table-cell text-table-cell font-medium">+233 54 123 4567</span>
+</div>
+<div>
+<span class="block font-sidebar-label text-sidebar-label text-outline mb-1">Residential Address</span>
+<span class="block font-table-cell text-table-cell font-medium">12 Independence Ave, Ridge, Accra</span>
+</div>
+</div>
+</div>
+<!-- AI Verification Results -->
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-xl p-card-padding border border-border-subtle dark:border-outline-variant shadow-sm dark:shadow-none">
+<h4 class="font-table-header text-table-header text-secondary dark:text-on-surface-variant mb-4 uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span> AI Verification
+                                     </h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-table-cell text-table-cell">Document Authenticity</span>
+<div class="flex items-center gap-2">
+<div class="w-24 h-2 bg-surface-variant dark:bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-success w-[94%]"></div>
+</div>
+<span class="font-table-cell text-table-cell font-semibold text-success">94%</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-table-cell text-table-cell">Face Match (Selfie to ID)</span>
+<div class="flex items-center gap-2">
+<div class="w-24 h-2 bg-surface-variant dark:bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-success w-[91%]"></div>
+</div>
+<span class="font-table-cell text-table-cell font-semibold text-success">91%</span>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-table-cell text-table-cell">Liveness Check</span>
+<span class="font-badge text-badge bg-success/10 text-success px-2 py-1 rounded border border-success/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> PASSED
+                                            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Documents -->
+<div class="col-span-12 lg:col-span-7">
+<div class="bg-surface-container-lowest dark:bg-inverse-surface rounded-xl p-card-padding border border-border-subtle dark:border-outline-variant shadow-sm dark:shadow-none h-full flex flex-col">
+<h4 class="font-table-header text-table-header text-secondary dark:text-on-surface-variant mb-4 uppercase">Submitted Documents</h4>
+<div class="grid grid-cols-2 gap-4 flex-1">
+<!-- ID Front -->
+<div class="flex flex-col gap-2">
+<span class="font-sidebar-label text-sidebar-label text-outline">Ghana Card (Front)</span>
+<div class="flex-1 rounded border border-border-subtle dark:border-outline-variant overflow-hidden bg-surface-container dark:bg-admin-bg relative group cursor-pointer">
+<div class="bg-cover bg-center w-full h-full min-h-[160px] opacity-90 group-hover:opacity-100 transition-opacity" data-alt="A close up detailed high resolution macro shot of a fictional generic identity card laying flat on a dark wooden desk. Strong dramatic lighting highlighting the holographic security features. The overall tone is secure, official and clean, fitting a banking environment. 50 to 100 words." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVY-lL4gEyXugwLqS21H7Zi_Sig7bQvJ3d-787Hiz1Wvh-MDUgmnDS5NfpLXLT6WptNaAw2HQBvmaKNBRPk_CljqkqPUon1p3l_t1fV1dU8bRi9X7aTiTGoyP3yuBoPYyP_rlw02HXCUuNleZxf2E0xDb52Xha6ARHKBd9j-qcmgBfCuu64n1jwm5rcqPKcgqYTKxnL55QnEQrVbddOUAaBGsrXQbE8LvRYcO3uUlB4Qy3h4lzh554PRrbrVoxbC5H-3MwVnxYOr0')"></div>
+<div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[32px]">zoom_in</span>
+</div>
+</div>
+</div>
+<!-- Selfie -->
+<div class="flex flex-col gap-2">
+<span class="font-sidebar-label text-sidebar-label text-outline">Liveness Selfie</span>
+<div class="flex-1 rounded border border-border-subtle dark:border-outline-variant overflow-hidden bg-surface-container dark:bg-admin-bg relative group cursor-pointer">
+<div class="bg-cover bg-center w-full h-full min-h-[160px] opacity-90 group-hover:opacity-100 transition-opacity" data-alt="A well lit frontal portrait photo of an African woman looking directly at the camera, holding up a small generic identity card next to her face. Bright neutral lighting, clean white background, professional and clear image quality suitable for biometric verification in a banking context. 50 to 100 words." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCn8QG5axdLJ4UnY_QoV7mEI73fBhFoF6AeUGogstdaR2V6Y_l5Y2eBHUtwDgP9Av2oxXtkgyETHPXqfo16QLkn8gcXKwRKKYYHShWdgKzBL0CbTs7p37es4ytKVt0A0IqDFWK4LJ_Lr0H-IDXz5Z3Nmlz8oVZY1tlpguAsvlybjRFc5gzvMgDO28lC7iKnriiShxZDGMahIItEkDGuXFl-Oj5N2CsTNlBd4filPa4pEPFQDDCCU4OmoPK9oGIFDDxNyI5e4alMKLo')"></div>
+<div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[32px]">zoom_in</span>
+</div>
+</div>
+</div>
+<!-- ID Back -->
+<div class="flex flex-col gap-2 col-span-2 mt-2">
+<span class="font-sidebar-label text-sidebar-label text-outline">Ghana Card (Back)</span>
+<div class="h-32 rounded border border-border-subtle dark:border-outline-variant overflow-hidden bg-surface-container dark:bg-admin-bg relative group cursor-pointer">
+<div class="bg-cover bg-center w-full h-full opacity-90 group-hover:opacity-100 transition-opacity" data-alt="A macro shot showing the back of a fictional identity card with a barcode, magnetic strip, and official text. Laying on a clean textured grey surface under soft studio lighting. High contrast, sharp focus on the barcode area to imply scanning capabilities within a secure fintech app. 50 to 100 words." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWQiItfUSoj7xh_eP3vwQrdQZ4X2cA-ASNH_gcvlrm25Y2GQdP0RQ8ERAJjkhFDLtGBA2TeeasqTApM87sdDQ3px5ZKKCs9Rf0SWoSpCI-34kyafATC1180tUjnmalquhqyf5-VbwmubhOIaFLs9blM6RUqbajXE3spFoljQA12D8H3MtmdW0ss2nhyhnYQu8INEROE0E_lrkWiARiNcRY0vQSHfThAaF6S1eyMpZkIQmiLq9_2TyDjZ-xtKiMdXnkmMYDVZ3ySb0')"></div>
+<div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[32px]">zoom_in</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Admin Notes -->
+<div class="mb-24">
+<label class="block font-table-header text-table-header text-secondary dark:text-on-surface-variant mb-2 uppercase" for="admin-notes">Admin Notes</label>
+<textarea class="w-full rounded bg-surface-container-lowest dark:bg-inverse-surface border border-border-subtle dark:border-outline-variant p-3 focus:border-admin-accent focus:ring-1 focus:ring-admin-accent text-table-cell font-table-cell text-on-surface dark:text-on-secondary placeholder-outline transition-all" id="admin-notes" placeholder="Enter reason for rejection or any internal notes..." rows="3"></textarea>
+</div>
+</div>
+</div>
+<!-- Sticky Action Bar -->
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-surface-container-lowest dark:bg-inverse-surface border-t border-border-subtle dark:border-outline-variant shadow-[0_-4px_6px_-1px_rgba(27,31,107,0.05)] dark:shadow-none z-10 flex justify-end gap-4">
+<button class="px-6 py-2.5 rounded-lg border border-error text-error hover:bg-error/10 font-nav-link text-nav-link transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">cancel</span>
+                        Reject <span class="text-[11px] opacity-70">(reason required)</span>
+</button>
+<button class="px-6 py-2.5 rounded-lg bg-success text-on-primary hover:bg-success/90 font-nav-link text-nav-link transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+                        Approve Tier 2
+                    </button>
+</div>
+</section>
+</div>
+</main>
+</body></html>

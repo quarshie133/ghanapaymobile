@@ -84,7 +84,7 @@ export default function SettingsPage() {
 
       <div className="settings-layout" style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 32, alignItems: 'start' }}>
         {/* Navigation Sidebar */}
-        <Card padding={12}>
+        <Card className="!p-3">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {TABS.map((tab) => (
               <button
@@ -114,7 +114,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Content Area */}
-        <Card padding={32}>
+        <Card className="!p-8">
           {activeTab === 'Profile' && (
             <div className="fade-in">
               <SectionTitle>Profile Details</SectionTitle>

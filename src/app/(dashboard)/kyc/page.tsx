@@ -1,16 +1,11 @@
 'use client';
-import React, { useState } from 'react';
-import { formatCurrency } from '@/lib/utils';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { api } from '@/lib/api';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, Divider, PageWrap } from '@/components/ui/Layout';
-import {
-  FaIdCard, FaCamera, FaHouse, FaBuildingColumns, FaCircleCheck, FaLock
-} from 'react-icons/fa6';
-import T from '@/lib/tokens';
 
 type KycStepStatus = 'done' | 'active' | 'pending';
 
@@ -18,7 +13,7 @@ type KycStep = {
   title: string;
   desc: string;
   status: KycStepStatus;
-  icon: React.ReactNode;
+  icon: string;
 };
 
 const TIER2_LIMITS = [
@@ -36,10 +31,10 @@ const TIER3_LIMITS = [
 ];
 
 const TIER3_STEPS: KycStep[] = [
-  { title: 'Ghana Card Upload',   desc: 'Upload front & back of your Ghana National ID (NIA Card)', status: 'done',    icon: <FaIdCard /> },
-  { title: 'Selfie Verification', desc: 'Take a live selfie for biometric face match',              status: 'active',  icon: <FaCamera /> },
-  { title: 'Address Proof',       desc: 'Upload a utility bill or bank statement',                  status: 'pending', icon: <FaHouse /> },
-  { title: 'Bank Verification',   desc: 'Link and verify a licensed Ghana bank account',            status: 'pending', icon: <FaBuildingColumns /> },
+  { title: 'Ghana Card Upload',   desc: 'Upload front & back of your Ghana National ID (NIA Card)', status: 'done',    icon: 'id_card' },
+  { title: 'Selfie Verification', desc: 'Take a live selfie for biometric face match',              status: 'active',  icon: 'photo_camera' },
+  { title: 'Address Proof',       desc: 'Upload a utility bill or bank statement',                  status: 'pending', icon: 'home' },
+  { title: 'Bank Verification',   desc: 'Link and verify a licensed Ghana bank account',            status: 'pending', icon: 'account_balance' },
 ];
 
 export default function KycPage() {
@@ -47,7 +42,7 @@ export default function KycPage() {
   const [steps, setSteps] = useState<KycStep[]>(TIER3_STEPS);
   const [kycApplication, setKycApplication] = useState<any>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       api.get('/kyc/status').then(res => setKycApplication(res)).catch(() => {});
     }
@@ -57,7 +52,6 @@ export default function KycPage() {
     const activeIdx = steps.findIndex(s => s.status === 'active');
     if (activeIdx === -1) return;
     
-    // Simulate API call for the step
     api.post('/kyc/document', { type: steps[activeIdx].title, url: 'mock-url' }).catch(() => {});
 
     setSteps(prev => {
@@ -71,57 +65,59 @@ export default function KycPage() {
 
   const doneCount = steps.filter(s => s.status === 'done').length;
   const progress  = Math.round((doneCount / steps.length) * 100);
-  const activeStep = steps.find(s => s.status === 'active');
 
   return (
-    <PageWrap title="KYC Verification" subtitle="Verify your identity to unlock higher limits and features">
-      <style>{`.trow:hover { background: ${T.tableHover} !important; }`}</style>
-
-      <div className="kyc-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 24 }}>
-        {/* Left Column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-
+    <PageWrap
+      title="KYC Verification"
+      subtitle="Verify your identity to unlock higher limits and features"
+      breadcrumb="KYC Verification"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Side: Current Status & Comparison (Span 7) */}
+        <div className="col-span-12 lg:col-span-7 space-y-6">
           {/* Current Tier Card */}
-          <Card style={{ background: `linear-gradient(135deg, ${T.navy}, ${T.navyMid})`, border: 'none', color: '#fff' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+          <div className="rounded-2xl bg-gradient-to-br from-primary to-primary-container p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="absolute right-[-20px] top-[-20px] w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <div style={{ fontSize: 12, opacity: 0.65, fontWeight: 600, letterSpacing: 0.5, marginBottom: 8 }}>CURRENT TIER</div>
-                <div style={{ fontSize: 28, fontWeight: 800 }}>Tier {user?.tier || 2}</div>
-                <div style={{ fontSize: 13, opacity: 0.75, marginTop: 4 }}>Verified · Active since Jan 2026</div>
+                <div className="text-xs font-bold text-white/70 uppercase tracking-widest mb-1">CURRENT TIER</div>
+                <div className="text-2xl font-black">Tier {user?.tier || 2}</div>
+                <div className="text-xs text-white/70 mt-1">Verified • Active since Jan 2026</div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
-                <Badge label="✓ Verified" type="success" />
+              <div className="flex flex-col gap-2 items-end">
+                <Badge label="Verified" type="success" />
                 <Badge label="Ghana Card" type="gold" />
               </div>
             </div>
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-              {TIER2_LIMITS.map(l => (
-                <div key={l.label} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px' }}>
-                  <div style={{ fontSize: 11, opacity: 0.65 }}>{l.label}</div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: T.gold }}>{l.value}</div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {TIER2_LIMITS.map((l, i) => (
+                <div key={i} className="bg-white/10 rounded-xl p-3.5 border border-white/5">
+                  <div className="text-[11px] text-white/50">{l.label}</div>
+                  <div className="text-base font-extrabold text-tertiary-fixed mt-0.5">{l.value}</div>
                 </div>
               ))}
             </div>
-          </Card>
+          </div>
 
           {/* Tier Comparison */}
           <Card>
             <SectionTitle>Tier Comparison</SectionTitle>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[400px]">
                 <thead>
-                  <tr style={{ background: T.surfaceLow }}>
-                    <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 700, color: T.textMuted, fontSize: 11 }}>Limit</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, color: T.navyMid, fontSize: 11 }}>Tier 2 (Current)</th>
-                    <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 700, color: T.gold, fontSize: 11 }}>Tier 3</th>
+                  <tr className="bg-surface border-b border-border-subtle text-xs">
+                    <th className="px-6 py-3 font-bold text-secondary">Limit</th>
+                    <th className="px-6 py-3 font-bold text-primary text-center">Tier 2 (Current)</th>
+                    <th className="px-6 py-3 font-bold text-tertiary text-center">Tier 3</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border-subtle text-sm">
                   {TIER2_LIMITS.map((l, i) => (
-                    <tr key={l.label} className="trow" style={{ borderBottom: `1px solid ${T.border}` }}>
-                      <td style={{ padding: '12px 14px', color: T.textSec, fontWeight: 600 }}>{l.label}</td>
-                      <td style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 700, color: T.textPrimary }}>{l.value}</td>
-                      <td style={{ padding: '12px 14px', textAlign: 'center', fontWeight: 800, color: T.success }}>
+                    <tr key={i} className="hover:bg-table-hover transition-colors duration-150">
+                      <td className="px-6 py-3.5 text-secondary font-semibold">{l.label}</td>
+                      <td className="px-6 py-3.5 text-primary text-center font-bold">{l.value}</td>
+                      <td className="px-6 py-3.5 text-success text-center font-black">
                         {TIER3_LIMITS[i].value}
                       </td>
                     </tr>
@@ -132,63 +128,74 @@ export default function KycPage() {
           </Card>
         </div>
 
-        {/* Right Column: Tier 3 Upgrade Steps */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        {/* Right Side: Steps & Progress (Span 5) */}
+        <div className="col-span-12 lg:col-span-5 space-y-6">
           {/* Progress Card */}
-          <Card style={{ background: T.surfaceLow }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary }}>Tier 3 Upgrade Progress</span>
+          <Card className="bg-surface-container-low">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-bold text-primary">Tier 3 Upgrade Progress</span>
               <Badge label={`${doneCount}/${steps.length} done`} type={doneCount === steps.length ? 'success' : 'info'} />
             </div>
-            <div style={{ height: 10, borderRadius: 8, background: T.border }}>
-              <div style={{ width: `${progress}%`, height: '100%', borderRadius: 8, background: progress === 100 ? T.success : T.navyMid, transition: 'width 0.5s' }} />
+            <div className="w-full bg-surface-container-high rounded-full h-2.5">
+              <div
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  progress === 100 ? 'bg-success' : 'bg-primary'
+                }`}
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
-            <div style={{ fontSize: 12, color: T.textMuted, marginTop: 6 }}>{progress}% complete</div>
+            <div className="text-xs text-secondary mt-2">{progress}% complete</div>
           </Card>
 
           {/* Steps */}
           <Card>
             <SectionTitle>Verification Steps</SectionTitle>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {steps.map((step, i) => (
-                <div key={i} style={{
-                  display: 'flex', gap: 14, padding: '16px',
-                  borderRadius: 12,
-                  background: step.status === 'active' ? T.sidebarActive : 'transparent',
-                  border: `1.5px solid ${step.status === 'active' ? T.navyMid : step.status === 'done' ? T.successBg : T.border}`,
-                  marginBottom: 4,
-                }}>
+            <div className="space-y-4">
+              {steps.map((s, i) => (
+                <div
+                  key={i}
+                  className={`flex gap-4 p-4 rounded-xl border transition-all duration-200 ${
+                    s.status === 'active'
+                      ? 'border-primary bg-sidebar-active-light'
+                      : s.status === 'done'
+                      ? 'border-[#E5F5ED] bg-white'
+                      : 'border-border-subtle bg-white'
+                  }`}
+                >
                   {/* Status Circle */}
-                  <div style={{
-                    width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: step.status === 'done' ? T.success : step.status === 'active' ? T.navyMid : T.border,
-                    color: '#fff', fontSize: step.status === 'done' ? 16 : 14, fontWeight: 700,
-                    transition: 'all 0.3s',
-                  }}>
-                    {step.status === 'done' ? '✓' : step.status === 'active' ? '●' : String(i + 1)}
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 transition-colors ${
+                      s.status === 'done'
+                        ? 'bg-success text-white'
+                        : s.status === 'active'
+                        ? 'bg-primary text-white'
+                        : 'bg-surface-container-high text-secondary border border-border-subtle'
+                    }`}
+                  >
+                    {s.status === 'done' ? '✓' : s.status === 'active' ? '●' : String(i + 1)}
                   </div>
 
-                  {/* Content */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  {/* Step Description */}
+                  <div className="flex-1 space-y-2">
+                    <div className="flex justify-between items-start">
                       <div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: step.status === 'pending' ? T.textMuted : T.textPrimary, display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span>{step.icon}</span> {step.title}
+                        <div className={`text-sm font-bold flex items-center gap-1.5 ${
+                          s.status === 'pending' ? 'text-secondary/50' : 'text-primary'
+                        }`}>
+                          <span className="material-symbols-outlined text-[16px]">{s.icon}</span>
+                          {s.title}
                         </div>
-                        <div style={{ fontSize: 12, color: T.textMuted, marginTop: 3, lineHeight: 1.5 }}>{step.desc}</div>
+                        <div className="text-xs text-secondary leading-relaxed mt-1">{s.desc}</div>
                       </div>
-                      {step.status === 'done' && <Badge label="Done" type="success" />}
-                      {step.status === 'active' && <Badge label="In Progress" type="info" />}
-                      {step.status === 'pending' && <Badge label="Pending" type="default" />}
                     </div>
 
-                    {step.status === 'active' && (
-                      <div style={{ marginTop: 12, display: 'flex', gap: 10 }}>
-                        <Btn size="sm" variant="primary" onClick={advanceStep} style={{ flex: 1, justifyContent: 'center' }}>
-                          <span style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                            {step.title === 'Selfie Verification' ? <><FaCamera /> Start Camera</> : step.title === 'Ghana Card Upload' ? <><FaIdCard /> Upload ID</> : <><FaHouse /> Upload Document</>}
+                    {s.status === 'active' && (
+                      <div className="pt-2">
+                        <Btn size="sm" onClick={advanceStep} className="w-full justify-center">
+                          <span className="material-symbols-outlined text-xs">
+                            {s.title === 'Selfie Verification' ? 'photo_camera' : s.title === 'Ghana Card Upload' ? 'id_card' : 'upload_file'}
                           </span>
+                          {s.title === 'Selfie Verification' ? 'Start Biometric Scan' : s.title === 'Ghana Card Upload' ? 'Upload ID Document' : 'Upload Document'}
                         </Btn>
                       </div>
                     )}
@@ -198,23 +205,24 @@ export default function KycPage() {
             </div>
 
             {doneCount === steps.length && (
-              <div style={{ marginTop: 16, padding: 20, borderRadius: 12, background: T.successBg, textAlign: 'center' }}>
-                <div style={{ fontSize: 32, marginBottom: 8, color: T.success, display: 'flex', justifyContent: 'center' }}><FaCircleCheck /></div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: T.success }}>All steps complete!</div>
-                <div style={{ fontSize: 13, color: T.textMuted, marginTop: 6 }}>Your application is under review (1–2 business days)</div>
+              <div className="mt-6 p-5 bg-[#E5F5ED] text-[#1E8449] rounded-xl text-center">
+                <span className="material-symbols-outlined text-[40px] block mb-2">check_circle</span>
+                <div className="font-extrabold text-sm">All Steps Completed!</div>
+                <div className="text-xs text-[#1E8449]/70 mt-1">Your verification is under review (1–2 business days)</div>
               </div>
             )}
           </Card>
 
-          {/* Security Note */}
-          <Card style={{ background: T.infoBg, border: `1px solid ${T.info}33` }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.info, marginBottom: 8, display: 'flex', gap: 6, alignItems: 'center' }}>
-              <FaLock /> Your data is safe
+          {/* Security details */}
+          <div className="p-4 rounded-xl bg-[#EBF0FF] border border-primary-fixed-dim">
+            <div className="flex gap-2 text-primary font-bold mb-2 items-center text-xs">
+              <span className="material-symbols-outlined text-[16px]">lock</span>
+              Your data is fully encrypted
             </div>
-            <div style={{ fontSize: 12, color: T.textSec, lineHeight: 1.7 }}>
-              All documents are encrypted with AES-256 and reviewed by our compliance team. We do not share your data with third parties.
-            </div>
-          </Card>
+            <p className="text-xs text-primary/80 leading-relaxed font-semibold">
+              All documents are encrypted with AES-256 and reviewed securely by our compliance team. We do not share credentials with third parties.
+            </p>
+          </div>
         </div>
       </div>
     </PageWrap>

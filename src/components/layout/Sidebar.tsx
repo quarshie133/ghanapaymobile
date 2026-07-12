@@ -2,67 +2,39 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Badge from "@/components/ui/Badge";
-import T from "@/lib/tokens";
-import {
-  FaHouse,
-  FaChartSimple,
-  FaPaperPlane,
-  FaCloudArrowUp,
-  FaReceipt,
-  FaCalendarDays,
-  FaWallet,
-  FaClockRotateLeft,
-  FaFileCsv,
-  FaShieldHalved,
-  FaGear,
-  FaGaugeHigh,
-  FaUsers,
-  FaUserCheck,
-  FaCreditCard,
-  FaTriangleExclamation,
-  FaClipboardList
-} from "react-icons/fa6";
-
 import { useAuth } from "@/lib/AuthContext";
-import { getInitials } from "@/lib/utils";
 
 interface NavItem {
   group?: string;
   key?: string;
   href?: string;
-  icon?: React.ComponentType<any>;
+  iconName?: string;
   label?: string;
   badge?: string;
   badgeType?: "error" | "gold";
 }
 
 const USER_NAV: NavItem[] = [
-  { group: "OVERVIEW" },
-  { key: "dashboard",     href: "/dashboard",      icon: FaHouse, label: "Dashboard" },
-  { key: "analytics",     href: "/analytics",      icon: FaChartSimple, label: "Analytics" },
-  { group: "PAYMENTS" },
-  { key: "send-money",    href: "/send-money",     icon: FaPaperPlane,  label: "Send Money" },
-  { key: "bulk",          href: "/bulk-payments",  icon: FaCloudArrowUp,  label: "Bulk Payments", badge: "Biz", badgeType: "gold" },
-  { key: "bills",         href: "/bill-payments",  icon: FaReceipt, label: "Bill Payments" },
-  { key: "scheduled",     href: "/scheduled",      icon: FaCalendarDays, label: "Scheduled" },
-  { group: "WALLET" },
-  { key: "wallet",        href: "/wallet",         icon: FaWallet, label: "Wallet & Accounts" },
-  { group: "HISTORY" },
-  { key: "history",       href: "/history",        icon: FaClockRotateLeft, label: "Transactions" },
-  { key: "statements",    href: "/statements",     icon: FaFileCsv, label: "Statements" },
-  { group: "ACCOUNT" },
-  { key: "kyc",           href: "/kyc",            icon: FaShieldHalved,  label: "KYC Verification" },
-  { key: "settings",      href: "/settings",       icon: FaGear,  label: "Settings" },
+  { key: "dashboard",     href: "/dashboard",      iconName: "dashboard", label: "Dashboard" },
+  { key: "analytics",     href: "/analytics",      iconName: "monitoring", label: "Analytics" },
+  { key: "send-money",    href: "/send-money",     iconName: "send",  label: "Send" },
+  { key: "bulk",          href: "/bulk-payments",  iconName: "layers",  label: "Bulk", badge: "Biz", badgeType: "gold" },
+  { key: "bills",         href: "/bill-payments",  iconName: "receipt_long", label: "Bills" },
+  { key: "airtime",       href: "/airtime",        iconName: "smartphone", label: "Airtime" },
+  { key: "scheduled",     href: "/scheduled",      iconName: "event_repeat", label: "Scheduled" },
+  { key: "wallet",        href: "/wallet",         iconName: "account_balance_wallet", label: "Wallet" },
+  { key: "history",       href: "/history",        iconName: "history", label: "Transactions" },
+  { key: "statements",    href: "/statements",     iconName: "description", label: "Statements" },
+  { key: "settings",      href: "/settings",       iconName: "settings", label: "Settings" },
 ];
 
 const ADMIN_NAV: NavItem[] = [
-  { key: "admin",         href: "/admin",                icon: FaGaugeHigh, label: "Overview" },
-  { key: "users",         href: "/admin/users",          icon: FaUsers, label: "User Management" },
-  { key: "kyc-queue",     href: "/admin/kyc",            icon: FaUserCheck, label: "KYC Queue", badge: "47", badgeType: "error" },
-  { key: "transactions",  href: "/admin/transactions",   icon: FaCreditCard, label: "Transactions" },
-  { key: "fraud",         href: "/admin/fraud",          icon: FaTriangleExclamation, label: "Fraud Alerts", badge: "3", badgeType: "error" },
-  { key: "reports",       href: "/admin/reports",        icon: FaClipboardList, label: "Reports" },
+  { key: "admin",         href: "/admin",                iconName: "dashboard", label: "Overview" },
+  { key: "users",         href: "/admin/users",          iconName: "group", label: "User Management" },
+  { key: "kyc-queue",     href: "/admin/kyc",            iconName: "verified_user", label: "KYC Queue", badge: "47", badgeType: "error" },
+  { key: "transactions",  href: "/admin/transactions",   iconName: "credit_card", label: "Transactions" },
+  { key: "fraud",         href: "/admin/fraud",          iconName: "warning", label: "Fraud Alerts", badge: "3", badgeType: "error" },
+  { key: "reports",       href: "/admin/reports",        iconName: "description", label: "Reports" },
 ];
 
 interface SidebarProps {
@@ -74,98 +46,69 @@ interface SidebarProps {
 
 export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavClick }: SidebarProps) {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { logout } = useAuth();
   const navItems = isAdmin ? ADMIN_NAV : USER_NAV;
-  const sidebarW = collapsed ? 72 : 240;
-
-  const bg = isAdmin ? T.adminBg : T.sidebarBg;
-  const borderColor = isAdmin ? "#1e2544" : T.border;
-  const textColor = isAdmin ? "#94A3B8" : T.textSec;
-  const activeTextColor = isAdmin ? "#fff" : T.navyMid;
-  const activeBg = isAdmin ? "#1E2544" : T.sidebarActive;
-  const activeAccent = isAdmin ? T.adminAccent : T.navyMid;
 
   return (
-    <div style={{
-      width: sidebarW,
-      minWidth: sidebarW,
-      height: "100%",           /* ← fill parent height fully */
-      transition: "width 0.2s",
-      background: bg,
-      borderRight: `1px solid ${borderColor}`,
-      display: "flex",
-      flexDirection: "column",
-      overflowX: "hidden",      /* ← only clip horizontal, not vertical */
-      overflowY: "hidden",
-      position: "relative",
-      zIndex: 10,
-      flexShrink: 0,
-    }}>
-      {/* Logo */}
-      <div style={{
-        height: 64, display: "flex", alignItems: "center",
-        padding: "0 20px", borderBottom: `1px solid ${borderColor}`,
-        gap: 10, flexShrink: 0,
-      }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: 8,
-          background: isAdmin ? T.adminAccent : T.navyMid,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: "#fff", fontSize: 14, fontWeight: 700, flexShrink: 0,
-        }}>₵</div>
+    <aside className={`h-screen bg-sidebar-light border-r border-border-subtle flex flex-col py-gutter z-50 transition-all duration-200 ${collapsed ? 'w-[72px]' : 'w-sidebar-width'}`}>
+      {/* Brand logo */}
+      <div className="px-6 mb-8 flex flex-col shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-[32px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
+            account_balance
+          </span>
+          {!collapsed && (
+            <span className="font-page-title text-page-title font-bold text-primary transition-opacity duration-200">
+              GhanaPay
+            </span>
+          )}
+        </div>
         {!collapsed && (
-          <span style={{ fontWeight: 700, fontSize: 16, color: isAdmin ? "#fff" : T.navy, whiteSpace: "nowrap" }}>
-            GhanaPay
+          <span className="text-xs text-secondary mt-1 font-medium tracking-wide uppercase">
+            Enterprise Portal
           </span>
         )}
       </div>
 
-      {/* Nav Items */}
-      <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "8px 0", background: bg }}>
-        {navItems.map((item, i) => {
-          if (item.group) {
-            if (collapsed) return null;
-            return (
-              <div key={i} style={{
-                padding: "16px 16px 4px", fontSize: 11, fontWeight: 700,
-                color: isAdmin ? "#475569" : T.textMuted, letterSpacing: "0.08em",
-              }}>
-                {item.group}
-              </div>
-            );
-          }
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden space-y-1 custom-scrollbar px-2">
+        {navItems.map((item) => {
           const isActive = item.href
             ? item.href === "/dashboard" || item.href === "/admin"
               ? pathname === item.href
-              : pathname.startsWith(item.href!)
+              : pathname.startsWith(item.href)
             : false;
 
           return (
-            <Link key={item.key} href={item.href!} style={{ textDecoration: "none" }} onClick={onNavClick}>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 10,
-                padding: collapsed ? "11px 22px" : "11px 14px",
-                margin: "1px 8px", borderRadius: 10, cursor: "pointer",
-                background: isActive ? activeBg : "transparent",
-                borderLeft: isActive ? `3px solid ${activeAccent}` : "3px solid transparent",
-                transition: "all 0.12s",
-                color: isActive ? activeTextColor : textColor,
-              }}>
-                <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
-                  {item.icon && <item.icon size={18} strokeWidth={2.2} />}
+            <Link key={item.key} href={item.href!} onClick={onNavClick} className="no-underline block">
+              <div
+                className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all duration-200 ${
+                  isActive
+                    ? "bg-sidebar-active-light text-primary border-l-4 border-primary font-bold"
+                    : "text-secondary hover:bg-surface-container"
+                }`}
+              >
+                <span
+                  className="material-symbols-outlined text-[20px]"
+                  style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                >
+                  {item.iconName}
                 </span>
                 {!collapsed && (
-                  <>
-                    <span style={{
-                      fontSize: 13, fontWeight: isActive ? 600 : 400,
-                      flex: 1, whiteSpace: "nowrap", color: isActive ? activeTextColor : textColor,
-                    }}>
-                      {item.label}
-                    </span>
-                    {item.badge && (
-                      <Badge label={item.badge} type={item.badgeType ?? "default"} />
-                    )}
-                  </>
+                  <span className="font-sidebar-label text-sidebar-label whitespace-nowrap">
+                    {item.label}
+                  </span>
+                )}
+                {!collapsed && item.badge && (
+                  <span
+                    className={`ml-auto text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                      item.badgeType === "error"
+                        ? "bg-error-container text-error"
+                        : "bg-tertiary-fixed text-tertiary"
+                    }`}
+                  >
+                    {item.badge}
+                  </span>
                 )}
               </div>
             </Link>
@@ -173,39 +116,16 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavCli
         })}
       </nav>
 
-      {/* User Card */}
-      {!collapsed && (
-        <div style={{
-          borderTop: `1px solid ${borderColor}`,
-          padding: "14px 16px",
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          background: bg,          /* ← match sidebar bg, no colour gap */
-          flexShrink: 0,
-        }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 9999,
-            background: isAdmin ? T.adminAccent : T.navyMid,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0,
-          }}>
-            {user?.name ? getInitials(user.name) : (isAdmin ? "EA" : "US")}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{
-              fontSize: 13, fontWeight: 600,
-              color: isAdmin ? "#fff" : T.navy,
-              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-            }}>
-              {user?.name || (isAdmin ? "Esi Amankwah" : "User")}
-            </div>
-            <div style={{ fontSize: 11, color: isAdmin ? "#94A3B8" : T.textMuted }}>
-              {isAdmin ? "Compliance Admin" : `Tier ${user?.tier || 1} Account`}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      {/* Logout */}
+      <div className="mt-auto px-2 pt-4">
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors duration-200 font-sidebar-label text-sidebar-label rounded-lg text-left"
+        >
+          <span className="material-symbols-outlined text-[20px]">logout</span>
+          {!collapsed && <span>Logout</span>}
+        </button>
+      </div>
+    </aside>
   );
 }

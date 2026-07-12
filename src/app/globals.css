@@ -1,454 +1,90 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* ─── Reset & Base ─── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body, #__next {
-  height: 100%;
-  font-family: 'Inter', sans-serif;
-  background: #f6fafe;
-  color: #171c1f;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-}
-
-/* ─── Remove mobile tap highlight ─── */
-* { -webkit-tap-highlight-color: transparent; }
-
-/* ─── Smooth focus ring ─── */
-:focus-visible {
-  outline: 2px solid #1B1F6B;
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-/* ─── Scrollbar ─── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c7c5d2; border-radius: 99px; }
-
-/* ─── Typography ─── */
-.syne { font-family: 'Syne', sans-serif !important; }
-.amount-pos { color: #1E8449; }
-.amount-neg { color: #C0392B; }
-
-/* ─── Kente Pattern Backgrounds ─── */
-.kente-bg {
-  background-color: #1B1F6B;
-  background-image:
-    repeating-linear-gradient(45deg,  rgba(206,166,44,0.10) 0, rgba(206,166,44,0.10) 2px, transparent 0, transparent 50%),
-    repeating-linear-gradient(-45deg, rgba(206,166,44,0.06) 0, rgba(206,166,44,0.06) 2px, transparent 0, transparent 50%);
-  background-size: 28px 28px;
-}
-.kente-bg-dark {
-  background-color: #020259;
-  background-image:
-    repeating-linear-gradient(45deg,  rgba(206,166,44,0.12) 0, rgba(206,166,44,0.12) 2px, transparent 0, transparent 50%),
-    repeating-linear-gradient(-45deg, rgba(206,166,44,0.07) 0, rgba(206,166,44,0.07) 2px, transparent 0, transparent 50%);
-  background-size: 28px 28px;
-}
-
-/* ─── Shimmer Skeleton ─── */
-@keyframes shimmer {
-  0%   { background-position: -600px 0; }
-  100% { background-position:  600px 0; }
-}
-.skeleton {
-  background: linear-gradient(90deg, #e4e9ed 25%, #f0f4f8 50%, #e4e9ed 75%);
-  background-size: 600px 100%;
-  animation: shimmer 1.4s infinite;
-  border-radius: 8px;
-}
-
-/* ─── Success Pop ─── */
-@keyframes successPop {
-  0%   { transform: scale(0.6); opacity: 0; }
-  70%  { transform: scale(1.1); }
-  100% { transform: scale(1);   opacity: 1; }
-}
-.success-pop { animation: successPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-
-/* ─── Slide In Panel ─── */
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to   { transform: translateX(0);    opacity: 1; }
-}
-.slide-in { animation: slideInRight 0.28s ease-out forwards; }
-
-/* ─── Slide In Left (mobile drawer) ─── */
-@keyframes slideInLeft {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(0); }
-}
-.slide-in-left { animation: slideInLeft 0.25s ease-out forwards; }
-
-/* ─── Toast ─── */
-@keyframes toastIn {
-  from { transform: translateX(120%); opacity: 0; }
-  to   { transform: translateX(0);    opacity: 1; }
-}
-.toast-enter { animation: toastIn 0.3s ease-out forwards; }
-
-/* ─── Spinner ─── */
-@keyframes spin { to { transform: rotate(360deg); } }
-.spinner {
-  display: inline-block;
-  width: 20px; height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-/* ─── Form Inputs ─── */
-input, select, textarea {
-  font-family: 'Inter', sans-serif;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-input:focus, select:focus, textarea:focus {
-  border-color: #1B1F6B !important;
-  box-shadow: 0 0 0 3px rgba(27,31,107,0.12);
-}
-button { cursor: pointer; font-family: 'Inter', sans-serif; }
-
-/* ─── Tab underline active ─── */
-.filter-tab { border-bottom: 2px solid transparent; transition: all 0.15s; }
-.filter-tab.active { border-bottom-color: #1B1F6B; color: #1B1F6B; }
-
-/* ─── Table row hover ─── */
-.trow { transition: background 0.12s; cursor: pointer; }
-.trow:hover { background: #F5F7FF; }
-
-/* ─── Stepper ─── */
-.step-active { background: #1B1F6B; color: #fff; }
-.step-done   { background: #1E8449; color: #fff; }
-.step-todo   { background: #E8ECF0; color: #777682; }
-
-/* ─── Fade In ─── */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.fade-in { animation: fadeIn 0.25s ease-out forwards; }
-
-/* ─── Pulse ─── */
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-.pulse { animation: pulse 2s ease-in-out infinite; }
-
-/* ══════════════════════════════════════════════════════
-   DESIGN FINE-TUNING — Global polish
-   ══════════════════════════════════════════════════════ */
-
-/* Card hover lift — subtle premium feel */
-.card-hover {
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
-}
-.card-hover:hover {
-  box-shadow: 0 8px 24px rgba(27,31,107,0.13), 0 1px 2px rgba(27,31,107,0.06) !important;
-  transform: translateY(-2px);
-}
-
-/* Sidebar nav item hover (non-active) */
-.nav-link-item:hover {
-  background: rgba(27, 31, 107, 0.05) !important;
-}
-
-/* Table row improved hover */
-.trow:hover { background: #F5F7FF; }
-.trow:active { background: #ECEFFE; }
-
-/* Quick action button hover */
-.qa-btn:hover {
-  transform: translateY(-3px);
-  opacity: 0.9;
-}
-.qa-btn { transition: transform 0.18s, opacity 0.18s; }
-
-/* Badge base improved */
-.badge-base {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 9px;
-  border-radius: 9999px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-/* Modal overlay */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(2, 2, 89, 0.45);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.modal-box {
-  background: #fff;
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.22);
-  width: 100%;
-  max-width: 440px;
-  animation: fadeIn 0.2s ease-out;
-}
-
-/* Progress bars */
-.progress-track {
-  height: 8px;
-  border-radius: 6px;
-  background: #E8ECF0;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  border-radius: 6px;
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Divider */
-.divider-line {
-  height: 1px;
-  background: #E8ECF0;
-  margin: 16px 0;
-}
-
-/* Section title */
-.section-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1B1F6B;
-}
-
-/* Status dot */
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* Responsive utility — horizontal scroll for tables */
-.responsive-table-wrap {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 8px;
-}
-.responsive-table-wrap::-webkit-scrollbar { height: 4px; }
-.responsive-table-wrap::-webkit-scrollbar-thumb { background: #c7c5d2; border-radius: 99px; }
-
-/* ══════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — Bottom Nav (Mobile only)
-   ══════════════════════════════════════════════════════ */
-.mobile-bottom-nav {
-  display: none; /* hidden on desktop */
-}
-
-/* ─── Mobile drawer backdrop ─── */
-.mobile-drawer-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(2, 2, 89, 0.5);
-  z-index: 199;
-  backdrop-filter: blur(2px);
-}
-
-/* ─── Responsive table wrapper ─── */
-.responsive-table-wrap {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* ─── Mobile-only / desktop-only utilities ─── */
-.mobile-only  { display: none !important; }
-.desktop-only { display: flex !important; }
-
-/* ══════════════════════════════════════════════════════
-   BREAKPOINT: ≤ 768px  (Tablets & Mobile)
-   ══════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  /* Show / hide utilities */
-  .mobile-only  { display: flex !important; }
-  .desktop-only { display: none !important; }
-
-  /* Mobile bottom nav */
-  .mobile-bottom-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 68px;
-    background: #ffffff;
-    border-top: 1px solid #E8ECF0;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 4px;
-    z-index: 100;
-    box-shadow: 0 -4px 20px rgba(27,31,107,0.08);
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 
-  /* Mobile drawer backdrop */
-  .mobile-drawer-backdrop {
-    display: block;
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Page content bottom padding so content clears the bottom nav */
-  .page-content-wrap {
-    padding-bottom: 80px !important;
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f6fafe;
+    color: #171c1f;
   }
 
-  /* PageWrap title padding */
-  .page-wrap-inner {
-    padding: 16px !important;
-  }
-
-  /* TopNav mobile adjustments */
-  .topnav-search      { display: none !important; }
-  .topnav-user-info   { display: none !important; }
-  .topnav-admin-btn   { display: none !important; }
-  .topnav-separator   { display: none !important; }
-
-  /* Sidebar: hidden on mobile — the JS-rendered mobile drawer is used instead */
-  .sidebar-desktop { display: none !important; }
-
-  /* KPI grid: 4-col → 2-col */
-  .kpi-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-
-  /* Quick actions: 6-col → 3-col */
-  .quick-actions-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 10px !important;
-  }
-
-  /* Dashboard 2-col layout → single col */
-  .dashboard-layout {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-  }
-
-  /* Generic 2-col grids → 1-col */
-  .two-col-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-  }
-
-  /* Category 3-col → 2-col */
-  .category-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-  }
-
-  /* Bill payment 2-col → 1-col */
-  .bill-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Send money centered */
-  .send-money-wrap {
-    max-width: 100% !important;
-    padding: 0 !important;
-  }
-
-  /* Settings sidebar + content: stacked */
-  .settings-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Statement 2-col → 1-col */
-  .statement-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Wallet overview → 1-col */
-  .wallet-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Analytics layout → 1-col */
-  .analytics-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Hide detail panel on history (takes separate screen flow) */
-  .history-detail-panel {
-    display: none !important;
-  }
-
-  /* Table → horizontal scroll */
-  table {
-    min-width: 600px;
-  }
-
-  /* Slide-in admin panel full width */
-  .admin-detail-panel {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  /* Login page: 2-panel → single column */
-  .login-left-panel {
-    display: none !important;
-  }
-  .login-right-panel {
-    flex: unset !important;
-    width: 100% !important;
-    padding: 32px 20px !important;
-  }
-
-  /* Bulk payment layout → 1-col */
-  .bulk-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* KYC layout → 1-col */
-  .kyc-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Scheduled 3-col summary → 1-col */
-  .scheduled-summary {
-    grid-template-columns: 1fr !important;
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+    user-select: none;
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   BREAKPOINT: ≤ 480px  (Small phones)
-   ══════════════════════════════════════════════════════ */
-@media (max-width: 480px) {
-  /* KPI grid: 2-col → 1-col on very small screens */
-  .kpi-grid {
-    grid-template-columns: 1fr 1fr !important;
+@layer components {
+  .kente-pattern {
+    background-image: radial-gradient(circle at 2px 2px, #020259 1px, transparent 0);
+    background-size: 24px 24px;
+    opacity: 0.03;
   }
 
-  /* Touch targets: minimum 44px */
-  button, a, input, select {
-    min-height: 44px;
+  .kente-login {
+    background-color: #1b1f6b;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l15 30H15L30 0zM0 30l15 30H-15L0 30zm60 0l15 30H45L60 30zM30 60l15-30H15l15 30z' fill='%23cea62c' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
 
-  .page-wrap-inner {
-    padding: 12px !important;
+  .sidebar-nav-link {
+    @apply flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors duration-200 font-sidebar-label text-sidebar-label;
   }
 
-  /* Category grid stays 2-col */
-  .category-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+  .sidebar-nav-link-active {
+    @apply flex items-center gap-3 bg-sidebar-active-light text-primary border-l-4 border-primary px-4 py-3 font-sidebar-label text-sidebar-label;
   }
 
-  /* Quick actions: 3-col stays */
-  .quick-actions-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
+  .card {
+    @apply bg-surface-container-lowest rounded-xl border border-border-subtle shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white font-bold rounded-xl hover:bg-primary-container transition-all active:scale-95 shadow-md;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-[#E5F5ED] text-success font-badge text-badge gap-1;
+  }
+
+  .badge-error {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-error-container text-error font-badge text-badge gap-1;
+  }
+
+  .badge-pending {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-[#FFF4E5] text-[#D35400] font-badge text-badge gap-1;
+  }
+
+  .badge-paused {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full bg-surface-variant text-secondary font-badge text-badge gap-1;
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e0e0ff;
+    border-radius: 10px;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

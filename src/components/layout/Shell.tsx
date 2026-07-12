@@ -1,9 +1,8 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import TopNav from "./TopNav";
 import MobileBottomNav from "./MobileBottomNav";
-import T from "@/lib/tokens";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -15,75 +14,60 @@ export default function Shell({ children, isAdmin = false }: ShellProps) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden", position: "relative" }}>
-
-      {/* ── Mobile backdrop overlay ── */}
+    <div className="flex h-screen overflow-hidden relative">
+      {/* Mobile Backdrop */}
       {mobileDrawerOpen && (
         <div
           onClick={() => setMobileDrawerOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(2, 2, 89, 0.55)",
-            backdropFilter: "blur(2px)",
-            zIndex: 200,
-          }}
+          className="fixed inset-0 bg-primary/40 backdrop-blur-sm z-40 md:hidden"
         />
       )}
 
-      {/* ── Mobile drawer sidebar ── */}
-      {mobileDrawerOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            height: "100vh",
-            zIndex: 201,
-            display: "flex",
-            flexDirection: "column",
-            animation: "slideInLeft 0.25s ease-out",
-          }}
-        >
-          <Sidebar
-            isAdmin={isAdmin}
-            collapsed={false}
-            onToggle={() => setMobileDrawerOpen(false)}
-            onNavClick={() => setMobileDrawerOpen(false)}
-          />
-        </div>
-      )}
+      {/* Sidebar Drawer on Mobile */}
+      <div
+        className={`fixed top-0 left-0 h-screen z-50 transition-transform duration-300 md:hidden ${
+          mobileDrawerOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <Sidebar
+          isAdmin={isAdmin}
+          collapsed={false}
+          onToggle={() => setMobileDrawerOpen(false)}
+          onNavClick={() => setMobileDrawerOpen(false)}
+        />
+      </div>
 
-      {/* ── Desktop sidebar (hidden on mobile via CSS) ── */}
-      <div className="sidebar-desktop" style={{ display: "flex", flexShrink: 0 }}>
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex shrink-0">
         <Sidebar
           isAdmin={isAdmin}
           collapsed={collapsed}
-          onToggle={() => setCollapsed((c) => !c)}
+          onToggle={() => setCollapsed(!collapsed)}
         />
       </div>
 
-      {/* ── Main content area ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
+      {/* Main Content Pane */}
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <TopNav
           isAdmin={isAdmin}
           onMenuToggle={() => {
-            // Desktop: collapse sidebar
-            setCollapsed((c) => !c);
-            // Mobile: open drawer
-            setMobileDrawerOpen((o) => !o);
+            // Toggle sidebar state
+            setCollapsed(!collapsed);
+            setMobileDrawerOpen(!mobileDrawerOpen);
           }}
         />
-        <div
-          className="page-content-wrap"
-          style={{ flex: 1, overflowY: "auto", background: T.surfaceLow }}
-        >
-          {children}
+        <div className="flex-1 overflow-y-auto pt-topnav-height bg-background relative">
+          <div className="absolute inset-0 kente-pattern pointer-events-none z-0"></div>
+          <div className="relative z-10 min-h-full">
+            {children}
+          </div>
         </div>
       </div>
 
-      {/* ── Mobile bottom nav (CSS hides it on desktop) ── */}
-      <MobileBottomNav />
+      {/* Bottom Nav for mobile devices */}
+      <div className="md:hidden">
+        <MobileBottomNav />
+      </div>
     </div>
   );
 }

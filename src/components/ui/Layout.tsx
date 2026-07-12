@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import T from "@/lib/tokens";
 
 interface SectionTitleProps {
   children: React.ReactNode;
@@ -9,19 +8,15 @@ interface SectionTitleProps {
 
 export function SectionTitle({ children, action }: SectionTitleProps) {
   return (
-    <div style={{
-      display: "flex", justifyContent: "space-between",
-      alignItems: "center", marginBottom: 16,
-      flexWrap: "wrap", gap: 8,
-    }}>
-      <h2 style={{ fontSize: 16, fontWeight: 700, color: T.navyMid }}>{children}</h2>
+    <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
+      <h3 className="font-section-title text-section-title text-primary">{children}</h3>
       {action}
     </div>
   );
 }
 
 export function Divider() {
-  return <div style={{ height: 1, background: T.border, margin: "16px 0" }} />;
+  return <div className="h-px bg-border-subtle w-full my-4" />;
 }
 
 interface PageWrapProps {
@@ -34,30 +29,29 @@ interface PageWrapProps {
 
 export function PageWrap({ title, subtitle, breadcrumb, action, children }: PageWrapProps) {
   return (
-    /* page-wrap-inner — CSS sets padding: 16px on mobile, 32px on desktop */
-    <div className="page-wrap-inner" style={{ padding: 32 }}>
-      <div style={{ marginBottom: 20 }}>
-        {breadcrumb && (
-          <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 6 }}>{breadcrumb}</div>
-        )}
-        <div style={{
-          display: "flex", alignItems: "flex-start",
-          justifyContent: "space-between", gap: 12,
-          flexWrap: "wrap",
-        }}>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: T.navy, marginBottom: subtitle ? 4 : 0 }}>
-              {title}
-            </h1>
-            {subtitle && <p style={{ fontSize: 14, color: T.textMuted }}>{subtitle}</p>}
-          </div>
-          {action && (
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {action}
-            </div>
-          )}
+    <div className="p-4 sm:p-6 md:p-page-padding max-w-[1600px] w-full mx-auto flex-1 flex flex-col gap-6 relative z-10">
+      {breadcrumb && (
+        <nav className="flex mb-2 text-sm font-medium text-secondary/60">
+          <span className="hover:text-primary transition-colors cursor-pointer">Home</span>
+          <span className="mx-2">/</span>
+          <span className="text-primary font-bold">{breadcrumb}</span>
+        </nav>
+      )}
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-page-title-mobile md:font-page-title text-page-title-mobile md:text-page-title font-bold text-primary">
+            {title}
+          </h1>
+          {subtitle && <p className="text-secondary mt-1 text-sm">{subtitle}</p>}
         </div>
+        {action && (
+          <div className="flex items-center gap-2">
+            {action}
+          </div>
+        )}
       </div>
+
       {children}
     </div>
   );

@@ -25,23 +25,32 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     headers.set('Content-Type', 'application/json');
   }
 
+  let tokenPresent = false;
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('ghana_pay_access');
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
+      tokenPresent = true;
     }
   }
+
+  console.log(`[apiFetch] ${options.method || 'GET'} ${url} | tokenPresent=${tokenPresent}`);
 
   const response = await fetch(url, {
     ...options,
     headers,
-    credentials: 'include', // Ensures HttpOnly cookies are sent
+    credentials: 'include', // Sends cookies — backend now prioritizes Bearer over cookie
   });
 
+  console.log(`[apiFetch] ${url} → ${response.status}`);
+
   if (response.status === 401) {
-    // Unauthorized: Clear frontend state or redirect if necessary
-    // E.g. window.location.href = '/login'; (Better handled in context)
+    console.error(`[apiFetch] 401 Unauthorized on ${url} | tokenPresent=${tokenPresent}`);
+    const storedToken = typeof window !== 'undefined' ? localStorage.getItem('ghana_pay_access') : null;
+    const tokenPrefix = storedToken ? storedToken.substring(0, 30) + '...' : 'NONE';
+    console.error(`[apiFetch] localStorage token at 401 time: ${tokenPrefix}`);
   }
+
 
   // Determine if response is JSON
   const contentType = response.headers.get('content-type');

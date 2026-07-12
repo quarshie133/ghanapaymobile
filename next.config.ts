@@ -4,9 +4,10 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        // Redirect old /auth/callback to /callback — but NEVER match /api/* paths
         source: "/auth/callback",
         destination: "/callback",
-        permanent: true,
+        permanent: false, // Use 307 so query params (tokens) are preserved
       },
     ];
   },

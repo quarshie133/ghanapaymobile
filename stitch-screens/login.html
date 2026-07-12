@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GhanaPay | Enterprise Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Syne:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffe08e",
+                        "border-subtle": "#E8ECF0",
+                        "secondary": "#566065",
+                        "surface-bright": "#f6fafe",
+                        "surface-variant": "#dfe3e7",
+                        "admin-bg": "#0D1120",
+                        "on-primary-fixed-variant": "#3a3f8a",
+                        "inverse-primary": "#bfc2ff",
+                        "outline": "#777682",
+                        "secondary-container": "#dae4ea",
+                        "tertiary": "#755b00",
+                        "on-error": "#ffffff",
+                        "sidebar-active-light": "#ECEFFE",
+                        "on-surface": "#171c1f",
+                        "surface-tint": "#5257a3",
+                        "on-primary-fixed": "#090c5e",
+                        "surface-container-highest": "#dfe3e7",
+                        "table-hover": "#F5F7FF",
+                        "primary-fixed": "#e0e0ff",
+                        "error": "#C0392B",
+                        "inverse-surface": "#2c3134",
+                        "admin-accent": "#4A6CF7",
+                        "outline-variant": "#c7c5d2",
+                        "primary-fixed-dim": "#bfc2ff",
+                        "on-surface-variant": "#464651",
+                        "on-primary-container": "#858ada",
+                        "primary": "#020259",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "on-error-container": "#93000a",
+                        "on-background": "#171c1f",
+                        "tertiary-container": "#cea62c",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-secondary-fixed": "#131d21",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "primary-container": "#1b1f6b",
+                        "secondary-fixed-dim": "#bec8ce",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#241a00",
+                        "success": "#1E8449",
+                        "surface-container": "#eaeef2",
+                        "on-secondary-fixed-variant": "#3f484d",
+                        "inverse-on-surface": "#edf1f5",
+                        "on-primary": "#ffffff",
+                        "surface": "#f6fafe",
+                        "on-secondary-container": "#5c666b",
+                        "surface-container-low": "#f0f4f8",
+                        "background": "#f6fafe",
+                        "on-tertiary": "#ffffff",
+                        "sidebar-light": "#F8F9FE",
+                        "secondary-fixed": "#dae4ea",
+                        "surface-dim": "#d6dade",
+                        "surface-container-high": "#e4e9ed",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "topnav-height": "64px",
+                        "gutter": "24px",
+                        "page-padding": "32px",
+                        "card-padding": "20px",
+                        "sidebar-width": "240px"
+                    },
+                    "fontFamily": {
+                        "sidebar-label": ["Inter"],
+                        "page-title": ["Inter"],
+                        "nav-link": ["Inter"],
+                        "metric-value": ["Syne"],
+                        "section-title": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .kente-pattern {
+            background-color: #1b1f6b;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l15 30H15L30 0zM0 30l15 30H-15L0 30zm60 0l15 30H45L60 30zM30 60l15-30H15l15 30z' fill='%23cea62c' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        .login-card {
+            box-shadow: 0 4px 20px -2px rgba(27, 31, 107, 0.05);
+        }
+
+        .transition-standard {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-surface font-sans antialiased overflow-hidden">
+<main class="flex min-h-screen w-full">
+<!-- Left Section: Branding -->
+<section class="hidden lg:flex lg:w-1/2 kente-pattern relative items-center justify-center p-gutter overflow-hidden">
+<!-- Glassmorphic Decorative Circles -->
+<div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary-container rounded-full opacity-20 blur-3xl"></div>
+<div class="absolute bottom-[-5%] right-[-5%] w-80 h-80 bg-tertiary-container rounded-full opacity-10 blur-3xl"></div>
+<div class="relative z-10 text-center space-y-8 max-w-lg">
+<div class="flex flex-col items-center gap-4">
+<div class="w-24 h-24 bg-white rounded-xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-standard">
+<span class="material-symbols-outlined text-primary text-6xl" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<h1 class="font-page-title text-white text-5xl font-extrabold tracking-tight">GhanaPay</h1>
+</div>
+<div class="space-y-4">
+<p class="font-section-title text-tertiary-fixed text-3xl font-semibold italic">"Your Money, Your Way"</p>
+<p class="text-on-primary-container text-lg opacity-90 leading-relaxed font-sidebar-label">
+                        The unified national mobile money wallet platform powered by Ghanaâs commercial banks and rural community banks.
+                    </p>
+</div>
+<!-- Floating Stats Bento (Visual Interest) -->
+<div class="grid grid-cols-2 gap-4 mt-12 text-left">
+<div class="bg-white/5 backdrop-blur-md border border-white/10 p-card-padding rounded-xl">
+<p class="text-tertiary-fixed font-semibold text-sm uppercase tracking-wider mb-1">Global Standard</p>
+<p class="text-white font-bold text-xl">Bank-Grade Security</p>
+</div>
+<div class="bg-white/5 backdrop-blur-md border border-white/10 p-card-padding rounded-xl">
+<p class="text-tertiary-fixed font-semibold text-sm uppercase tracking-wider mb-1">Accessibility</p>
+<p class="text-white font-bold text-xl">Nationwide Network</p>
+</div>
+</div>
+</div>
+<!-- Bottom Left Decorative Badge -->
+<div class="absolute bottom-10 left-10 flex items-center gap-2 text-white/40 font-sidebar-label text-xs uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<span>PCI-DSS COMPLIANT PLATFORM</span>
+</div>
+</section>
+<!-- Right Section: Login Form -->
+<section class="w-full lg:w-1/2 bg-white flex items-center justify-center p-8 md:p-16">
+<div class="w-full max-w-md space-y-10">
+<!-- Mobile Branding (Hidden on Desktop) -->
+<div class="lg:hidden flex flex-col items-center gap-4 mb-8">
+<h1 class="font-page-title text-primary text-3xl font-extrabold tracking-tight">GhanaPay</h1>
+</div>
+<div class="space-y-2">
+<h2 class="font-page-title text-primary text-3xl font-bold">Welcome back</h2>
+<p class="text-secondary font-sidebar-label">Please enter your credentials to access your portal</p>
+</div>
+<form class="space-y-6" onsubmit="event.preventDefault();">
+<div class="space-y-4">
+<!-- Identity Field -->
+<div class="space-y-1.5">
+<label class="text-sm font-semibold text-on-surface-variant flex items-center gap-2" for="identifier">
+<span class="material-symbols-outlined text-sm">person</span>
+                                Phone Number or Email
+                            </label>
+<input class="w-full h-[44px] px-4 rounded-xl border border-border-subtle bg-surface-bright focus:border-primary focus:ring-2 focus:ring-primary-container outline-none transition-standard font-sidebar-label placeholder:text-outline-variant" id="identifier" name="identifier" placeholder="02X XXX XXXX or email@example.com" type="text"/>
+</div>
+<!-- Password Field -->
+<div class="space-y-1.5">
+<div class="flex justify-between items-center">
+<label class="text-sm font-semibold text-on-surface-variant flex items-center gap-2" for="password">
+<span class="material-symbols-outlined text-sm">lock</span>
+                                    PIN / Password
+                                </label>
+<a class="text-sm font-medium text-primary hover:underline transition-standard" href="#">Forgot PIN?</a>
+</div>
+<div class="relative">
+<input class="w-full h-[44px] px-4 rounded-xl border border-border-subtle bg-surface-bright focus:border-primary focus:ring-2 focus:ring-primary-container outline-none transition-standard font-sidebar-label placeholder:text-outline-variant" id="password" name="password" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-standard" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="w-5 h-5 rounded border-border-subtle text-primary focus:ring-primary-container cursor-pointer transition-standard" id="remember" type="checkbox"/>
+<label class="ml-3 text-sm text-on-surface-variant font-medium cursor-pointer" for="remember">Remember this device</label>
+</div>
+<!-- CTA -->
+<button class="w-full h-[52px] bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-container hover:shadow-xl active:scale-[0.98] transition-standard flex items-center justify-center gap-2 group" type="submit">
+                        Log In
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-standard">arrow_forward</span>
+</button>
+</form>
+<div class="pt-8 border-t border-border-subtle">
+<div class="grid grid-cols-3 gap-6 items-center grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-standard duration-500">
+<!-- Security Badge 1 -->
+<div class="flex flex-col items-center gap-1 text-center">
+<span class="material-symbols-outlined text-success text-2xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[10px] font-bold text-on-surface uppercase tracking-tighter">Bank Grade</span>
+</div>
+<!-- Security Badge 2 -->
+<div class="flex flex-col items-center gap-1 text-center">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="text-[10px] font-bold text-on-surface uppercase tracking-tighter">Encrypted</span>
+</div>
+<!-- Security Badge 3 -->
+<div class="flex flex-col items-center gap-1 text-center">
+<span class="material-symbols-outlined text-tertiary text-2xl" style="font-variation-settings: 'FILL' 1;">gpp_good</span>
+<span class="text-[10px] font-bold text-on-surface uppercase tracking-tighter">Regulated</span>
+</div>
+</div>
+</div>
+<div class="text-center pt-4">
+<p class="text-sm text-secondary font-sidebar-label">
+                        Don't have an account? 
+                        <a class="text-primary font-bold hover:underline" href="#">Sign up for Enterprise</a>
+</p>
+</div>
+</div>
+<!-- Global Footer Info (Absolute Bottom Right) -->
+<footer class="absolute bottom-6 right-8 text-[11px] text-outline flex gap-6 font-medium">
+<a class="hover:text-primary transition-standard" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-standard" href="#">Terms of Service</a>
+<span>Â© 2024 GhanaPay Enterprise</span>
+</footer>
+</section>
+</main>
+<!-- Micro-interaction Script -->
+<script>
+        // Password Visibility Toggle
+        const togglePass = document.querySelector('button .material-symbols-outlined');
+        const passInput = document.getElementById('password');
+        
+        if (togglePass && passInput) {
+            togglePass.parentElement.addEventListener('click', () => {
+                const isPass = passInput.getAttribute('type') === 'password';
+                passInput.setAttribute('type', isPass ? 'text' : 'password');
+                togglePass.textContent = isPass ? 'visibility_off' : 'visibility';
+            });
+        }
+
+        // Input Focus Ripple Effect Simulation (Visual only)
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('scale-[1.01]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+    </script>
+</body></html>

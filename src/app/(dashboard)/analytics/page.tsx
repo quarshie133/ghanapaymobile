@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SPENDING_DATA, CATEGORIES } from '@/lib/mock-data';
 import { formatCurrency } from '@/lib/utils';
 import { api } from '@/lib/api';
@@ -10,25 +10,19 @@ import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  PieChart, Pie, Cell,
 } from 'recharts';
-import {
-  FaCreditCard, FaInbox, FaHouse, FaLightbulb, FaCar, FaShieldHalved
-} from 'react-icons/fa6';
-import T from '@/lib/tokens';
-
-const PERIOD_TABS = ['Week', 'Month', '3M'];
 
 const PAYMENT_METHODS = [
-  { label: 'GhanaPay Wallet', pct: 60, color: T.navyMid },
-  { label: 'MTN MoMo',        pct: 30, color: '#FFCB05' },
-  { label: 'Vodafone Cash',   pct: 8,  color: '#E60026' },
-  { label: 'Bank Transfer',   pct: 2,  color: '#555' },
+  { label: 'GhanaPay', pct: 60, bgClass: 'bg-primary' },
+  { label: 'MTN MoMo', pct: 30, bgClass: 'bg-tertiary-container' },
+  { label: 'Vodafone Cash', pct: 8, bgClass: 'bg-surface-tint' },
+  { label: 'Bank', pct: 2, bgClass: 'bg-outline' },
 ];
 
 const SAVINGS_GOALS = [
-  { icon: <FaCar />, name: 'New Car Fund',    saved: 1200, target: 5000, pct: 24, eta: 'Dec 2026' },
-  { icon: <FaShieldHalved />, name: 'Emergency Fund', saved: 3800, target: 5000, pct: 76, eta: 'Sep 2026' },
+  { icon: 'directions_car', name: 'New Car Fund', saved: 12000, target: 50000, pct: 24, textClass: 'text-tertiary-container', bgClass: 'bg-tertiary-container' },
+  { icon: 'health_and_safety', name: 'Emergency Fund', saved: 15200, target: 20000, pct: 76, textClass: 'text-primary', bgClass: 'bg-primary' },
 ];
 
 export default function AnalyticsPage() {
@@ -36,163 +30,205 @@ export default function AnalyticsPage() {
   const [period, setPeriod] = useState('Month');
   const [analytics, setAnalytics] = useState<any>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       api.get('/analytics/summary').then(res => setAnalytics(res)).catch(() => {});
     }
   }, [user]);
 
-  const kpiCards = analytics ? [
-    { label: 'Total Spent',       value: formatCurrency(analytics.totalSpent || 0), delta: '▼ vs last month', deltaColor: T.success, icon: <FaCreditCard /> },
-    { label: 'Total Received',    value: formatCurrency(analytics.totalReceived || 0), delta: '▲ vs last month', deltaColor: T.success, icon: <FaInbox /> },
-    { label: 'Largest Expense',   value: formatCurrency(analytics.largestExpense || 0), delta: 'Recent', deltaColor: T.textMuted, icon: <FaHouse /> },
-    { label: 'Health Score',      value: `${analytics.healthScore || 82}/100`, delta: 'Good', deltaColor: T.info, icon: <FaLightbulb /> },
-  ] : [
-    { label: 'Total Spent',       value: '₵2,000', delta: '▼ 8% vs last month', deltaColor: T.success, icon: <FaCreditCard /> },
-    { label: 'Total Received',    value: '₵5,400', delta: '▲ 15% vs last month', deltaColor: T.success, icon: <FaInbox /> },
-    { label: 'Largest Expense',   value: '₵1,500', delta: 'Rent · Jun 14', deltaColor: T.textMuted, icon: <FaHouse /> },
-    { label: 'Health Score',      value: '82/100', delta: 'Good · Top 20%', deltaColor: T.info, icon: <FaLightbulb /> },
+  const kpis = [
+    { label: 'Total Spent', value: '₵2,000.00', icon: 'payments', delta: '8.4% vs May', deltaUp: false },
+    { label: 'Total Received', value: '₵5,400.00', icon: 'account_balance_wallet', delta: '12.1% vs May', deltaUp: true },
+    { label: 'Largest Expense', value: '₵1,500.00', icon: 'shopping_cart', delta: 'Rent Payment', deltaUp: null },
+    { label: 'Health Score', value: '82', icon: 'favorite', delta: 'Excellent standing', deltaUp: null, max: '/100' },
   ];
 
   return (
     <PageWrap
       title="Financial Analytics"
-      subtitle="Insights into your spending patterns and financial health"
+      breadcrumb="Analytics"
       action={
-        <div style={{ display: 'flex', gap: 4 }}>
-          {PERIOD_TABS.map(t => (
-            <button key={t} onClick={() => setPeriod(t)} style={{
-              padding: '6px 16px', borderRadius: 20, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-              background: period === t ? T.navyMid : T.surfaceLow,
-              color: period === t ? '#fff' : T.textMuted, transition: 'all 0.15s',
-            }}>
-              {t}
-            </button>
-          ))}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center border border-border-subtle rounded-lg bg-surface-container-lowest overflow-hidden">
+            {['Week', 'Month', '3 Months'].map((t) => (
+              <button
+                key={t}
+                onClick={() => setPeriod(t === '3 Months' ? '3M' : t)}
+                className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                  (t === '3 Months' && period === '3M') || period === t
+                    ? 'bg-primary-fixed text-primary border-r border-border-subtle'
+                    : 'text-secondary hover:bg-surface-container border-r border-border-subtle'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 border border-border-subtle rounded-lg bg-surface-container-lowest px-4 py-2 cursor-pointer hover:border-outline transition-colors">
+            <span className="material-symbols-outlined text-outline text-sm">calendar_month</span>
+            <span className="text-sm font-medium">Jun 2026</span>
+          </div>
         </div>
       }
     >
-      <style>{`.trow:hover { background: ${T.tableHover} !important; }`}</style>
-
-      {/* KPI Cards */}
-      <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-        {kpiCards.map(k => (
-          <Card key={k.label}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-              <span style={{ fontSize: 12, fontWeight: 600, color: T.textMuted, letterSpacing: 0.4 }}>{k.label.toUpperCase()}</span>
-              <span style={{ fontSize: 20 }}>{k.icon}</span>
+      {/* ROW 1: Summary Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpis.map((k, idx) => (
+          <Card key={idx} className="flex flex-col justify-between p-6">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-secondary font-medium text-sm">{k.label}</span>
+              <span className={`material-symbols-outlined ${idx === 3 ? 'text-primary' : 'text-outline'}`}>
+                {k.icon}
+              </span>
             </div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: T.textPrimary, marginBottom: 6 }}>{k.value}</div>
-            <div style={{ fontSize: 12, color: k.deltaColor, fontWeight: 600 }}>{k.delta}</div>
+            <div className="font-metric-value text-metric-value text-on-surface mb-2">
+              {k.value}
+              {k.max && <span className="text-lg text-outline">{k.max}</span>}
+            </div>
+            {k.deltaUp !== null ? (
+              <div className="flex items-center gap-1 text-success text-sm font-medium">
+                <span className="material-symbols-outlined text-sm">
+                  {k.deltaUp ? 'arrow_upward' : 'arrow_downward'}
+                </span>
+                {k.delta}
+              </div>
+            ) : (
+              <div className="text-secondary text-sm font-medium">{k.delta}</div>
+            )}
           </Card>
         ))}
       </div>
 
-      <div className="analytics-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
-        {/* Spending Trend */}
-        <Card>
-          <SectionTitle>Spending Trend</SectionTitle>
-          <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
-            <span style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 10, height: 10, borderRadius: 2, background: T.navyMid, display: 'inline-block' }} /> This Month
-            </span>
-            <span style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 10, height: 10, borderRadius: 2, background: T.border, border: `1px solid ${T.borderVar}`, display: 'inline-block' }} /> Last Month
-            </span>
-          </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={SPENDING_DATA} barCategoryGap="25%">
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false} />
-              <XAxis dataKey="week" tick={{ fontSize: 10, fill: T.textMuted }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: T.textMuted }} axisLine={false} tickLine={false} />
-              <Tooltip formatter={(val: any) => [`₵${val}`, '']} contentStyle={{ borderRadius: 10, fontSize: 12 }} />
-              <Bar dataKey="prev"   fill={T.border}   radius={[4,4,0,0]} name="Last Month"  />
-              <Bar dataKey="amount" fill={T.navyMid}  radius={[4,4,0,0]} name="This Month" />
+      {/* ROW 2: Main Chart */}
+      <Card className="p-6">
+        <SectionTitle
+          action={
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-primary rounded-sm"></div>
+                <span className="text-secondary text-xs font-semibold">June (Current)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-0 border-t-2 border-dashed border-tertiary-container"></div>
+                <span className="text-secondary text-xs font-semibold">May (Previous)</span>
+              </div>
+            </div>
+          }
+        >
+          Spending Trend
+        </SectionTitle>
+
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={SPENDING_DATA} barSize={40}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8ECF0" />
+              <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
+              <Tooltip
+                contentStyle={{ borderRadius: 10, border: '1px solid #E8ECF0', fontSize: 12 }}
+                formatter={(val: any) => [`₵${val}`, 'Spending']}
+              />
+              <Bar dataKey="amount" fill="#020259" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-        </Card>
+        </div>
+      </Card>
 
-        {/* Spending by Category Pie */}
-        <Card>
-          <SectionTitle>Spending by Category</SectionTitle>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <div style={{ flex: '0 0 160px' }}>
-              <PieChart width={160} height={160}>
-                <Pie data={CATEGORIES} dataKey="pct" cx={75} cy={75} innerRadius={45} outerRadius={75} paddingAngle={3}>
-                  {CATEGORIES.map(c => <Cell key={c.name} fill={c.color} />)}
+      {/* ROW 3: Two Columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Category breakdown (Span 7) */}
+        <Card className="lg:col-span-7 p-6 flex flex-col">
+          <h2 className="font-section-title text-section-title text-on-surface mb-6">Spending by Category</h2>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 flex-1">
+            <div className="shrink-0 flex items-center justify-center">
+              <PieChart width={180} height={180}>
+                <Pie
+                  data={CATEGORIES}
+                  dataKey="pct"
+                  cx={90}
+                  cy={90}
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={4}
+                >
+                  {CATEGORIES.map((c, i) => (
+                    <Cell key={i} fill={c.color} />
+                  ))}
                 </Pie>
-                <Tooltip formatter={(val: any) => [`${val}%`, '']} />
               </PieChart>
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
-              {CATEGORIES.map(c => (
-                <div key={c.name}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: c.color, display: 'inline-block' }} />
-                      {c.name}
-                    </span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: T.textPrimary }}>{c.pct}% · {formatCurrency(c.amount)}</span>
+            <div className="flex-1 w-full space-y-4">
+              {CATEGORIES.map((c, i) => (
+                <div key={i} className="w-full">
+                  <div className="flex justify-between items-center text-sm mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: c.color }} />
+                      <span className="font-medium text-secondary">{c.name}</span>
+                    </div>
+                    <span className="font-bold text-on-surface">{c.pct}%</span>
                   </div>
-                  <div style={{ height: 5, borderRadius: 4, background: T.border }}>
-                    <div style={{ width: `${c.pct}%`, height: '100%', borderRadius: 4, background: c.color }} />
+                  <div className="w-full bg-surface-container-high rounded-full h-2">
+                    <div className="h-2 rounded-full" style={{ width: `${c.pct}%`, backgroundColor: c.color }} />
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </Card>
+
+        {/* Payment Methods (Span 5) */}
+        <Card className="lg:col-span-5 p-6">
+          <h2 className="font-section-title text-section-title text-on-surface mb-6">Payment Methods</h2>
+          <div className="space-y-6">
+            {PAYMENT_METHODS.map((m, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="font-semibold text-secondary">{m.label}</span>
+                  <span className="font-bold text-primary">{m.pct}%</span>
+                </div>
+                <div className="w-full bg-surface-container-high rounded-full h-2.5">
+                  <div className={`h-2.5 rounded-full ${m.bgClass}`} style={{ width: `${m.pct}%` }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       </div>
 
-      <div className="analytics-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-        {/* Payment Methods */}
-        <Card>
-          <SectionTitle>Payment Methods</SectionTitle>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {PAYMENT_METHODS.map(m => (
-              <div key={m.label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: T.textSec }}>{m.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: T.textPrimary }}>{m.pct}%</span>
-                </div>
-                <div style={{ height: 8, borderRadius: 6, background: T.border }}>
-                  <div style={{ width: `${m.pct}%`, height: '100%', borderRadius: 6, background: m.color, transition: 'width 0.6s' }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Savings Goals */}
-        <Card>
-          <SectionTitle action={<Btn size="sm" variant="secondary">+ New Goal</Btn>}>Savings Goals</SectionTitle>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {SAVINGS_GOALS.map(g => (
-              <div key={g.name} style={{ padding: 16, borderRadius: 12, border: `1px solid ${T.border}`, background: T.surfaceLow }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 20 }}>{g.icon}</span>{g.name}
+      {/* ROW 4: Savings Goals */}
+      <div>
+        <h2 className="font-section-title text-section-title text-on-surface mb-4">Savings Goals</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {SAVINGS_GOALS.map((g, idx) => (
+            <Card key={idx} className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 rounded-lg bg-surface-bright flex items-center justify-center border border-border-subtle">
+                  <span className={`material-symbols-outlined ${g.textClass}`}>
+                    {g.icon}
                   </span>
-                  <Badge label={`${g.pct}%`} type={g.pct >= 75 ? 'success' : 'info'} />
                 </div>
-                <div style={{ height: 8, borderRadius: 6, background: T.border, marginBottom: 8 }}>
-                  <div style={{ width: `${g.pct}%`, height: '100%', borderRadius: 6, background: g.pct >= 75 ? T.success : T.info, transition: 'width 0.6s' }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: T.textMuted }}>
-                  <span>{formatCurrency(g.saved)} saved of {formatCurrency(g.target)}</span>
-                  <span>ETA: {g.eta}</span>
-                </div>
+                <span className="text-xs font-semibold px-2.5 py-1 bg-surface-container rounded text-secondary">
+                  {g.pct}%
+                </span>
               </div>
-            ))}
-            <button style={{
-              width: '100%', padding: '14px', borderRadius: 12, cursor: 'pointer',
-              border: `2px dashed ${T.border}`, background: 'transparent',
-              fontSize: 13, color: T.navyMid, fontWeight: 600,
-            }}>
-              ＋ Add New Goal
-            </button>
+              <h3 className="font-semibold text-on-surface mb-1">{g.name}</h3>
+              <div className="text-sm text-secondary mb-4">
+                ₵{g.saved.toLocaleString()} / ₵{g.target.toLocaleString()}
+              </div>
+              <div className="w-full bg-surface-container-high rounded-full h-1.5">
+                <div className={`h-1.5 rounded-full ${g.bgClass}`} style={{ width: `${g.pct}%` }}></div>
+              </div>
+            </Card>
+          ))}
+
+          {/* Create New Goal */}
+          <div className="border-2 border-dashed border-border-subtle rounded-xl p-6 flex flex-col items-center justify-center text-secondary hover:text-primary hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer group min-h-[160px]">
+            <span className="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">
+              add_circle
+            </span>
+            <span className="font-bold">Create New Goal</span>
           </div>
-        </Card>
+        </div>
       </div>
     </PageWrap>
   );
