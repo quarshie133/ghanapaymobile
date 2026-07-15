@@ -19,13 +19,13 @@ export default function Shell({ children, isAdmin = false }: ShellProps) {
       {mobileDrawerOpen && (
         <div
           onClick={() => setMobileDrawerOpen(false)}
-          className="fixed inset-0 bg-primary/40 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-primary/40 backdrop-blur-sm z-[998] md:hidden"
         />
       )}
 
       {/* Sidebar Drawer on Mobile */}
       <div
-        className={`fixed top-0 left-0 h-screen z-50 transition-transform duration-300 md:hidden ${
+        className={`fixed top-0 left-0 h-screen z-[999] transition-transform duration-300 md:hidden ${
           mobileDrawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -50,10 +50,13 @@ export default function Shell({ children, isAdmin = false }: ShellProps) {
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <TopNav
           isAdmin={isAdmin}
+          collapsed={collapsed}
           onMenuToggle={() => {
-            // Toggle sidebar state
-            setCollapsed(!collapsed);
-            setMobileDrawerOpen(!mobileDrawerOpen);
+            if (typeof window !== "undefined" && window.innerWidth >= 768) {
+              setCollapsed(!collapsed);
+            } else {
+              setMobileDrawerOpen(!mobileDrawerOpen);
+            }
           }}
         />
         <div className="flex-1 overflow-y-auto pt-topnav-height bg-background relative">

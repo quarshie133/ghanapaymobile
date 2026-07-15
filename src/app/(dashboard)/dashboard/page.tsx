@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TRANSACTIONS, SPENDING_DATA } from '@/lib/mock-data';
 import { formatCurrency, getInitials } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
 import { api } from '@/lib/api';
@@ -18,15 +17,80 @@ export default function DashboardPage() {
   const [balanceHidden, setBalanceHidden] = useState(false);
   const [period, setPeriod] = useState('Month');
   const [wallet, setWallet] = useState<any>(null);
-  const [recent, setRecent] = useState<any[]>(TRANSACTIONS.slice(0, 4));
+  const [summary, setSummary] = useState<any>(null);
+  const [weeklyData, setWeeklyData] = useState<any[]>([]);
+  const [recent, setRecent] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const isMerchant = user?.phone && user.phone.length <= 6;
 
   useEffect(() => {
     if (user) {
-      api.get('/wallet').then(res => setWallet(res.data || res)).catch(() => {});
-      api.get('/transactions').then(res => {
-        if (res.data) setRecent(res.data.slice(0, 4));
-      }).catch(() => {});
+      setLoading(true);
+      if (isMerchant) {
+        Promise.all([
+          api.get('/analytics/merchant/summary'),
+          api.get('/analytics/merchant/weekly'),
+          api.get('/transactions')
+        ]).then(([sumRes, weekRes, txRes]) => {
+          setSummary(sumRes.data || sumRes);
+          setWeeklyData(weekRes.data || weekRes);
+          if (txRes.data) setRecent(txRes.data.slice(0, 4));
+          setLoading(false);
+        }).catch(() => setLoading(false));
+      } else {
+        Promise.all([
+          api.get('/wallet'),
+          api.get('/analytics/summary'),
+          api.get('/analytics/weekly'),
+          api.get('/transactions')
+        ]).then(([walletRes, sumRes, weekRes, txRes]) => {
+          setWallet(walletRes.data || walletRes);
+          setSummary(sumRes.data || sumRes);
+          setWeeklyData(weekRes.data || weekRes);
+          if (txRes.data) setRecent(txRes.data.slice(0, 4));
+          setLoading(false);
+        }).catch(() => setLoading(false));
+      }
     }
+  }, [user, isMerchant]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !user) return;
+
+    const token = localStorage.getItem('ghana_pay_access');
+    if (!token) return;
+
+    const ws = new WebSocket('ws://localhost:3001/ws');
+
+    ws.onopen = () => {
+      console.log('[WebSocket] Dashboard connected');
+      ws.send(JSON.stringify({ event: 'authenticate', data: { token } }));
+    };
+
+    ws.onmessage = (eventMsg) => {
+      try {
+        const payload = JSON.parse(eventMsg.data);
+        console.log('[WebSocket] Dashboard received event:', payload);
+        if (payload.event === 'wallet_balance') {
+          const balanceVal = Number(payload.data.balance);
+          setWallet((prev: any) => prev ? { ...prev, balance: balanceVal } : { balance: balanceVal });
+          setSummary((prev: any) => prev ? { ...prev, balance: balanceVal } : { balance: balanceVal });
+        } else if (payload.event === 'transaction_status') {
+          const newTx = payload.data.transaction;
+          setRecent((prev) => {
+            const filtered = prev.filter(t => t.id !== newTx.id);
+            return [newTx, ...filtered].slice(0, 4);
+          });
+        }
+      } catch (err) {
+        console.error('[WebSocket] Parsing error:', err);
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
   }, [user]);
 
   const QUICK_ACTIONS = [
@@ -37,6 +101,186 @@ export default function DashboardPage() {
     { label: 'Bulk Pay',    icon: 'layers', href: '/bulk-payments',  bgClass: 'bg-primary-fixed text-primary group-hover:bg-primary group-hover:text-white' },
     { label: 'Add Money',   icon: 'add_card', href: '/wallet',         bgClass: 'bg-primary-fixed text-primary group-hover:bg-primary group-hover:text-white' },
   ];
+
+  if (isMerchant) {
+    return (
+      <PageWrap
+        title={`Welcome to Merchant Console, ${user?.name || 'Store'} 🏪`}
+        subtitle={`Till ID: #${user?.phone} | Platform Settlement Account Active`}
+        action={
+          <button className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary-container transition-all active:scale-95 shadow-md">
+            <span className="material-symbols-outlined text-sm">download</span>
+            Sales Report
+          </button>
+        }
+      >
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Till Balance */}
+          <Card className="relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <span className="material-symbols-outlined text-5xl">store</span>
+            </div>
+            <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Merchant Till Balance</p>
+            <div className="flex items-center justify-between">
+              <p className="font-metric-value text-metric-value text-primary leading-tight">
+                {balanceHidden ? '₵ ••••••' : `₵${summary?.balance != null ? Number(summary.balance).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}`}
+              </p>
+              <button
+                onClick={() => setBalanceHidden(!balanceHidden)}
+                className="text-secondary hover:text-primary transition-colors focus:outline-none"
+              >
+                <span className="material-symbols-outlined text-md">
+                  {balanceHidden ? 'visibility_off' : 'visibility'}
+                </span>
+              </button>
+            </div>
+            <div className="mt-4 flex items-center text-success text-xs font-bold">
+              <span className="material-symbols-outlined text-xs mr-1">check_circle</span>
+              Ready to settle to bank
+            </div>
+          </Card>
+
+          {/* Sales Today */}
+          <Card>
+            <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Sales Today</p>
+            <p className="font-metric-value text-metric-value text-primary leading-tight">
+              ₵{summary ? Number(summary.salesToday).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
+            </p>
+            <div className="mt-4 flex items-center text-success text-xs font-bold">
+              <span className="material-symbols-outlined text-xs mr-1">trending_up</span>
+              Live payments tracking active
+            </div>
+          </Card>
+
+          {/* Monthly Volume */}
+          <Card>
+            <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Monthly Sales</p>
+            <p className="font-metric-value text-metric-value text-primary leading-tight">
+              ₵{summary ? Number(summary.totalSales).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
+            </p>
+            <div className="mt-4 flex items-center text-secondary text-xs font-medium">
+              <span className="w-2 h-2 rounded-full bg-primary mr-2"></span>
+              {summary?.transactionCount || 0} customer orders
+            </div>
+          </Card>
+
+          {/* Average Ticket Size */}
+          <Card>
+            <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Average Ticket Value</p>
+            <p className="font-metric-value text-metric-value text-primary leading-tight">
+              ₵{summary ? Number(summary.avgTransactionValue).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
+            </p>
+            <div className="mt-4 flex items-center text-tertiary text-xs font-bold">
+              <span className="material-symbols-outlined text-xs mr-1">analytics</span>
+              Based on completed payments
+            </div>
+          </Card>
+        </div>
+
+        {/* Main Grid Area */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="col-span-12 lg:col-span-8 space-y-6">
+            {/* Sales Trend Chart */}
+            <Card>
+              <SectionTitle>Sales Trend This Month</SectionTitle>
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={weeklyData} barSize={32}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8ECF0" />
+                    <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{ borderRadius: 10, border: '1px solid #E8ECF0', fontSize: 12 }}
+                      formatter={(val: any) => [`₵${val}`, 'Sales']}
+                    />
+                    <Bar dataKey="amount" fill="#020259" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* Recent Payments Received */}
+            <Card>
+              <SectionTitle action={<Link href="/history" className="text-primary font-semibold text-sm hover:underline">View All Sales</Link>}>
+                Recent Customer Payments
+              </SectionTitle>
+              <div className="space-y-4">
+                {recent.length === 0 ? (
+                  <div className="text-center py-6 text-secondary text-sm">No sales transactions logged yet.</div>
+                ) : (
+                  recent.map((tx, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors duration-200"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center shrink-0">
+                          {getInitials(tx.recipientName || tx.senderName || 'Customer')}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-primary">{tx.recipientName || tx.senderName || 'Anonymous'}</p>
+                          <p className="text-[11px] text-secondary">{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Just now'} • {tx.method || 'GhanaPay'}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-success">
+                          +{formatCurrency(Math.abs(tx.amount))}
+                        </p>
+                        <Badge
+                          label={tx.status}
+                          type={tx.status === 'completed' ? 'success' : 'warning'}
+                        />
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </Card>
+          </div>
+
+          {/* Right Column: Quick Actions */}
+          <div className="col-span-12 lg:col-span-4 space-y-6">
+            <Card className="bg-primary text-white border-primary/20 relative overflow-hidden group">
+              <div className="flex items-start gap-4 relative z-10">
+                <div className="p-3 rounded-lg bg-white/10 backdrop-blur-md shrink-0">
+                  <span className="material-symbols-outlined text-tertiary-fixed">qr_code_scanner</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1 text-white">Dynamic GHQR</h4>
+                  <p className="text-white/90 text-sm leading-relaxed mb-4">
+                    Generate dynamic GHQR payment requests for fast counter checkout.
+                  </p>
+                  <button className="bg-white text-primary px-4 py-2 rounded-lg text-xs font-bold hover:bg-surface-container-low transition-colors duration-200">
+                    Generate QR
+                  </button>
+                </div>
+              </div>
+            </Card>
+
+            <Card>
+              <SectionTitle>Settlement Bank Account</SectionTitle>
+              <div className="flex items-center justify-between p-3 bg-surface rounded-lg border border-border-subtle">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-6 bg-primary rounded-sm flex items-center justify-center shrink-0">
+                    <span className="text-[8px] text-white font-bold">GCB</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-primary">GCB Corporate Settlement</p>
+                    <p className="text-[10px] text-secondary">**** 8821</p>
+                  </div>
+                </div>
+                <Badge label="ACTIVE" type="success" />
+              </div>
+            </Card>
+          </div>
+        </div>
+        <footer className="mt-12 text-center text-outline text-[11px] pb-8 relative z-10">
+          <p>Licensed and Regulated by the Bank of Ghana. © 2026 GhanaPay Enterprise.</p>
+        </footer>
+      </PageWrap>
+    );
+  }
 
   return (
     <PageWrap
@@ -59,7 +303,7 @@ export default function DashboardPage() {
           <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Wallet Balance</p>
           <div className="flex items-center justify-between">
             <p className="font-metric-value text-metric-value text-primary leading-tight">
-              {balanceHidden ? '₵ ••••••' : `₵${wallet?.balance != null ? Number(wallet.balance).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '4,250.00'}`}
+              {balanceHidden ? '₵ ••••••' : `₵${wallet?.balance != null ? Number(wallet.balance).toLocaleString('en-US', { minimumFractionDigits: 2 }) : summary?.balance != null ? Number(summary.balance).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}`}
             </p>
             <button
               onClick={() => setBalanceHidden(!balanceHidden)}
@@ -72,37 +316,43 @@ export default function DashboardPage() {
           </div>
           <div className="mt-4 flex items-center text-success text-xs font-bold">
             <span className="material-symbols-outlined text-xs mr-1">trending_up</span>
-            12% increase from last month
+            8.4% increase from last month
           </div>
         </Card>
 
         {/* Sent Today */}
         <Card>
           <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Sent Today</p>
-          <p className="font-metric-value text-metric-value text-primary leading-tight">₵1,820.00</p>
+          <p className="font-metric-value text-metric-value text-primary leading-tight">
+            ₵{summary ? Number(summary.sentToday).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
+          </p>
           <div className="mt-4 flex items-center text-secondary text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-secondary mr-2"></span>
-            24 transactions today
+            Outbound transactions today
           </div>
         </Card>
 
         {/* Received Today */}
         <Card>
           <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Received Today</p>
-          <p className="font-metric-value text-metric-value text-primary leading-tight">₵2,440.50</p>
+          <p className="font-metric-value text-metric-value text-primary leading-tight">
+            ₵{summary ? Number(summary.receivedToday).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
+          </p>
           <div className="mt-4 flex items-center text-success text-xs font-bold">
             <span className="material-symbols-outlined text-xs mr-1">call_received</span>
-            High volume alert
+            Inbound transactions today
           </div>
         </Card>
 
         {/* Saved This Month */}
         <Card>
           <p className="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Saved This Month</p>
-          <p className="font-metric-value text-metric-value text-primary leading-tight">₵620.00</p>
+          <p className="font-metric-value text-metric-value text-primary leading-tight">
+            ₵{summary ? Number(summary.savedThisMonth).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00'}
+          </p>
           <div className="mt-4 flex items-center text-tertiary text-xs font-bold">
             <span className="material-symbols-outlined text-xs mr-1">savings</span>
-            82% of monthly goal
+            Active goals contribution
           </div>
         </Card>
       </div>
@@ -156,19 +406,15 @@ export default function DashboardPage() {
                       {t}
                     </button>
                   ))}
-                  <select className="bg-surface border border-border-subtle rounded-md text-xs font-bold text-primary px-3 py-1 focus:ring-0 outline-none ml-2">
-                    <option>Monthly</option>
-                    <option>Weekly</option>
-                  </select>
                 </div>
               }
             >
-              Spending This Month
+              Spending Trends
             </SectionTitle>
 
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={SPENDING_DATA} barSize={32}>
+                <BarChart data={weeklyData} barSize={32}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8ECF0" />
                   <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
@@ -183,11 +429,11 @@ export default function DashboardPage() {
             <div className="flex justify-center gap-6 mt-4">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-primary inline-block"></span>
-                <span className="text-xs font-bold text-primary uppercase">Current Month</span>
+                <span className="text-xs font-bold text-primary uppercase">Current Period</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-3 h-0.5 border-t border-dashed border-tertiary-container inline-block"></span>
-                <span className="text-xs font-bold text-primary uppercase">Last Month</span>
+                <span className="w-3 h-3 rounded-full bg-tertiary-container inline-block"></span>
+                <span className="text-xs font-bold text-primary uppercase">Previous Period</span>
               </div>
             </div>
           </Card>
@@ -204,31 +450,35 @@ export default function DashboardPage() {
               Recent Activity
             </SectionTitle>
             <div className="space-y-4">
-              {recent.map((tx, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors duration-200"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center shrink-0">
-                      {getInitials(tx.name || tx.senderName || 'Anonymous')}
+              {recent.length === 0 ? (
+                <div className="text-center py-6 text-secondary text-sm">No transaction records found.</div>
+              ) : (
+                recent.map((tx, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors duration-200"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center shrink-0">
+                        {getInitials(tx.recipientName || tx.senderName || 'Anonymous')}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-primary">{tx.recipientName || tx.senderName || 'Anonymous'}</p>
+                        <p className="text-[11px] text-secondary">{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : tx.time} • {tx.note || 'Transfer'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-primary">{tx.name || tx.senderName}</p>
-                      <p className="text-[11px] text-secondary">{tx.time || tx.date} • {tx.note || 'Transfer'}</p>
+                    <div className="text-right">
+                      <p className={`text-sm font-bold ${tx.type === 'received' || tx.type === 'topup' ? 'text-success' : 'text-error'}`}>
+                        {tx.type === 'received' || tx.type === 'topup' ? '+' : '-'}{formatCurrency(Math.abs(tx.amount))}
+                      </p>
+                      <Badge
+                        label={tx.status}
+                        type={tx.status === 'completed' ? 'success' : 'warning'}
+                      />
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-bold ${tx.amount > 0 || tx.type === 'RECEIVE' ? 'text-success' : 'text-error'}`}>
-                      {tx.amount > 0 || tx.type === 'RECEIVE' ? '+' : '-'}{formatCurrency(Math.abs(tx.amount))}
-                    </p>
-                    <Badge
-                      label={tx.status}
-                      type={tx.status === 'completed' || tx.status === 'SUCCESS' ? 'success' : 'warning'}
-                    />
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </Card>
         </div>
@@ -245,13 +495,11 @@ export default function DashboardPage() {
               <div>
                 <h4 className="font-bold text-lg mb-1 text-white">GhanaPay AI Insight</h4>
                 <p className="text-white/90 text-sm leading-relaxed mb-4">
-                  You've spent <span className="font-bold text-tertiary-fixed underline decoration-tertiary-fixed/50 underline-offset-4">₵200 more</span> on Utility bills this month compared to average. Consider setting a transaction limit for the <span className="font-bold text-tertiary-fixed font-black">ECG</span> category.
+                  You spent <span className="font-bold text-tertiary-fixed">₵{summary?.largestExpense || 0}</span> on your largest transaction this month. Consider checking your saving goal velocity.
                 </p>
-
-
-                <button className="bg-white text-primary px-4 py-2 rounded-lg text-xs font-bold hover:bg-surface-container-low transition-colors duration-200">
-                  Manage Limits
-                </button>
+                <Link href="/analytics" className="bg-white text-primary px-4 py-2 rounded-lg text-xs font-bold hover:bg-surface-container-low transition-colors duration-200 no-underline inline-block">
+                  View Analytics
+                </Link>
               </div>
             </div>
           </Card>

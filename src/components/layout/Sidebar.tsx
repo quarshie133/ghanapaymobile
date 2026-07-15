@@ -17,6 +17,7 @@ interface NavItem {
 const USER_NAV: NavItem[] = [
   { key: "dashboard",     href: "/dashboard",      iconName: "dashboard", label: "Dashboard" },
   { key: "analytics",     href: "/analytics",      iconName: "monitoring", label: "Analytics" },
+  { key: "assistant",     href: "/assistant",      iconName: "auto_awesome", label: "AI Assistant" },
   { key: "send-money",    href: "/send-money",     iconName: "send",  label: "Send" },
   { key: "bulk",          href: "/bulk-payments",  iconName: "layers",  label: "Bulk", badge: "Biz", badgeType: "gold" },
   { key: "bills",         href: "/bill-payments",  iconName: "receipt_long", label: "Bills" },
@@ -50,7 +51,7 @@ export default function Sidebar({ isAdmin = false, collapsed, onToggle, onNavCli
   const navItems = isAdmin ? ADMIN_NAV : USER_NAV;
 
   return (
-    <aside className={`h-screen bg-sidebar-light border-r border-border-subtle flex flex-col py-gutter z-50 transition-all duration-200 ${collapsed ? 'w-[72px]' : 'w-sidebar-width'}`}>
+    <aside className={`h-screen bg-sidebar-light border-r border-border-subtle flex flex-col py-gutter z-20 transition-all duration-200 ${collapsed ? 'w-[72px]' : 'w-sidebar-width'}`}>
       {/* Brand logo */}
       <div className="px-6 mb-8 flex flex-col shrink-0">
         <div className="flex items-center gap-2">

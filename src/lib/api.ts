@@ -71,7 +71,7 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
   if (data && typeof data === 'object' && data.success === true && 'data' in data) {
     const unwrapped = data.data;
-    if (unwrapped && (typeof unwrapped === 'object' || Array.isArray(unwrapped))) {
+    if (unwrapped && (typeof unwrapped === 'object' || Array.isArray(unwrapped)) && !('data' in unwrapped)) {
       try {
         Object.defineProperty(unwrapped, 'data', {
           get() { return unwrapped; },

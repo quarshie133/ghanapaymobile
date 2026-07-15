@@ -6,15 +6,18 @@ import { getInitials } from "@/lib/utils";
 interface TopNavProps {
   onMenuToggle: () => void;
   isAdmin?: boolean;
+  collapsed?: boolean;
 }
 
-export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
+export default function TopNav({ onMenuToggle, isAdmin = false, collapsed = false }: TopNavProps) {
   const { user } = useAuth();
   
   return (
-    <header className="fixed top-0 right-0 h-topnav-height w-full md:w-[calc(100%-240px)] bg-surface border-b border-border-subtle shadow-sm flex justify-between items-center px-gutter z-30 transition-all">
-      {/* Mobile Menu Icon */}
-      <div className="md:hidden flex items-center">
+    <header className={`fixed top-0 right-0 h-topnav-height w-full bg-surface border-b border-border-subtle shadow-sm flex justify-between items-center px-gutter z-30 transition-all duration-200 ${
+      collapsed ? 'md:w-[calc(100%-72px)]' : 'md:w-[calc(100%-240px)]'
+    }`}>
+      {/* Menu Toggle Icon */}
+      <div className="flex items-center">
         <button
           onClick={onMenuToggle}
           className="text-on-surface-variant p-2 rounded-full hover:bg-surface-container"
@@ -22,7 +25,7 @@ export default function TopNav({ onMenuToggle, isAdmin = false }: TopNavProps) {
         >
           <span className="material-symbols-outlined">menu</span>
         </button>
-        <span className="font-page-title-mobile text-page-title-mobile font-bold text-primary ml-2">
+        <span className="font-page-title-mobile text-page-title-mobile font-bold text-primary ml-2 md:hidden">
           GhanaPay
         </span>
       </div>

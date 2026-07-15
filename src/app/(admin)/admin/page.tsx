@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -8,29 +8,12 @@ import {
   FaUsers, FaCreditCard, FaMoneyBillTrendUp, FaShieldHalved
 } from 'react-icons/fa6';
 import T from '@/lib/tokens';
-import { KYC_QUEUE } from '@/lib/mock-data';
+import { api } from '@/lib/api';
 import { formatCurrency, getInitials } from '@/lib/utils';
 import Card from '@/components/ui/Card';
 import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { PageWrap, SectionTitle } from '@/components/ui/Layout';
-
-/* ── Mock data ─────────────────────────────────────────── */
-const VOLUME_TREND = [
-  { day: 'Mon', volume: 182000 },
-  { day: 'Tue', volume: 247000 },
-  { day: 'Wed', volume: 198000 },
-  { day: 'Thu', volume: 312000 },
-  { day: 'Fri', volume: 389000 },
-  { day: 'Sat', volume: 274000 },
-  { day: 'Sun', volume: 210000 },
-];
-
-const FRAUD_ALERTS = [
-  { id: 'FR-8821', user: 'Kweku Asante', type: 'Velocity', amount: 4800, risk: 'High',   time: '14 mins ago' },
-  { id: 'FR-8802', user: 'Priscilla Darko', type: 'Geo-anomaly', amount: 2200, risk: 'High', time: '1 hr ago' },
-  { id: 'FR-8789', user: 'Nana Boateng', type: 'Large transfer', amount: 9500, risk: 'Medium', time: '3 hrs ago' },
-];
 
 /* ── Sub-components ─────────────────────────────────────── */
 function KpiCard({
@@ -74,6 +57,77 @@ function ScoreBar({ value, color }: { value: number; color: string }) {
 /* ── Page ───────────────────────────────────────────────── */
 export default function AdminOverviewPage() {
   const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchOverview = () => {
+    api.get('/admin/overview')
+      .then(res => {
+        setData(res.data || res);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchOverview();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const token = localStorage.getItem('ghana_pay_access');
+    if (!token) return;
+
+    const ws = new WebSocket('ws://localhost:3001/ws');
+
+    ws.onopen = () => {
+      console.log('[WebSocket] Admin connected');
+      ws.send(JSON.stringify({ event: 'authenticate', data: { token } }));
+    };
+
+    ws.onmessage = (eventMsg) => {
+      try {
+        const payload = JSON.parse(eventMsg.data);
+        console.log('[WebSocket] Admin received event:', payload);
+        if (payload.event === 'admin_overview_refresh') {
+          fetchOverview();
+        }
+      } catch (err) {
+        console.error('[WebSocket] Parsing error:', err);
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  const handleApproveKyc = async (id: string) => {
+    setApprovingId(id);
+    try {
+      await api.post(`/admin/kyc/${id}/approve`, { note: 'Approved via Admin Overview Console' });
+      fetchOverview();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setApprovingId(null);
+    }
+  };
+
+  const handleRejectKyc = async (id: string) => {
+    try {
+      await api.post(`/admin/kyc/${id}/reject`, { note: 'Rejected via Admin Overview Console' });
+      fetchOverview();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const highRiskCount = (data?.fraudAlerts || []).filter((f: any) => f.risk === 'High').length;
+  const medRiskCount = (data?.fraudAlerts || []).filter((f: any) => f.risk !== 'High').length;
 
   return (
     <PageWrap
@@ -83,10 +137,34 @@ export default function AdminOverviewPage() {
     >
       {/* ── KPI Cards ── */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 24 }}>
-        <KpiCard label="Total Users" value="48,291" sub="▲ +1.2% today" subColor={T.success} icon={<FaUsers />} />
-        <KpiCard label="Active Wallets" value="31,400" sub="65% of total users" subColor={T.textMuted} icon={<FaCreditCard />} />
-        <KpiCard label="Today's Volume" value="₵2.4M" sub="↑ ₵312K from yesterday" subColor={T.success} icon={<FaMoneyBillTrendUp />} />
-        <KpiCard label="Pending KYC" value="47" sub="⚠ Urgent review required" subColor={T.warning} icon={<FaShieldHalved />} />
+        <KpiCard
+          label="Total Users"
+          value={data ? Number(data.totalUsers).toLocaleString() : '...'}
+          sub="Registered accounts"
+          subColor={T.textMuted}
+          icon={<FaUsers />}
+        />
+        <KpiCard
+          label="Active Wallets"
+          value={data ? Number(data.activeUsers).toLocaleString() : '...'}
+          sub={data ? `${Math.round((data.activeUsers / data.totalUsers) * 100)}% of total users` : '...'}
+          subColor={T.textMuted}
+          icon={<FaCreditCard />}
+        />
+        <KpiCard
+          label="Total Volume"
+          value={data ? `₵${Number(data.totalVolume).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '...'}
+          sub="Platform volume"
+          subColor={T.success}
+          icon={<FaMoneyBillTrendUp />}
+        />
+        <KpiCard
+          label="Pending KYC"
+          value={data ? String(data.pendingKyc) : '...'}
+          sub={data?.pendingKyc > 0 ? "⚠ Review required" : "All clear"}
+          subColor={data?.pendingKyc > 0 ? T.warning : T.success}
+          icon={<FaShieldHalved />}
+        />
       </div>
 
       {/* ── Charts + System Health row ── */}
@@ -95,7 +173,7 @@ export default function AdminOverviewPage() {
         <Card>
           <SectionTitle>7-Day Transaction Volume</SectionTitle>
           <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={VOLUME_TREND} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+            <LineChart data={data?.volumeTrend || []} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false} />
               <XAxis dataKey="day" tick={{ fontSize: 12, fill: T.textMuted }} axisLine={false} tickLine={false} />
               <YAxis
@@ -125,7 +203,7 @@ export default function AdminOverviewPage() {
             { label: 'DB Latency', value: '12 ms', note: 'PostgreSQL primary' },
             { label: 'SMS Gateway', value: 'OK', note: 'Hubtel — 0 errors' },
             { label: 'MoMo Webhook', value: 'OK', note: 'MTN & Vodafone live' },
-            { label: 'Fraud Engine', value: 'ACTIVE', note: 'v2.4 — 3 alerts today' },
+            { label: 'Fraud Engine', value: 'ACTIVE', note: 'v2.4 — alerts active' },
           ].map((s) => (
             <div key={s.label} style={{
               display: 'flex', alignItems: 'center', gap: 12,
@@ -171,55 +249,69 @@ export default function AdminOverviewPage() {
                 </tr>
               </thead>
               <tbody>
-                {KYC_QUEUE.slice(0, 3).map((entry) => (
-                  <tr key={entry.id}
-                    className="trow"
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = T.tableHover; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = ''; }}
-                    style={{ borderBottom: `1px solid ${T.border}` }}
-                  >
-                    <td style={{ padding: '12px 12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{
-                          width: 34, height: 34, borderRadius: 9999,
-                          background: `linear-gradient(135deg, ${T.adminAccent} 0%, ${T.navyMid} 100%)`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: '#fff', fontSize: 12, fontWeight: 700, flexShrink: 0,
-                        }}>
-                          {getInitials(entry.name)}
-                        </div>
-                        <div>
-                          <div style={{ fontSize: 13, fontWeight: 600, color: T.textPrimary }}>{entry.name}</div>
-                          <div style={{ fontSize: 11, color: T.textMuted }}>{entry.id}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px 12px', fontSize: 13, color: T.textSec }}>{entry.phone}</td>
-                    <td style={{ padding: '12px 12px', minWidth: 120 }}>
-                      <ScoreBar value={entry.docScore} color={entry.docScore >= 90 ? T.success : T.warning} />
-                    </td>
-                    <td style={{ padding: '12px 12px', minWidth: 120 }}>
-                      <ScoreBar value={entry.faceScore} color={entry.faceScore >= 85 ? T.success : T.warning} />
-                    </td>
-                    <td style={{ padding: '12px 12px' }}>
-                      <Badge
-                        label={entry.status === 'urgent' ? '⚠ Urgent' : 'Pending'}
-                        type={entry.status === 'urgent' ? 'warning' : 'info'}
-                      />
-                    </td>
-                    <td style={{ padding: '12px 12px' }}>
-                      <div style={{ display: 'flex', gap: 6 }}>
-                        <Btn
-                          variant="success" size="sm"
-                          onClick={() => setApprovingId(entry.id)}
-                        >
-                          {approvingId === entry.id ? '✓' : 'Approve'}
-                        </Btn>
-                        <Btn variant="danger" size="sm">Reject</Btn>
-                      </div>
+                {(data?.kycQueue || []).length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ padding: '24px', textAlign: 'center', color: T.textMuted, fontSize: 13 }}>
+                      No pending KYC applications.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  (data.kycQueue).map((entry: any) => (
+                    <tr key={entry.id}
+                      className="trow"
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = T.tableHover; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLTableRowElement).style.background = ''; }}
+                      style={{ borderBottom: `1px solid ${T.border}` }}
+                    >
+                      <td style={{ padding: '12px 12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{
+                            width: 34, height: 34, borderRadius: 9999,
+                            background: `linear-gradient(135deg, ${T.adminAccent} 0%, ${T.navyMid} 100%)`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: '#fff', fontSize: 12, fontWeight: 700, flexShrink: 0,
+                          }}>
+                            {getInitials(entry.name)}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: T.textPrimary }}>{entry.name}</div>
+                            <div style={{ fontSize: 11, color: T.textMuted }}>{entry.id.substring(0, 8)}...</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px 12px', fontSize: 13, color: T.textSec }}>{entry.phone}</td>
+                      <td style={{ padding: '12px 12px', minWidth: 120 }}>
+                        <ScoreBar value={entry.docScore} color={entry.docScore >= 90 ? T.success : T.warning} />
+                      </td>
+                      <td style={{ padding: '12px 12px', minWidth: 120 }}>
+                        <ScoreBar value={entry.faceScore} color={entry.faceScore >= 85 ? T.success : T.warning} />
+                      </td>
+                      <td style={{ padding: '12px 12px' }}>
+                        <Badge
+                          label={entry.status === 'urgent' || entry.docScore < 80 ? '⚠ Urgent' : 'Pending'}
+                          type={entry.status === 'urgent' || entry.docScore < 80 ? 'warning' : 'info'}
+                        />
+                      </td>
+                      <td style={{ padding: '12px 12px' }}>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <Btn
+                            variant="success" size="sm"
+                            disabled={approvingId === entry.id}
+                            onClick={() => handleApproveKyc(entry.id)}
+                          >
+                            {approvingId === entry.id ? '...' : 'Approve'}
+                          </Btn>
+                          <Btn
+                            variant="danger" size="sm"
+                            onClick={() => handleRejectKyc(entry.id)}
+                          >
+                            Reject
+                          </Btn>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -241,38 +333,44 @@ export default function AdminOverviewPage() {
               flex: 1, textAlign: 'center', padding: '10px 0',
               background: T.errorBg, borderRadius: 10,
             }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: T.error }}>3</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: T.error }}>{highRiskCount}</div>
               <div style={{ fontSize: 11, color: T.error, fontWeight: 600 }}>High Risk</div>
             </div>
             <div style={{
               flex: 1, textAlign: 'center', padding: '10px 0',
               background: T.warningBg, borderRadius: 10,
             }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: T.warning }}>5</div>
-              <div style={{ fontSize: 11, color: T.warning, fontWeight: 600 }}>Medium</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: T.warning }}>{medRiskCount}</div>
+              <div style={{ fontSize: 11, color: T.warning, fontWeight: 600 }}>Medium/Low</div>
             </div>
           </div>
 
-          {FRAUD_ALERTS.map((alert) => (
-            <div key={alert.id} style={{
-              padding: '12px', borderRadius: 10,
-              background: alert.risk === 'High' ? T.errorBg : T.warningBg,
-              marginBottom: 8, border: `1px solid ${alert.risk === 'High' ? '#f5c6c2' : '#f5ddb0'}`,
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: alert.risk === 'High' ? T.error : T.warning }}>
-                  {alert.id}
-                </span>
-                <Badge label={alert.risk} type={alert.risk === 'High' ? 'error' : 'warning'} />
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: T.textPrimary }}>{alert.user}</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                <span style={{ fontSize: 12, color: T.textMuted }}>{alert.type}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: T.textPrimary }}>{formatCurrency(alert.amount)}</span>
-              </div>
-              <div style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>{alert.time}</div>
+          {(data?.fraudAlerts || []).length === 0 ? (
+            <div style={{ padding: '20px', textAlign: 'center', color: T.textMuted, fontSize: 13 }}>
+              No open fraud alerts.
             </div>
-          ))}
+          ) : (
+            (data.fraudAlerts).map((alert: any) => (
+              <div key={alert.id} style={{
+                padding: '12px', borderRadius: 10,
+                background: alert.risk === 'High' ? T.errorBg : T.warningBg,
+                marginBottom: 8, border: `1px solid ${alert.risk === 'High' ? '#f5c6c2' : '#f5ddb0'}`,
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: alert.risk === 'High' ? T.error : T.warning }}>
+                    {alert.id.substring(0, 8).toUpperCase()}
+                  </span>
+                  <Badge label={alert.risk} type={alert.risk === 'High' ? 'error' : 'warning'} />
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: T.textPrimary }}>{alert.user}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                  <span style={{ fontSize: 12, color: T.textMuted }}>{alert.type.replace('_', ' ')}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: T.textPrimary }}>{formatCurrency(alert.amount)}</span>
+                </div>
+                <div style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>{new Date(alert.time).toLocaleTimeString()}</div>
+              </div>
+            ))
+          )}
         </Card>
       </div>
     </PageWrap>

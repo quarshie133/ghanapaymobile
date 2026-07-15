@@ -1,11 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { SPENDING_DATA, CATEGORIES } from '@/lib/mock-data';
 import { formatCurrency } from '@/lib/utils';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
 import Card from '@/components/ui/Card';
-import Btn from '@/components/ui/Btn';
 import Badge from '@/components/ui/Badge';
 import { SectionTitle, PageWrap } from '@/components/ui/Layout';
 import {
@@ -13,34 +11,153 @@ import {
   PieChart, Pie, Cell,
 } from 'recharts';
 
-const PAYMENT_METHODS = [
-  { label: 'GhanaPay', pct: 60, bgClass: 'bg-primary' },
-  { label: 'MTN MoMo', pct: 30, bgClass: 'bg-tertiary-container' },
-  { label: 'Vodafone Cash', pct: 8, bgClass: 'bg-surface-tint' },
-  { label: 'Bank', pct: 2, bgClass: 'bg-outline' },
-];
-
-const SAVINGS_GOALS = [
-  { icon: 'directions_car', name: 'New Car Fund', saved: 12000, target: 50000, pct: 24, textClass: 'text-tertiary-container', bgClass: 'bg-tertiary-container' },
-  { icon: 'health_and_safety', name: 'Emergency Fund', saved: 15200, target: 20000, pct: 76, textClass: 'text-primary', bgClass: 'bg-primary' },
-];
-
 export default function AnalyticsPage() {
   const { user } = useAuth();
   const [period, setPeriod] = useState('Month');
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [summary, setSummary] = useState<any>(null);
+  const [weeklyData, setWeeklyData] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [goals, setGoals] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const isMerchant = user?.phone && user.phone.length <= 6;
 
   useEffect(() => {
     if (user) {
-      api.get('/analytics/summary').then(res => setAnalytics(res)).catch(() => {});
+      setLoading(true);
+      if (isMerchant) {
+        Promise.all([
+          api.get('/analytics/merchant/summary'),
+          api.get('/analytics/merchant/weekly'),
+          api.get('/analytics/merchant/payment-methods')
+        ]).then(([sumRes, weekRes, methodRes]) => {
+          setSummary(sumRes.data || sumRes);
+          setWeeklyData(weekRes.data || weekRes);
+          setPaymentMethods(methodRes.data || methodRes);
+          setLoading(false);
+        }).catch(() => setLoading(false));
+      } else {
+        Promise.all([
+          api.get('/analytics/summary'),
+          api.get('/analytics/weekly'),
+          api.get('/analytics/categories'),
+          api.get('/analytics/payment-methods'),
+          api.get('/analytics/savings-goals')
+        ]).then(([sumRes, weekRes, catRes, methodRes, goalsRes]) => {
+          setSummary(sumRes.data || sumRes);
+          setWeeklyData(weekRes.data || weekRes);
+          setCategories(catRes.data || catRes);
+          setPaymentMethods(methodRes.data || methodRes);
+          setGoals(goalsRes.data || goalsRes);
+          setLoading(false);
+        }).catch(() => setLoading(false));
+      }
     }
-  }, [user]);
+  }, [user, isMerchant]);
 
-  const kpis = [
-    { label: 'Total Spent', value: '₵2,000.00', icon: 'payments', delta: '8.4% vs May', deltaUp: false },
-    { label: 'Total Received', value: '₵5,400.00', icon: 'account_balance_wallet', delta: '12.1% vs May', deltaUp: true },
-    { label: 'Largest Expense', value: '₵1,500.00', icon: 'shopping_cart', delta: 'Rent Payment', deltaUp: null },
-    { label: 'Health Score', value: '82', icon: 'favorite', delta: 'Excellent standing', deltaUp: null, max: '/100' },
+  if (isMerchant) {
+    const merchantKpis = [
+      { label: 'Total Sales', value: summary ? `₵${Number(summary.totalSales).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '₵0.00', icon: 'payments', delta: 'This Month sales volume' },
+      { label: 'Sales Today', value: summary ? `₵${Number(summary.salesToday).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '₵0.00', icon: 'store', delta: 'Today incoming payments' },
+      { label: 'Transactions', value: summary ? String(summary.transactionCount) : '0', icon: 'receipt_long', delta: 'Completed client invoices' },
+      { label: 'Avg Ticket Value', value: summary ? `₵${Number(summary.avgTransactionValue).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '₵0.00', icon: 'analytics', delta: 'Average checkout value' },
+    ];
+
+    return (
+      <PageWrap
+        title="Merchant Sales Analytics"
+        breadcrumb="Analytics"
+        action={
+          <div className="flex items-center gap-2 border border-border-subtle rounded-lg bg-surface-container-lowest px-4 py-2">
+            <span className="material-symbols-outlined text-outline text-sm">calendar_month</span>
+            <span className="text-sm font-medium">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+          </div>
+        }
+      >
+        {/* Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {merchantKpis.map((k, idx) => (
+            <Card key={idx} className="flex flex-col justify-between p-6">
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-secondary font-medium text-sm">{k.label}</span>
+                <span className="material-symbols-outlined text-outline">
+                  {k.icon}
+                </span>
+              </div>
+              <div className="font-metric-value text-metric-value text-on-surface mb-2">
+                {k.value}
+              </div>
+              <div className="text-secondary text-sm font-medium">{k.delta}</div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Weekly Sales Chart */}
+        <Card className="p-6">
+          <SectionTitle>Sales Trend</SectionTitle>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={weeklyData} barSize={40}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8ECF0" />
+                <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ borderRadius: 10, border: '1px solid #E8ECF0', fontSize: 12 }}
+                  formatter={(val: any) => [`₵${val}`, 'Sales']}
+                />
+                <Bar dataKey="amount" fill="#020259" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Customer Wallet/Methods Breakdown */}
+        <Card className="p-6">
+          <h2 className="font-section-title text-section-title text-on-surface mb-6">Payment Methods Received</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              {paymentMethods.map((m, i) => (
+                <div key={i}>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="font-semibold text-secondary">{m.label}</span>
+                    <span className="font-bold text-primary">{m.pct}% (₵{Number(m.amount).toLocaleString()})</span>
+                  </div>
+                  <div className="w-full bg-surface-container-high rounded-full h-2.5">
+                    <div className={`h-2.5 rounded-full ${m.bgClass || 'bg-primary'}`} style={{ width: `${m.pct}%` }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-center">
+              <PieChart width={200} height={200}>
+                <Pie
+                  data={paymentMethods}
+                  dataKey="pct"
+                  cx={100}
+                  cy={100}
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={4}
+                >
+                  {paymentMethods.map((m, i) => {
+                    const colors = ['#020259', '#cea62c', '#1E7B9E', '#8E44AD'];
+                    return <Cell key={i} fill={colors[i % colors.length]} />;
+                  })}
+                </Pie>
+              </PieChart>
+            </div>
+          </div>
+        </Card>
+      </PageWrap>
+    );
+  }
+
+  const userKpis = [
+    { label: 'Total Spent', value: summary ? `₵${Number(summary.monthlySpent).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '₵0.00', icon: 'payments', delta: 'Total spent this month' },
+    { label: 'Total Received', value: summary ? `₵${Number(summary.monthlyReceived).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '₵0.00', icon: 'account_balance_wallet', delta: 'Received this month' },
+    { label: 'Largest Expense', value: summary ? `₵${Number(summary.largestExpense).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '₵0.00', icon: 'shopping_cart', delta: 'Largest checkout item' },
+    { label: 'Health Score', value: summary ? String(80 + Math.min(20, Math.max(0, Math.round(((summary.monthlyReceived - summary.monthlySpent) / (summary.monthlyReceived || 1)) * 20)))) : '80', icon: 'favorite', delta: 'Overall cash flow score', max: '/100' },
   ];
 
   return (
@@ -48,32 +165,15 @@ export default function AnalyticsPage() {
       title="Financial Analytics"
       breadcrumb="Analytics"
       action={
-        <div className="flex items-center gap-4">
-          <div className="flex items-center border border-border-subtle rounded-lg bg-surface-container-lowest overflow-hidden">
-            {['Week', 'Month', '3 Months'].map((t) => (
-              <button
-                key={t}
-                onClick={() => setPeriod(t === '3 Months' ? '3M' : t)}
-                className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                  (t === '3 Months' && period === '3M') || period === t
-                    ? 'bg-primary-fixed text-primary border-r border-border-subtle'
-                    : 'text-secondary hover:bg-surface-container border-r border-border-subtle'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-2 border border-border-subtle rounded-lg bg-surface-container-lowest px-4 py-2 cursor-pointer hover:border-outline transition-colors">
-            <span className="material-symbols-outlined text-outline text-sm">calendar_month</span>
-            <span className="text-sm font-medium">Jun 2026</span>
-          </div>
+        <div className="flex items-center gap-2 border border-border-subtle rounded-lg bg-surface-container-lowest px-4 py-2">
+          <span className="material-symbols-outlined text-outline text-sm">calendar_month</span>
+          <span className="text-sm font-medium">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
         </div>
       }
     >
       {/* ROW 1: Summary Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map((k, idx) => (
+        {userKpis.map((k, idx) => (
           <Card key={idx} className="flex flex-col justify-between p-6">
             <div className="flex justify-between items-start mb-2">
               <span className="text-secondary font-medium text-sm">{k.label}</span>
@@ -85,42 +185,17 @@ export default function AnalyticsPage() {
               {k.value}
               {k.max && <span className="text-lg text-outline">{k.max}</span>}
             </div>
-            {k.deltaUp !== null ? (
-              <div className="flex items-center gap-1 text-success text-sm font-medium">
-                <span className="material-symbols-outlined text-sm">
-                  {k.deltaUp ? 'arrow_upward' : 'arrow_downward'}
-                </span>
-                {k.delta}
-              </div>
-            ) : (
-              <div className="text-secondary text-sm font-medium">{k.delta}</div>
-            )}
+            <div className="text-secondary text-sm font-medium">{k.delta}</div>
           </Card>
         ))}
       </div>
 
       {/* ROW 2: Main Chart */}
       <Card className="p-6">
-        <SectionTitle
-          action={
-            <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-primary rounded-sm"></div>
-                <span className="text-secondary text-xs font-semibold">June (Current)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-0 border-t-2 border-dashed border-tertiary-container"></div>
-                <span className="text-secondary text-xs font-semibold">May (Previous)</span>
-              </div>
-            </div>
-          }
-        >
-          Spending Trend
-        </SectionTitle>
-
+        <SectionTitle>Spending Trend</SectionTitle>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={SPENDING_DATA} barSize={40}>
+            <BarChart data={weeklyData} barSize={40}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8ECF0" />
               <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#777682' }} axisLine={false} tickLine={false} />
@@ -143,7 +218,7 @@ export default function AnalyticsPage() {
             <div className="shrink-0 flex items-center justify-center">
               <PieChart width={180} height={180}>
                 <Pie
-                  data={CATEGORIES}
+                  data={categories}
                   dataKey="pct"
                   cx={90}
                   cy={90}
@@ -151,21 +226,21 @@ export default function AnalyticsPage() {
                   outerRadius={80}
                   paddingAngle={4}
                 >
-                  {CATEGORIES.map((c, i) => (
+                  {categories.map((c, i) => (
                     <Cell key={i} fill={c.color} />
                   ))}
                 </Pie>
               </PieChart>
             </div>
             <div className="flex-1 w-full space-y-4">
-              {CATEGORIES.map((c, i) => (
+              {categories.map((c, i) => (
                 <div key={i} className="w-full">
                   <div className="flex justify-between items-center text-sm mb-1">
                     <div className="flex items-center gap-2">
                       <span className="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: c.color }} />
                       <span className="font-medium text-secondary">{c.name}</span>
                     </div>
-                    <span className="font-bold text-on-surface">{c.pct}%</span>
+                    <span className="font-bold text-on-surface">{c.pct}% (₵{c.amount})</span>
                   </div>
                   <div className="w-full bg-surface-container-high rounded-full h-2">
                     <div className="h-2 rounded-full" style={{ width: `${c.pct}%`, backgroundColor: c.color }} />
@@ -180,14 +255,14 @@ export default function AnalyticsPage() {
         <Card className="lg:col-span-5 p-6">
           <h2 className="font-section-title text-section-title text-on-surface mb-6">Payment Methods</h2>
           <div className="space-y-6">
-            {PAYMENT_METHODS.map((m, i) => (
+            {paymentMethods.map((m, i) => (
               <div key={i}>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="font-semibold text-secondary">{m.label}</span>
-                  <span className="font-bold text-primary">{m.pct}%</span>
+                  <span className="font-bold text-primary">{m.pct}% (₵{Number(m.amount).toLocaleString()})</span>
                 </div>
                 <div className="w-full bg-surface-container-high rounded-full h-2.5">
-                  <div className={`h-2.5 rounded-full ${m.bgClass}`} style={{ width: `${m.pct}%` }}></div>
+                  <div className={`h-2.5 rounded-full ${m.bgClass || 'bg-primary'}`} style={{ width: `${m.pct}%` }}></div>
                 </div>
               </div>
             ))}
@@ -199,29 +274,30 @@ export default function AnalyticsPage() {
       <div>
         <h2 className="font-section-title text-section-title text-on-surface mb-4">Savings Goals</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {SAVINGS_GOALS.map((g, idx) => (
-            <Card key={idx} className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 rounded-lg bg-surface-bright flex items-center justify-center border border-border-subtle">
-                  <span className={`material-symbols-outlined ${g.textClass}`}>
-                    {g.icon}
+          {(goals || []).map((g: any, idx: number) => {
+            const pct = g.targetAmount > 0 ? Math.min(100, Math.round((g.savedAmount / g.targetAmount) * 100)) : 0;
+            return (
+              <Card key={idx} className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-surface-bright flex items-center justify-center border border-border-subtle">
+                    <span className="material-symbols-outlined text-primary">
+                      {g.icon || 'savings'}
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold px-2.5 py-1 bg-surface-container rounded text-secondary">
+                    {pct}%
                   </span>
                 </div>
-                <span className="text-xs font-semibold px-2.5 py-1 bg-surface-container rounded text-secondary">
-                  {g.pct}%
-                </span>
-              </div>
-              <h3 className="font-semibold text-on-surface mb-1">{g.name}</h3>
-              <div className="text-sm text-secondary mb-4">
-                ₵{g.saved.toLocaleString()} / ₵{g.target.toLocaleString()}
-              </div>
-              <div className="w-full bg-surface-container-high rounded-full h-1.5">
-                <div className={`h-1.5 rounded-full ${g.bgClass}`} style={{ width: `${g.pct}%` }}></div>
-              </div>
-            </Card>
-          ))}
-
-          {/* Create New Goal */}
+                <h3 className="font-semibold text-on-surface mb-1">{g.name}</h3>
+                <div className="text-sm text-secondary mb-4">
+                  ₵{Number(g.savedAmount).toLocaleString()} / ₵{Number(g.targetAmount).toLocaleString()}
+                </div>
+                <div className="w-full bg-surface-container-high rounded-full h-1.5">
+                  <div className="h-1.5 rounded-full bg-primary" style={{ width: `${pct}%` }}></div>
+                </div>
+              </Card>
+            );
+          })}
           <div className="border-2 border-dashed border-border-subtle rounded-xl p-6 flex flex-col items-center justify-center text-secondary hover:text-primary hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer group min-h-[160px]">
             <span className="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">
               add_circle
