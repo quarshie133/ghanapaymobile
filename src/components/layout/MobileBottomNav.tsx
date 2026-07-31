@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import T from "@/lib/tokens";
 import {
   FaHouse,
   FaClockRotateLeft,
@@ -11,11 +10,11 @@ import {
 } from "react-icons/fa6";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",  icon: FaHouse,            label: "Home"     },
-  { href: "/history",    icon: FaClockRotateLeft,   label: "History"  },
-  { href: "/send-money", icon: FaPaperPlane,         label: "Send"     },
-  { href: "/analytics",  icon: FaChartSimple,        label: "Insights" },
-  { href: "/settings",   icon: FaUser,               label: "Profile"  },
+  { href: "/dashboard",  icon: FaHouse,           label: "Home"     },
+  { href: "/history",    icon: FaClockRotateLeft,  label: "History"  },
+  { href: "/send-money", icon: FaPaperPlane,        label: "Send"     },
+  { href: "/analytics",  icon: FaChartSimple,       label: "Insights" },
+  { href: "/settings",   icon: FaUser,              label: "Profile"  },
 ];
 
 export default function MobileBottomNav() {
@@ -25,7 +24,11 @@ export default function MobileBottomNav() {
     href === "/dashboard" ? pathname === href : pathname.startsWith(href);
 
   return (
-    <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
+    <nav
+      className="mobile-bottom-nav"
+      aria-label="Mobile navigation"
+      role="navigation"
+    >
       {NAV_ITEMS.map((item) => {
         const active = isActive(item.href);
         const Icon = item.icon;
@@ -35,83 +38,84 @@ export default function MobileBottomNav() {
           <Link
             key={item.href}
             href={item.href}
-            style={{ textDecoration: "none", flex: 1 }}
+            className="flex-1 flex flex-col items-center justify-center no-underline relative"
+            style={{ minHeight: 44 }} // minimum touch target
+            aria-label={item.label}
+            aria-current={active ? "page" : undefined}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 3,
-                padding: isSend ? "0" : "8px 4px",
-                position: "relative",
-              }}
-            >
-              {isSend ? (
-                /* ── Send FAB (centre) ── */
+            {isSend ? (
+              /* ── Send FAB (centre elevated button) ── */
+              <div className="flex flex-col items-center gap-1">
                 <div
                   style={{
-                    width: 52,
-                    height: 52,
+                    width: 50,
+                    height: 50,
                     borderRadius: "50%",
-                    background: `linear-gradient(135deg, ${T.navyMid}, ${T.navy})`,
+                    background: "linear-gradient(135deg, #1b1f6b, #020259)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    boxShadow: `0 4px 16px ${T.navyMid}60`,
-                    marginBottom: 2,
-                    marginTop: -12,
+                    boxShadow: "0 4px 16px rgba(2,2,89,0.40)",
+                    marginTop: -16,
                     border: "3px solid #fff",
                   }}
                 >
-                  <Icon size={20} style={{ color: "#fff" }} />
+                  <Icon size={18} style={{ color: "#fff" }} />
                 </div>
-              ) : (
-                <>
-                  {/* Active indicator dot */}
-                  {active && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        width: 4,
-                        height: 4,
-                        borderRadius: "50%",
-                        background: T.navyMid,
-                      }}
-                    />
-                  )}
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: "#020259",
+                    lineHeight: 1,
+                  }}
+                >
+                  {item.label}
+                </span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-0.5 py-1 relative w-full items-center justify-center">
+                {/* Active indicator dot */}
+                {active && (
                   <div
+                    className="absolute top-0 left-1/2 -translate-x-1/2"
                     style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 12,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: active ? T.sidebarActive : "transparent",
-                      transition: "background 0.15s",
+                      width: 20,
+                      height: 3,
+                      borderRadius: "0 0 4px 4px",
+                      background: "#020259",
                     }}
-                  >
-                    <Icon
-                      size={18}
-                      style={{ color: active ? T.navyMid : T.textMuted }}
-                    />
-                  </div>
-                </>
-              )}
-              <span
-                style={{
-                  fontSize: 10,
-                  fontWeight: active ? 700 : 500,
-                  color: active ? T.navyMid : T.textMuted,
-                  lineHeight: 1,
-                }}
-              >
-                {item.label}
-              </span>
-            </div>
+                  />
+                )}
+                <div
+                  style={{
+                    width: 40,
+                    height: 32,
+                    borderRadius: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: active ? "#ECEFFE" : "transparent",
+                    transition: "background 0.15s",
+                  }}
+                >
+                  <Icon
+                    size={17}
+                    style={{ color: active ? "#020259" : "#8a9299" }}
+                  />
+                </div>
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: active ? 700 : 500,
+                    color: active ? "#020259" : "#8a9299",
+                    lineHeight: 1,
+                  }}
+                >
+                  {item.label}
+                </span>
+              </div>
+            )}
           </Link>
         );
       })}

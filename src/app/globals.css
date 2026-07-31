@@ -12,18 +12,34 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Prevent font size inflation on mobile */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
     font-family: 'Inter', sans-serif;
     background-color: #f6fafe;
     color: #171c1f;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
   }
 
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     vertical-align: middle;
     user-select: none;
+  }
+
+  /* Better tap highlights on mobile */
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 }
 
@@ -71,8 +87,39 @@
     @apply inline-flex items-center px-2.5 py-1 rounded-full bg-surface-variant text-secondary font-badge text-badge gap-1;
   }
 
+  /* ─── Mobile Bottom Nav ─────────────────────────────────────── */
   .mobile-bottom-nav {
-    @apply fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-border-subtle flex justify-around items-center z-[100] shadow-lg;
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-border-subtle flex justify-around items-center z-[100] shadow-lg;
+    height: calc(64px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* ─── Horizontal scroll containers (filter pills, months) ─── */
+  .scroll-x-snap {
+    @apply flex gap-2 overflow-x-auto pb-1;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+  }
+  .scroll-x-snap > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+  .scroll-x-snap::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ─── Table horizontal scroll wrapper ───────────────────────── */
+  .table-scroll {
+    @apply overflow-x-auto w-full;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ─── Modal: full screen on mobile ──────────────────────────── */
+  @media (max-width: 639px) {
+    .modal-panel {
+      @apply !w-full !max-w-full !rounded-none !min-h-screen !m-0;
+    }
   }
 }
 
@@ -90,5 +137,35 @@
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Safe area padding utilities */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Mobile-specific bottom clearance for bottom nav */
+  .pb-bottom-nav {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 768px) {
+    .pb-bottom-nav {
+      padding-bottom: 0;
+    }
+  }
+
+  /* Responsive metric value — override the fixed 36px on mobile */
+  .text-metric-value {
+    font-size: 22px !important;
+    line-height: 28px !important;
+  }
+  @media (min-width: 640px) {
+    .text-metric-value {
+      font-size: 36px !important;
+      line-height: 44px !important;
+    }
   }
 }

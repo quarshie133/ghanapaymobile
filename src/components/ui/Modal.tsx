@@ -103,7 +103,7 @@ export default function Modal({
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
-      className="fixed inset-0 bg-neutral-950/60 backdrop-blur-md z-[1000] flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 bg-neutral-950/60 backdrop-blur-md z-[1000] flex items-end sm:items-center justify-center sm:p-4 animate-in fade-in duration-200"
       onClick={(e) => {
         if (closeOnClickOutside && e.target === e.currentTarget) {
           onClose();
@@ -112,7 +112,7 @@ export default function Modal({
     >
       <div
         ref={modalRef}
-        className={`w-full bg-white rounded-3xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 ${sizeClasses[size]}`}
+        className={`w-full bg-white sm:rounded-3xl rounded-t-3xl shadow-2xl border border-border-subtle overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 sm:${sizeClasses[size]} max-h-[90vh] overflow-y-auto`}
       >
         {/* Modal Header */}
         <div className="p-6 pb-0 flex justify-between items-center">

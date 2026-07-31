@@ -373,14 +373,14 @@ export default function WalletPage() {
         <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ── Left column (8 cols) ── */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
 
           {/* ── Main Wallet Card ── */}
           <div className="rounded-2xl overflow-hidden shadow-xl border border-border-subtle">
             {/* Gradient Header */}
-            <div className="bg-gradient-to-br from-[#020259] via-[#0a0a7a] to-[#1b1b6b] p-8 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-[#020259] via-[#0a0a7a] to-[#1b1b6b] p-5 sm:p-8 relative overflow-hidden">
               {/* Decorative blobs */}
               <div className="absolute -top-10 -right-10 w-56 h-56 rounded-full bg-white/5 pointer-events-none" />
               <div className="absolute bottom-[-24px] right-[70px] w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
@@ -412,7 +412,7 @@ export default function WalletPage() {
                   Available Balance
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="font-black text-[42px] leading-none text-white tracking-tight">
+                  <span className="font-black text-[28px] sm:text-[42px] leading-none text-white tracking-tight">
                     {loading
                       ? '₵ ——'
                       : hidden
@@ -464,7 +464,7 @@ export default function WalletPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="bg-white p-5 grid grid-cols-3 gap-3 border-t border-border-subtle">
+            <div className="bg-white p-3 sm:p-5 grid grid-cols-3 gap-2 sm:gap-3 border-t border-border-subtle">
               <button
                 onClick={() => setModal('topup')}
                 className="group flex flex-col items-center gap-2 p-4 rounded-xl bg-emerald-50 hover:bg-emerald-500 transition-all duration-200 cursor-pointer border border-emerald-100 hover:border-emerald-500 hover:shadow-lg"
@@ -582,8 +582,8 @@ export default function WalletPage() {
           <Card>
             <SectionTitle>Recent Transactions</SectionTitle>
 
-            {/* Filter Tabs */}
-            <div className="flex gap-2 flex-wrap mb-4">
+            {/* Filter Tabs — horizontal scroll on mobile */}
+            <div className="scroll-x-snap mb-4">
               {TX_FILTER_TABS.map(({ key, label }) => (
                 <button
                   key={key}

@@ -115,7 +115,7 @@ export default function DashboardPage() {
         }
       >
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {/* Till Balance */}
           <Card className="relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -184,7 +184,7 @@ export default function DashboardPage() {
             {/* Sales Trend Chart */}
             <Card>
               <SectionTitle>Sales Trend This Month</SectionTitle>
-              <div className="h-64 w-full">
+              <div className="h-44 sm:h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={weeklyData} barSize={32}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8ECF0" />
@@ -214,13 +214,13 @@ export default function DashboardPage() {
                       key={idx}
                       className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors duration-200"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center shrink-0">
-                          {getInitials(tx.recipientName || tx.senderName || 'Customer')}
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center shrink-0 text-xs">
+                          {getInitials(tx.recipientName || tx.senderName || 'Anonymous')}
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-primary">{tx.recipientName || tx.senderName || 'Anonymous'}</p>
-                          <p className="text-[11px] text-secondary">{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Just now'} • {tx.method || 'GhanaPay'}</p>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-primary truncate max-w-[130px] sm:max-w-none">{tx.recipientName || tx.senderName || 'Anonymous'}</p>
+                          <p className="text-[10px] sm:text-[11px] text-secondary truncate max-w-[130px] sm:max-w-none">{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : tx.time} · {tx.note || 'Transfer'}</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -294,7 +294,7 @@ export default function DashboardPage() {
       }
     >
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {/* Wallet Balance */}
         <Card className="relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -372,10 +372,10 @@ export default function DashboardPage() {
             >
               Quick Actions
             </SectionTitle>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               {QUICK_ACTIONS.map((a, idx) => (
                 <Link key={idx} href={a.href} className="no-underline group">
-                  <div className="flex flex-col items-center justify-center p-4 rounded-xl bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all duration-200">
+                  <div className="flex flex-col items-center justify-center p-2 sm:p-4 rounded-xl bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all duration-200">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors duration-200 ${a.bgClass}`}>
                       <span className="material-symbols-outlined">{a.icon}</span>
                     </div>
@@ -412,7 +412,7 @@ export default function DashboardPage() {
               Spending Trends
             </SectionTitle>
 
-            <div className="h-64 w-full">
+            <div className="h-44 sm:h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weeklyData} barSize={32}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8ECF0" />

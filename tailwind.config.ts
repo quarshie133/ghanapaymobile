@@ -78,6 +78,7 @@ const config: Config = {
         'card-padding': '20px',
         'sidebar-width': '240px',
         'input-height': '44px',
+        'bottom-nav': '64px',
       },
       fontFamily: {
         'sidebar-label': ['Inter', 'sans-serif'],
@@ -92,11 +93,12 @@ const config: Config = {
       fontSize: {
         'sidebar-label': ['13px', { lineHeight: '18px', fontWeight: '500' }],
         'page-title': ['28px', { lineHeight: '36px', fontWeight: '700' }],
-        'page-title-mobile': ['22px', { lineHeight: '28px', fontWeight: '700' }],
+        'page-title-mobile': ['20px', { lineHeight: '26px', fontWeight: '700' }],
         'table-header': ['12px', { lineHeight: '16px', letterSpacing: '0.05em', fontWeight: '600' }],
         'table-cell': ['14px', { lineHeight: '20px', fontWeight: '400' }],
         'nav-link': ['14px', { lineHeight: '20px', fontWeight: '500' }],
         'metric-value': ['36px', { lineHeight: '44px', fontWeight: '700' }],
+        'metric-value-mobile': ['24px', { lineHeight: '30px', fontWeight: '700' }],
         'section-title': ['20px', { lineHeight: '28px', fontWeight: '600' }],
         'badge': ['11px', { lineHeight: '14px', fontWeight: '600' }],
       },

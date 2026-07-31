@@ -20,7 +20,7 @@ export default function Card({ children, style, className = "", onClick, id }: C
       id={id}
       onClick={onClick}
       style={style}
-      className={`${bgClass} ${borderClass} rounded-xl p-card-padding shadow-sm relative overflow-hidden transition-all duration-200 ${className}`}
+      className={`${bgClass} ${borderClass} rounded-xl p-3 sm:p-card-padding shadow-sm relative overflow-hidden transition-all duration-200 ${className}`}
     >
       {children}
     </div>
