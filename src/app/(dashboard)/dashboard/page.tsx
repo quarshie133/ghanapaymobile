@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { formatCurrency, getInitials } from '@/lib/utils';
+import { formatCurrency, getInitials, getGreeting } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
 import { api } from '@/lib/api';
 import Card from '@/components/ui/Card';
@@ -284,7 +284,7 @@ export default function DashboardPage() {
 
   return (
     <PageWrap
-      title={`Good morning, ${user?.name?.split(' ')[0] || 'Abena'} 👋`}
+      title={`${getGreeting()}, ${user?.name?.split(' ')[0] || 'Abena'} 👋`}
       subtitle={new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
       action={
         <button className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary-container transition-all active:scale-95 shadow-md">
