@@ -70,6 +70,10 @@
   .badge-paused {
     @apply inline-flex items-center px-2.5 py-1 rounded-full bg-surface-variant text-secondary font-badge text-badge gap-1;
   }
+
+  .mobile-bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-border-subtle flex justify-around items-center z-[100] shadow-lg;
+  }
 }
 
 @layer utilities {

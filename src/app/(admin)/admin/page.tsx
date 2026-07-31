@@ -59,12 +59,14 @@ export default function AdminOverviewPage() {
   const [approvingId, setApprovingId] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [lastChecked, setLastChecked] = useState<string>('');
 
   const fetchOverview = () => {
     api.get('/admin/overview')
       .then(res => {
         setData(res.data || res);
         setLoading(false);
+        setLastChecked(new Date().toLocaleTimeString());
       })
       .catch(() => {
         setLoading(false);
@@ -222,7 +224,7 @@ export default function AdminOverviewPage() {
             </div>
           ))}
           <div style={{ marginTop: 12, fontSize: 11, color: T.textMuted, textAlign: 'right' }}>
-            Last checked: {new Date().toLocaleTimeString()}
+            Last checked: {lastChecked || '...'}
           </div>
         </Card>
       </div>

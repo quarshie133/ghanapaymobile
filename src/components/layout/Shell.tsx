@@ -59,7 +59,7 @@ export default function Shell({ children, isAdmin = false }: ShellProps) {
             }
           }}
         />
-        <div className="flex-1 overflow-y-auto pt-topnav-height bg-background relative">
+        <div className="flex-1 overflow-y-auto pt-topnav-height pb-16 md:pb-0 bg-background relative">
           <div className="absolute inset-0 kente-pattern pointer-events-none z-0"></div>
           <div className="relative z-10 min-h-full">
             {children}
