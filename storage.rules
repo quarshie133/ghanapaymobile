@@ -1,0 +1,40 @@
+rules_version = '2';
+
+// GhanaPay Mobile — Storage Security Rules (DRAFT, Phase 4)
+// Deploy via Firebase Console → Build → Storage → Rules tab → Publish.
+//
+// STATUS: KYC document upload isn't implemented yet (still a mock API
+// route). These rules pre-establish the intended access boundary — a
+// user's KYC documents are only readable by that user and by admins,
+// NEVER publicly — so it's in place before real uploads land.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // kyc/{uid}/{fileName} — private per-user KYC documents.
+    match /kyc/{uid}/{fileName} {
+      // Admin viewing does NOT go through these rules — it uses a
+      // server-side signed URL generated with the Admin SDK (which bypasses
+      // Storage rules by design), see src/app/api/kyc/document-url/route.ts.
+      // Never add a client-readable admin path here; that would make
+      // getDownloadURL-style permanent links possible again.
+      allow read: if isOwner(uid);
+      allow write: if isOwner(uid)
+        && request.resource.size < 10 * 1024 * 1024 // 10MB max
+        && request.resource.contentType.matches('image/.*|application/pdf');
+    }
+
+    // Default-deny everything else.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

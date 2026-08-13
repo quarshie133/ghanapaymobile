@@ -1,0 +1,125 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────
+// GhanaPay Mobile — Firestore Security Rules (DRAFT, Phase 4)
+//
+// HOW TO DEPLOY (GUI, no CLI):
+//   Firebase Console → Build → Firestore Database → Rules tab →
+//   paste this file's contents → Publish.
+// See docs/15_FIREBASE_GUI_SETUP_GUIDE.md for the full walkthrough.
+//
+// STATUS: Covers the `users` collection only, matching what's implemented
+// so far (Firebase Auth + user profiles). Rules for wallets, transactions,
+// KYC, etc. will be added alongside those features in later phases —
+// they are NOT implemented yet, so don't assume they're enforced.
+// ─────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'administrator';
+    }
+
+    // ── users/{uid} ─────────────────────────────────────────────────────
+    // A user can read/create/update their OWN profile, but can never set
+    // or change their own `role` or `tier` — those are privilege fields.
+    // Admins can read any profile (needed for the admin user-management
+    // screen) but role/tier changes still must not happen from arbitrary
+    // client writes; that should go through a reviewed admin action
+    // (future Cloud Function), not a raw Firestore write, once that's built.
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.role == 'customer'
+        && request.resource.data.tier == 1;
+
+      allow update: if isOwner(uid)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.tier == resource.data.tier
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if false; // no client-side account deletion
+    }
+
+    // ── wallets/{uid} ───────────────────────────────────────────────────
+    // Balance changes ONLY happen server-side via the Admin SDK (see
+    // src/lib/wallet-ledger.ts, called from src/app/api/wallet/route.ts
+    // after verifying the caller's identity). The Admin SDK bypasses these
+    // rules entirely — that's expected. These rules exist to block the
+    // CLIENT SDK from ever writing a balance directly, which is the
+    // exact "balance = balance - amount from the browser" anti-pattern
+    // the brief calls out.
+    match /wallets/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    // ── walletTransactions/{txId} ───────────────────────────────────────
+    // Immutable ledger entries, written only by the server. A user can
+    // read their own transactions (uid field on the document); admins can
+    // read any transaction for the admin transaction-monitoring screen
+    // (not yet built).
+    match /walletTransactions/{txId} {
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
+    // ── kycRecords/{uid} ─────────────────────────────────────────────────
+    // A user can read their own KYC status/progress; admins can read any
+    // record for the review queue. ALL writes (document submission,
+    // approve/reject) go through server routes using the Admin SDK — see
+    // src/lib/kyc-record.ts. This is what actually enforces "a user can
+    // never approve their own KYC" — it's not a client-writable field.
+    match /kycRecords/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    // ── linkedAccounts/{accountId} ──────────────────────────────────────
+    // Sandbox-linked external bank/MoMo accounts. Same server-only write
+    // pattern as everything else money-related — see src/lib/linked-accounts.ts.
+    match /linkedAccounts/{accountId} {
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
+    // ── notifications/{notificationId} ──────────────────────────────────
+    // Server-created only (see src/lib/notifications.ts). A user can read
+    // their own notifications; marking as read also goes through a server
+    // route (not a direct client write) so `read` can't be spoofed to hide
+    // evidence of an action from an admin audit later.
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // ── scheduledPayments/{id} ───────────────────────────────────────────
+    // A user can read their own schedules. ALL writes (create, pause,
+    // cancel, and execution updates) go through server routes — see
+    // src/lib/scheduled-payments.ts. Execution itself
+    // (POST /api/scheduled/run) is invoked by a cron trigger using the
+    // Admin SDK, which bypasses these rules entirely, same as every other
+    // server-only collection in this file.
+    match /scheduledPayments/{id} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Default-deny everything else until it's actually implemented.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
