@@ -1,0 +1,413 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GhanaPay - Wallet &amp; Accounts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Syne:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#131d21",
+                        "outline-variant": "#c7c5d2",
+                        "surface-tint": "#5257a3",
+                        "on-primary-container": "#858ada",
+                        "surface-container-low": "#f0f4f8",
+                        "primary-container": "#1b1f6b",
+                        "table-hover": "#F5F7FF",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffe08e",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-background": "#171c1f",
+                        "sidebar-light": "#F8F9FE",
+                        "success": "#1E8449",
+                        "secondary-fixed-dim": "#bec8ce",
+                        "surface-bright": "#f6fafe",
+                        "surface-dim": "#d6dade",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#3a3f8a",
+                        "secondary": "#566065",
+                        "error": "#C0392B",
+                        "surface": "#f6fafe",
+                        "on-tertiary-container": "#4f3d00",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#171c1f",
+                        "surface-variant": "#dfe3e7",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#464651",
+                        "primary-fixed-dim": "#bfc2ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ecc246",
+                        "border-subtle": "#E8ECF0",
+                        "surface-container-high": "#e4e9ed",
+                        "secondary-container": "#dae4ea",
+                        "outline": "#777682",
+                        "inverse-primary": "#bfc2ff",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-secondary-fixed-variant": "#3f484d",
+                        "on-secondary-container": "#5c666b",
+                        "on-primary": "#ffffff",
+                        "background": "#f6fafe",
+                        "surface-container-highest": "#dfe3e7",
+                        "primary": "#020259",
+                        "admin-bg": "#0D1120",
+                        "tertiary": "#755b00",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#e0e0ff",
+                        "inverse-on-surface": "#edf1f5",
+                        "tertiary-container": "#cea62c",
+                        "sidebar-active-light": "#ECEFFE",
+                        "on-primary-fixed": "#090c5e",
+                        "inverse-surface": "#2c3134",
+                        "surface-container": "#eaeef2",
+                        "secondary-fixed": "#dae4ea",
+                        "admin-accent": "#4A6CF7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding": "32px",
+                        "topnav-height": "64px",
+                        "gutter": "24px",
+                        "card-padding": "20px",
+                        "input-height": "44px",
+                        "sidebar-width": "240px"
+                    },
+                    "fontFamily": {
+                        "table-header": ["Inter"],
+                        "page-title-mobile": ["Inter"],
+                        "page-title": ["Inter"],
+                        "metric-value": ["Syne"],
+                        "badge": ["Inter"],
+                        "nav-link": ["Inter"],
+                        "sidebar-label": ["Inter"],
+                        "section-title": ["Inter"],
+                        "table-cell": ["Inter"]
+                    },
+                    "fontSize": {
+                        "table-header": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "page-title-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "page-title": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "metric-value": ["36px", { "lineHeight": "44px", "fontWeight": "700" }],
+                        "badge": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+                        "nav-link": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "sidebar-label": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "section-title": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "table-cell": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .shadow-level-1 { box-shadow: 0 4px 6px -1px rgba(27, 31, 107, 0.05), 0 2px 4px -1px rgba(27, 31, 107, 0.03); }
+        .shadow-level-2 { box-shadow: 0 10px 15px -3px rgba(27, 31, 107, 0.08), 0 4px 6px -2px rgba(27, 31, 107, 0.04); }
+        
+        .kente-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20zm20-20h20v20H20V0z' fill='%231B1F6B' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-table-cell flex h-screen overflow-hidden antialiased">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-sidebar-light dark:bg-admin-bg font-sidebar-label text-sidebar-label fixed left-0 top-0 h-screen w-sidebar-width border-r border-border-subtle dark:border-outline-variant flex flex-col h-full py-gutter z-40 transition-all duration-200 ease-in-out">
+<div class="px-gutter mb-8">
+<h1 class="font-page-title text-page-title font-bold text-primary dark:text-inverse-primary">GhanaPay</h1>
+<p class="text-secondary text-xs mt-1">Enterprise Portal</p>
+</div>
+<div class="flex flex-col gap-1 flex-1 overflow-y-auto px-4">
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">monitoring</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">send</span>
+                Send
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">layers</span>
+                Bulk
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+                Bills
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">smartphone</span>
+                Airtime
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">event_repeat</span>
+                Scheduled
+            </a>
+<a class="flex items-center gap-3 bg-sidebar-active-light dark:bg-primary-container text-primary dark:text-on-primary-container border-l-4 border-primary dark:border-inverse-primary px-4 py-3 rounded-r-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+                Wallet
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">history</span>
+                Transactions
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">description</span>
+                Statements
+            </a>
+</div>
+<div class="mt-auto flex flex-col gap-1 px-4 pt-4 border-t border-border-subtle">
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help_center</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 text-secondary dark:text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-highest px-4 py-3 transition-colors rounded-lg text-error" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col ml-0 md:ml-sidebar-width relative w-full h-full kente-pattern">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-admin-bg font-nav-link text-nav-link fixed top-0 right-0 h-topnav-height w-full md:w-[calc(100%-240px)] z-30 border-b border-border-subtle dark:border-outline-variant shadow-sm dark:shadow-none flex justify-between items-center px-gutter h-full">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+<div class="flex-1 max-w-md ml-4 mr-8 hidden sm:block">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary">search</span>
+<input class="w-full h-input-height pl-10 pr-4 bg-surface-container-low border border-border-subtle rounded-lg focus:outline-none focus:border-primary text-sm text-on-surface" placeholder="Search accounts, transactions..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest rounded-full p-2 transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest rounded-full p-2 transition-colors scale-95 active:scale-90 transition-transform relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-fixed overflow-hidden ml-2 cursor-pointer border border-border-subtle">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a person looking forward against a neutral background, high resolution, soft corporate lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6ctgGUxxpl7l3dLuZcr3qdFvIN-8bBEelBDkpCvaBLyZLIeDwgdFvGC4P3hbJ6nSXfC0zSiU7Af1buqlL2GnDipBCQh-EVax8r4RRUaSVBxsiivdIhE8MzGZPWX4_IMglAZDTdz3T4FsLO68sugqiGA1q5kJk82zGeK6qbNIpHgY6gPGEmEBjQBu-r_v7gsAZkd2-z-PL4UoXUIYt2KjH-PaNKys5mQ32al13M8PjDCK-1jtifqse-cyNFsY12rylCRqDIOfapug"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 overflow-y-auto mt-topnav-height p-page-padding">
+<!-- Page Header -->
+<div class="mb-8">
+<h2 class="font-page-title text-page-title hidden md:block text-primary">Wallet &amp; Accounts</h2>
+<h2 class="font-page-title-mobile text-page-title-mobile md:hidden text-primary">Wallet &amp; Accounts</h2>
+<p class="text-secondary mt-2">Manage your GhanaPay balance and linked funding sources.</p>
+</div>
+<div class="grid grid-cols-12 gap-gutter max-w-[1200px]">
+<!-- ROW 1: Primary Wallet Card -->
+<div class="col-span-12 lg:col-span-5">
+<div class="bg-primary text-on-primary rounded-xl p-card-padding shadow-level-2 h-full flex flex-col justify-between relative overflow-hidden">
+<!-- Decorative glow -->
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-primary-fixed rounded-full opacity-20 blur-3xl"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-2">
+<span class="text-inverse-primary text-sm font-medium">Available Balance</span>
+<span class="material-symbols-outlined text-inverse-primary">visibility</span>
+</div>
+<h3 class="font-metric-value text-metric-value tracking-tight">âµ4,250.00</h3>
+</div>
+<div class="flex gap-3 mt-8 relative z-10">
+<button class="flex-1 bg-on-primary text-primary font-medium py-3 rounded-lg shadow-sm hover:bg-surface transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                                Add Money
+                            </button>
+<button class="flex-1 bg-transparent border border-inverse-primary text-inverse-primary hover:bg-primary-container font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                                Withdraw
+                            </button>
+</div>
+</div>
+</div>
+<!-- ROW 2: Linked Sources -->
+<div class="col-span-12 lg:col-span-7 flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-section-title text-section-title text-on-surface">Linked Sources</h3>
+<a class="text-primary text-sm font-medium hover:underline" href="#">Manage All</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 h-full">
+<!-- Card 1: MTN MoMo -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-border-subtle shadow-level-1 relative group hover:shadow-level-2 transition-shadow">
+<div class="absolute top-3 right-3">
+<span class="bg-success/10 text-success font-badge text-badge px-2 py-1 rounded-full border border-success/20">Primary Source</span>
+</div>
+<div class="w-12 h-12 bg-[#FFCC00] rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+<span class="font-bold text-[#000] text-xs">MTN</span>
+</div>
+<p class="font-medium text-on-surface">MTN MoMo</p>
+<p class="text-secondary text-sm mt-1">Balance: âµ1,200.00</p>
+<button class="mt-4 text-primary text-sm font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                Top-up from here <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</button>
+</div>
+<!-- Card 2: Ecobank -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-border-subtle shadow-level-1 group hover:shadow-level-2 transition-shadow">
+<div class="w-12 h-12 bg-surface-container rounded-lg mb-4 flex items-center justify-center overflow-hidden p-2 border border-border-subtle">
+<img alt="Bank Logo" class="w-full h-full object-contain" data-alt="A clean, minimalist logo of a modern corporate bank, white background, flat design, high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBSd94aPa5LA_5l6CCa9g84yKYA_VbceXetVwx6h5MzArIDjixnGKElNlvqRlC7gdRKd3y9vLklz3WRxyM259wem-ih0NMkhwSpCvXvEqVKyNZt0emlkIyO8Ai2PHsBznEHpJi5pwq3NW5qcTm37N0NpJhXL1h08woKtHFWaOGGB8lppDWkhBLf3QcOrKvVSciffuZztRcRrJW7qQHoRq3XqQ_MZwmawJKPvGJJafOXjaUGLj2HugbsH7gacHjVUxfNexv8UhOQlA"/>
+</div>
+<p class="font-medium text-on-surface">Ecobank Ghana</p>
+<p class="text-secondary text-sm mt-1">Account ...4821</p>
+<button class="mt-4 text-primary text-sm font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                Top-up from here <span class="material-symbols-outlined text-xs">arrow_forward</span>
+</button>
+</div>
+<!-- Card 3: Add New -->
+<div class="rounded-xl p-4 border-2 border-dashed border-outline-variant hover:border-primary hover:bg-surface-container-low transition-colors flex flex-col items-center justify-center text-center cursor-pointer min-h-[140px]">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center mb-2 text-secondary group-hover:text-primary">
+<span class="material-symbols-outlined">add_link</span>
+</div>
+<p class="font-medium text-primary text-sm">Link New Account</p>
+</div>
+</div>
+</div>
+<!-- ROW 3: Recent Wallet Activity -->
+<div class="col-span-12 mt-4">
+<div class="bg-surface-container-lowest rounded-xl border border-border-subtle shadow-level-1 overflow-hidden">
+<div class="p-5 border-b border-border-subtle flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<h3 class="font-section-title text-section-title text-on-surface">Recent Wallet Activity</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-border-subtle rounded-md text-sm font-medium text-secondary hover:bg-surface-container flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                                    Filter
+                                </button>
+<button class="px-3 py-1.5 border border-border-subtle rounded-md text-sm font-medium text-secondary hover:bg-surface-container flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                    Export
+                                </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low font-table-header text-table-header text-secondary uppercase border-b border-border-subtle">
+<tr>
+<th class="p-4 whitespace-nowrap">Date</th>
+<th class="p-4 whitespace-nowrap">Source/Destination</th>
+<th class="p-4 whitespace-nowrap">Type</th>
+<th class="p-4 whitespace-nowrap text-right">Amount</th>
+<th class="p-4 whitespace-nowrap text-center">Status</th>
+<th class="p-4 whitespace-nowrap"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<!-- Row 1 -->
+<tr class="hover:bg-table-hover transition-colors group cursor-pointer">
+<td class="p-4 text-sm">
+<div class="text-on-surface font-medium">Oct 24, 2023</div>
+<div class="text-secondary text-xs">14:32 PM</div>
+</td>
+<td class="p-4 text-sm">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-[#FFCC00] flex justify-center items-center text-[8px] font-bold">MTN</div>
+<span class="text-on-surface font-medium">MTN MoMo</span>
+</div>
+</td>
+<td class="p-4 text-sm">
+<div class="flex items-center gap-1 text-success">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+                                                Top-up
+                                            </div>
+</td>
+<td class="p-4 text-sm text-right font-medium text-success">+ âµ500.00</td>
+<td class="p-4 text-center">
+<span class="inline-flex bg-success/10 text-success font-badge text-badge px-2 py-0.5 rounded-full">Completed</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-secondary opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-surface-container rounded">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-table-hover transition-colors bg-surface-bright group cursor-pointer">
+<td class="p-4 text-sm">
+<div class="text-on-surface font-medium">Oct 22, 2023</div>
+<div class="text-secondary text-xs">09:15 AM</div>
+</td>
+<td class="p-4 text-sm">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-container border border-border-subtle flex justify-center items-center text-secondary">
+<span class="material-symbols-outlined text-[14px]">account_balance</span>
+</div>
+<span class="text-on-surface font-medium">Ecobank ...4821</span>
+</div>
+</td>
+<td class="p-4 text-sm">
+<div class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+                                                Withdrawal
+                                            </div>
+</td>
+<td class="p-4 text-sm text-right font-medium text-on-surface">- âµ1,500.00</td>
+<td class="p-4 text-center">
+<span class="inline-flex bg-success/10 text-success font-badge text-badge px-2 py-0.5 rounded-full">Completed</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-secondary opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-surface-container rounded">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-table-hover transition-colors group cursor-pointer">
+<td class="p-4 text-sm">
+<div class="text-on-surface font-medium">Oct 18, 2023</div>
+<div class="text-secondary text-xs">16:45 PM</div>
+</td>
+<td class="p-4 text-sm">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-[#FFCC00] flex justify-center items-center text-[8px] font-bold">MTN</div>
+<span class="text-on-surface font-medium">MTN MoMo</span>
+</div>
+</td>
+<td class="p-4 text-sm">
+<div class="flex items-center gap-1 text-success">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+                                                Top-up
+                                            </div>
+</td>
+<td class="p-4 text-sm text-right font-medium text-success">+ âµ2,000.00</td>
+<td class="p-4 text-center">
+<span class="inline-flex bg-error-container text-on-error-container font-badge text-badge px-2 py-0.5 rounded-full">Failed</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-secondary opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-surface-container rounded">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-border-subtle bg-surface-bright flex justify-center">
+<button class="text-primary font-medium text-sm hover:underline">View Full Statement</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

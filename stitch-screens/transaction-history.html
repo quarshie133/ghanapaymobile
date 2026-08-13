@@ -1,0 +1,594 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GhanaPay Enterprise - Transaction History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Syne:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#ffe08e",
+                    "border-subtle": "#E8ECF0",
+                    "secondary": "#566065",
+                    "surface-bright": "#f6fafe",
+                    "surface-variant": "#dfe3e7",
+                    "admin-bg": "#0D1120",
+                    "on-primary-fixed-variant": "#3a3f8a",
+                    "inverse-primary": "#bfc2ff",
+                    "outline": "#777682",
+                    "secondary-container": "#dae4ea",
+                    "tertiary": "#755b00",
+                    "on-error": "#ffffff",
+                    "sidebar-active-light": "#ECEFFE",
+                    "on-surface": "#171c1f",
+                    "surface-tint": "#5257a3",
+                    "on-primary-fixed": "#090c5e",
+                    "surface-container-highest": "#dfe3e7",
+                    "table-hover": "#F5F7FF",
+                    "primary-fixed": "#e0e0ff",
+                    "error": "#C0392B",
+                    "inverse-surface": "#2c3134",
+                    "admin-accent": "#4A6CF7",
+                    "outline-variant": "#c7c5d2",
+                    "primary-fixed-dim": "#bfc2ff",
+                    "on-surface-variant": "#464651",
+                    "on-primary-container": "#858ada",
+                    "primary": "#020259",
+                    "tertiary-fixed-dim": "#ecc246",
+                    "on-error-container": "#93000a",
+                    "on-background": "#171c1f",
+                    "tertiary-container": "#cea62c",
+                    "on-tertiary-container": "#4f3d00",
+                    "on-secondary-fixed": "#131d21",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#584400",
+                    "primary-container": "#1b1f6b",
+                    "secondary-fixed-dim": "#bec8ce",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#241a00",
+                    "success": "#1E8449",
+                    "surface-container": "#eaeef2",
+                    "on-secondary-fixed-variant": "#3f484d",
+                    "inverse-on-surface": "#edf1f5",
+                    "on-primary": "#ffffff",
+                    "surface": "#f6fafe",
+                    "on-secondary-container": "#5c666b",
+                    "surface-container-low": "#f0f4f8",
+                    "background": "#f6fafe",
+                    "on-tertiary": "#ffffff",
+                    "sidebar-light": "#F8F9FE",
+                    "secondary-fixed": "#dae4ea",
+                    "surface-dim": "#d6dade",
+                    "surface-container-high": "#e4e9ed",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "topnav-height": "64px",
+                    "gutter": "24px",
+                    "page-padding": "32px",
+                    "card-padding": "20px",
+                    "sidebar-width": "240px"
+            },
+            "fontFamily": {
+                    "sidebar-label": ["Inter"],
+                    "page-title": ["Inter"],
+                    "table-header": ["Inter"],
+                    "table-cell": ["Inter"],
+                    "nav-link": ["Inter"],
+                    "metric-value": ["Syne"],
+                    "section-title": ["Inter"],
+                    "badge": ["Inter"]
+            },
+            "fontSize": {
+                    "sidebar-label": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "page-title": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                    "table-header": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "table-cell": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "nav-link": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "metric-value": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                    "section-title": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "badge": ["11px", {"lineHeight": "14px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .sidebar-item-active {
+            border-left: 4px solid #020259;
+            background-color: #ECEFFE;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #dfe3e7;
+            border-radius: 10px;
+        }
+        .receipt-jagged-bottom {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+            background: white;
+            position: relative;
+        }
+        .receipt-jagged-bottom::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(-45deg, transparent 5px, white 5px), linear-gradient(45deg, transparent 5px, white 5px);
+            background-size: 10px 10px;
+        }
+    </style>
+</head>
+<body class="bg-background font-table-cell text-on-surface">
+<!-- Sidebar -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-sidebar-light border-r border-border-subtle flex flex-col py-gutter z-50">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="font-page-title text-primary text-lg leading-tight">GhanaPay</h1>
+<p class="text-[10px] text-secondary uppercase tracking-widest font-bold">Enterprise Portal</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-sidebar-label">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-sidebar-label">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">send</span>
+<span class="font-sidebar-label">Send</span>
+</a>
+<a class="sidebar-item-active flex items-center gap-3 text-primary px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-sidebar-label">Transactions</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-sidebar-label">Wallet</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-sidebar-label">Bills</span>
+</a>
+<div class="pt-4 pb-2 px-6">
+<span class="text-[11px] font-bold text-outline-variant uppercase tracking-widest">Management</span>
+</div>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-sidebar-label">Settings</span>
+</a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<span class="font-sidebar-label">Support</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="flex items-center gap-3 text-error w-full hover:bg-error-container/20 p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-sidebar-label">Logout</span>
+</button>
+</div>
+</aside>
+<!-- Header -->
+<header class="fixed top-0 right-0 h-topnav-height w-[calc(100%-240px)] bg-surface border-b border-border-subtle z-40 flex justify-between items-center px-gutter">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96 border border-border-subtle focus-within:border-primary transition-all">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full font-nav-link" placeholder="Search transactions, IDs, or contacts..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-secondary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<div class="flex items-center gap-3 border-l border-border-subtle pl-6">
+<div class="text-right">
+<p class="text-sm font-bold text-primary">Kofi Mensah</p>
+<p class="text-[10px] text-secondary">Administrator</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-fixed" data-alt="A professional headshot of a middle-aged Ghanaian business administrator in a sharp navy suit, smiling confidently. The background is a blurred high-end corporate office with soft, warm lighting. The image maintains a clean, modern aesthetic with high contrast and sharp focus on the facial features to convey trust and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaACKlTQJP2oL9aBdTEJyobfwBGhslGUcuehpn61vl876yA61ZHM3GHUfYwNqj79pilZnp-sewNBjZFCtGBZGFqVSHUcBuRsQUo5w97Xy965p1L1OcsNSSAhz2zor_seQF5eXc4KjYbVAJDyYpDtF-SgwJORdJlB_u-IGYOTmcTjt903Vt3iPLAKPTYVAqowYO6w9oJ0K9ExiHiu-8m9eimSy6uqVspu0b5C2hb1f1wPYO1HhtRn7WFnq6JDxFFGFIt5S0JJMyWoE"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-sidebar-width pt-topnav-height min-h-screen p-page-padding">
+<div class="mb-8 flex justify-between items-end">
+<div>
+<h2 class="font-page-title text-primary">Transaction History</h2>
+<p class="text-secondary font-nav-link mt-1">Review and manage your enterprise financial activities.</p>
+</div>
+<button class="bg-primary text-white px-6 py-2.5 rounded-xl font-nav-link flex items-center gap-2 shadow-lg shadow-primary/20 hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                Export Report
+            </button>
+</div>
+<!-- Summary Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white p-card-padding rounded-2xl border border-border-subtle shadow-sm flex items-center justify-between">
+<div>
+<p class="text-[12px] font-bold text-secondary uppercase tracking-wider mb-1">Total Received</p>
+<h3 class="font-metric-value text-success">GHâµ 1,245,000.00</h3>
+<p class="text-[11px] text-secondary mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-success">trending_up</span>
+<span class="text-success font-bold">+12.5%</span> from last period
+                    </p>
+</div>
+<div class="w-12 h-12 bg-success/10 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-success">call_received</span>
+</div>
+</div>
+<div class="bg-white p-card-padding rounded-2xl border border-border-subtle shadow-sm flex items-center justify-between">
+<div>
+<p class="text-[12px] font-bold text-secondary uppercase tracking-wider mb-1">Total Sent</p>
+<h3 class="font-metric-value text-error">GHâµ 892,300.50</h3>
+<p class="text-[11px] text-secondary mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-error">trending_down</span>
+<span class="text-error font-bold">-2.4%</span> from last period
+                    </p>
+</div>
+<div class="w-12 h-12 bg-error/10 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-error">call_made</span>
+</div>
+</div>
+<div class="bg-white p-card-padding rounded-2xl border border-border-subtle shadow-sm flex items-center justify-between">
+<div>
+<p class="text-[12px] font-bold text-secondary uppercase tracking-wider mb-1">Net Balance</p>
+<h3 class="font-metric-value text-primary">GHâµ 352,699.50</h3>
+<p class="text-[11px] text-secondary mt-2">Activity for Jun 1 - Jun 16, 2026</p>
+</div>
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+</div>
+</div>
+</div>
+<!-- Sticky Filter Bar -->
+<div class="sticky top-[64px] bg-background/80 backdrop-blur-md z-30 py-4 -mx-4 px-4 mb-4">
+<div class="bg-white p-3 rounded-2xl border border-border-subtle shadow-sm flex flex-wrap items-center gap-4">
+<div class="flex-1 min-w-[200px]">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline">search</span>
+<input class="w-full pl-10 h-10 bg-surface-container-lowest border-border-subtle rounded-xl focus:ring-primary focus:border-primary text-sm" placeholder="Search by recipient or ID..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<select class="h-10 bg-surface-container-lowest border-border-subtle rounded-xl text-sm focus:ring-primary font-nav-link">
+<option>Transaction Type</option>
+<option>Bulk Transfer</option>
+<option>Airtime Purchase</option>
+<option>Bill Payment</option>
+<option>Wallet Top-up</option>
+</select>
+<div class="h-10 flex items-center px-4 bg-surface-container-lowest border border-border-subtle rounded-xl text-sm font-nav-link cursor-pointer hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-[18px] mr-2">calendar_today</span>
+                        June 01 - June 16, 2026
+                    </div>
+<select class="h-10 bg-surface-container-lowest border-border-subtle rounded-xl text-sm focus:ring-primary font-nav-link">
+<option>Status: All</option>
+<option>Successful</option>
+<option>Pending</option>
+<option>Failed</option>
+</select>
+<button class="h-10 px-4 bg-surface-container border border-border-subtle rounded-xl text-sm font-bold text-secondary hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        More Filters
+                    </button>
+</div>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-white rounded-2xl border border-border-subtle shadow-sm overflow-hidden mb-8">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-border-subtle">
+<tr>
+<th class="px-6 py-4 font-table-header text-secondary">DATE &amp; TIME</th>
+<th class="px-6 py-4 font-table-header text-secondary">DESCRIPTION</th>
+<th class="px-6 py-4 font-table-header text-secondary">TYPE</th>
+<th class="px-6 py-4 font-table-header text-secondary">AMOUNT</th>
+<th class="px-6 py-4 font-table-header text-secondary">STATUS</th>
+<th class="px-6 py-4 font-table-header text-secondary text-right">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<!-- Row 1 (Selected) -->
+<tr class="hover:bg-table-hover cursor-pointer transition-colors bg-sidebar-active-light" onclick="toggleDetails()">
+<td class="px-6 py-5">
+<p class="text-sm font-bold text-on-surface">Jun 16, 2026</p>
+<p class="text-[12px] text-secondary">02:45 PM</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary/5 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px] text-primary">business_center</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Employee Salaries - June</p>
+<p class="text-[12px] text-secondary">Ref: GHP-20260616-4821</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="text-[11px] font-bold text-on-secondary-container bg-secondary-container px-2 py-1 rounded-md uppercase">Bulk Transfer</span>
+</td>
+<td class="px-6 py-5">
+<span class="font-metric-value text-lg text-primary">GHâµ 45,200.00</span>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 bg-success/10 text-success px-3 py-1 rounded-full font-badge text-[11px]">
+<span class="w-1.5 h-1.5 bg-success rounded-full"></span>
+                                SUCCESSFUL
+                            </span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary hover:bg-primary/5 p-2 rounded-lg">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-table-hover cursor-pointer transition-colors">
+<td class="px-6 py-5">
+<p class="text-sm font-bold text-on-surface">Jun 15, 2026</p>
+<p class="text-[12px] text-secondary">10:12 AM</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-error/5 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px] text-error">bolt</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">ECG Utility Payment</p>
+<p class="text-[12px] text-secondary">Ref: GHP-20260615-1012</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="text-[11px] font-bold text-on-tertiary-container bg-tertiary-fixed px-2 py-1 rounded-md uppercase">Bill Payment</span>
+</td>
+<td class="px-6 py-5">
+<span class="font-metric-value text-lg text-primary">GHâµ 1,250.00</span>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 bg-success/10 text-success px-3 py-1 rounded-full font-badge text-[11px]">
+<span class="w-1.5 h-1.5 bg-success rounded-full"></span>
+                                SUCCESSFUL
+                            </span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary hover:bg-primary/5 p-2 rounded-lg">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-table-hover cursor-pointer transition-colors">
+<td class="px-6 py-5">
+<p class="text-sm font-bold text-on-surface">Jun 15, 2026</p>
+<p class="text-[12px] text-secondary">08:00 AM</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-success/5 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px] text-success">add_circle</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Inbound Bank Transfer</p>
+<p class="text-[12px] text-secondary">Ref: BNK-TRF-990122</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="text-[11px] font-bold text-on-primary-fixed-variant bg-primary-fixed px-2 py-1 rounded-md uppercase">Top-up</span>
+</td>
+<td class="px-6 py-5">
+<span class="font-metric-value text-lg text-success">GHâµ 500,000.00</span>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 bg-success/10 text-success px-3 py-1 rounded-full font-badge text-[11px]">
+<span class="w-1.5 h-1.5 bg-success rounded-full"></span>
+                                SUCCESSFUL
+                            </span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary hover:bg-primary/5 p-2 rounded-lg">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-table-hover cursor-pointer transition-colors">
+<td class="px-6 py-5">
+<p class="text-sm font-bold text-on-surface">Jun 14, 2026</p>
+<p class="text-[12px] text-secondary">04:15 PM</p>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-error/5 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px] text-error">smartphone</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Bulk Airtime - Sales Team</p>
+<p class="text-[12px] text-secondary">Ref: GHP-20260614-2210</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="text-[11px] font-bold text-on-secondary-fixed-variant bg-secondary-fixed px-2 py-1 rounded-md uppercase">Airtime</span>
+</td>
+<td class="px-6 py-5">
+<span class="font-metric-value text-lg text-primary">GHâµ 5,500.00</span>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 bg-surface-container-highest text-outline px-3 py-1 rounded-full font-badge text-[11px]">
+<span class="w-1.5 h-1.5 bg-outline rounded-full"></span>
+                                PENDING
+                            </span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="text-primary hover:bg-primary/5 p-2 rounded-lg">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-border-subtle">
+<span class="text-sm text-secondary font-nav-link">Showing 1 to 10 of 2,450 results</span>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-border-subtle hover:bg-surface-container text-secondary transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container text-secondary font-bold">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container text-secondary font-bold">3</button>
+<span class="px-2 text-secondary">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container text-secondary font-bold">245</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-border-subtle hover:bg-surface-container text-secondary transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Overlay backdrop -->
+<div class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-[60] hidden opacity-0 transition-opacity duration-300" id="overlay" onclick="toggleDetails()"></div>
+<!-- Right-side Slide-in Panel: Transaction Detail (HI-02) -->
+<aside class="fixed top-0 right-0 h-screen w-full md:w-[450px] bg-white shadow-2xl z-[70] transform translate-x-full transition-transform duration-300 ease-out flex flex-col" id="detailPanel">
+<div class="p-6 border-b border-border-subtle flex justify-between items-center">
+<h3 class="font-section-title text-primary">Transaction Detail</h3>
+<button class="p-2 hover:bg-surface-container rounded-full text-secondary transition-colors" onclick="toggleDetails()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+<!-- Receipt Header -->
+<div class="receipt-jagged-bottom p-8 text-center border-t border-x border-border-subtle rounded-t-2xl">
+<div class="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-symbols-outlined text-success text-[32px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h4 class="text-secondary uppercase tracking-[0.2em] font-bold text-[12px] mb-2">Payment Successful</h4>
+<p class="font-metric-value text-[32px] text-primary">GHâµ 45,200.00</p>
+<p class="text-sm text-secondary font-nav-link mt-1">Ref: GHP-20260616-4821</p>
+</div>
+<!-- Detail List -->
+<div class="space-y-4 pt-6">
+<div class="flex justify-between items-center">
+<span class="text-secondary text-sm">Recipient</span>
+<span class="font-bold text-on-surface text-sm">Employee Salaries (32 Employees)</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-secondary text-sm">Source Wallet</span>
+<span class="font-bold text-on-surface text-sm">Main Operational Account</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-secondary text-sm">Service Fee</span>
+<span class="font-bold text-on-surface text-sm">GHâµ 15.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-secondary text-sm">Total Amount</span>
+<span class="font-bold text-on-surface text-sm">GHâµ 45,215.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-secondary text-sm">Paid At</span>
+<span class="font-bold text-on-surface text-sm">16 Jun 2026, 02:45:12 PM</span>
+</div>
+</div>
+<!-- Timeline -->
+<div>
+<h4 class="font-bold text-primary text-sm mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+                    Status Timeline
+                </h4>
+<div class="relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-surface-container">
+<!-- Step 1 -->
+<div class="relative">
+<div class="absolute -left-8 w-6 h-6 bg-success rounded-full flex items-center justify-center border-4 border-white shadow-sm">
+<span class="material-symbols-outlined text-white text-[12px] font-bold">check</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Initiated</p>
+<p class="text-[12px] text-secondary">16 Jun 2026, 02:40 PM by Kofi Mensah</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative">
+<div class="absolute -left-8 w-6 h-6 bg-success rounded-full flex items-center justify-center border-4 border-white shadow-sm">
+<span class="material-symbols-outlined text-white text-[12px] font-bold">check</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Authorized</p>
+<p class="text-[12px] text-secondary">16 Jun 2026, 02:42 PM by Finance Lead</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="relative">
+<div class="absolute -left-8 w-6 h-6 bg-success rounded-full flex items-center justify-center border-4 border-white shadow-sm">
+<span class="material-symbols-outlined text-white text-[12px] font-bold">check</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Processing Complete</p>
+<p class="text-[12px] text-secondary">16 Jun 2026, 02:45 PM by GhanaPay System</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-border-subtle bg-surface-container-low flex flex-col gap-3">
+<button class="w-full bg-primary text-white py-3 rounded-xl font-nav-link flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">print</span>
+                Print Receipt
+            </button>
+<button class="w-full bg-white border border-border-subtle text-primary py-3 rounded-xl font-nav-link flex items-center justify-center gap-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">share</span>
+                Share Confirmation
+            </button>
+<button class="w-full text-error py-2 text-sm font-bold hover:bg-error-container/20 rounded-lg transition-colors">
+                Report an Issue
+            </button>
+</div>
+</aside>
+<script>
+        function toggleDetails() {
+            const panel = document.getElementById('detailPanel');
+            const overlay = document.getElementById('overlay');
+            
+            if (panel.classList.contains('translate-x-full')) {
+                panel.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+    </script>
+</body></html>

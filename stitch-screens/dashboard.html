@@ -1,0 +1,512 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GhanaPay Enterprise Portal - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Syne:wght@700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#ffe08e",
+                      "border-subtle": "#E8ECF0",
+                      "secondary": "#566065",
+                      "surface-bright": "#f6fafe",
+                      "surface-variant": "#dfe3e7",
+                      "admin-bg": "#0D1120",
+                      "on-primary-fixed-variant": "#3a3f8a",
+                      "inverse-primary": "#bfc2ff",
+                      "outline": "#777682",
+                      "secondary-container": "#dae4ea",
+                      "tertiary": "#755b00",
+                      "on-error": "#ffffff",
+                      "sidebar-active-light": "#ECEFFE",
+                      "on-surface": "#171c1f",
+                      "surface-tint": "#5257a3",
+                      "on-primary-fixed": "#090c5e",
+                      "surface-container-highest": "#dfe3e7",
+                      "table-hover": "#F5F7FF",
+                      "primary-fixed": "#e0e0ff",
+                      "error": "#C0392B",
+                      "inverse-surface": "#2c3134",
+                      "admin-accent": "#4A6CF7",
+                      "outline-variant": "#c7c5d2",
+                      "primary-fixed-dim": "#bfc2ff",
+                      "on-surface-variant": "#464651",
+                      "on-primary-container": "#858ada",
+                      "primary": "#020259",
+                      "tertiary-fixed-dim": "#ecc246",
+                      "on-error-container": "#93000a",
+                      "on-background": "#171c1f",
+                      "tertiary-container": "#cea62c",
+                      "on-tertiary-container": "#4f3d00",
+                      "on-secondary-fixed": "#131d21",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#584400",
+                      "primary-container": "#1b1f6b",
+                      "secondary-fixed-dim": "#bec8ce",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed": "#241a00",
+                      "success": "#1E8449",
+                      "surface-container": "#eaeef2",
+                      "on-secondary-fixed-variant": "#3f484d",
+                      "inverse-on-surface": "#edf1f5",
+                      "on-primary": "#ffffff",
+                      "surface": "#f6fafe",
+                      "on-secondary-container": "#5c666b",
+                      "surface-container-low": "#f0f4f8",
+                      "background": "#f6fafe",
+                      "on-tertiary": "#ffffff",
+                      "sidebar-light": "#F8F9FE",
+                      "secondary-fixed": "#dae4ea",
+                      "surface-dim": "#d6dade",
+                      "surface-container-high": "#e4e9ed",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "topnav-height": "64px",
+                      "gutter": "24px",
+                      "page-padding": "32px",
+                      "card-padding": "20px",
+                      "sidebar-width": "240px"
+              },
+              "fontFamily": {
+                      "sidebar-label": ["Inter"],
+                      "page-title-mobile": ["Inter"],
+                      "table-header": ["Inter"],
+                      "page-title": ["Inter"],
+                      "table-cell": ["Inter"],
+                      "nav-link": ["Inter"],
+                      "metric-value": ["Syne"],
+                      "section-title": ["Inter"],
+                      "badge": ["Inter"]
+              },
+              "fontSize": {
+                      "sidebar-label": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                      "page-title-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "700"}],
+                      "table-header": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "page-title": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                      "table-cell": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "nav-link": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "metric-value": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                      "section-title": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "badge": ["11px", {"lineHeight": "14px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f6fafe; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .kente-pattern {
+            background-image: radial-gradient(circle at 2px 2px, #1b1f6b 1px, transparent 0);
+            background-size: 24px 24px;
+            opacity: 0.03;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e0e0ff; border-radius: 10px; }
+        .chart-container { height: 300px; position: relative; }
+        .bar-hover:hover { filter: brightness(1.2); transition: all 0.2s; }
+    </style>
+</head>
+<body class="bg-background text-on-background overflow-hidden h-screen flex">
+<!-- Side Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-sidebar-light border-r border-border-subtle flex flex-col py-gutter z-50">
+<div class="px-6 mb-8">
+<h1 class="font-page-title text-page-title font-bold text-primary">GhanaPay</h1>
+<p class="text-[10px] uppercase tracking-widest text-secondary font-bold">Enterprise Portal</p>
+</div>
+<nav class="flex-1 overflow-y-auto custom-scrollbar px-2 space-y-1">
+<a class="flex items-center gap-3 bg-sidebar-active-light text-primary border-l-4 border-primary px-4 py-3 font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+                Send
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+                Bulk
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+                Bills
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="smartphone">smartphone</span>
+                Airtime
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="event_repeat">event_repeat</span>
+                Scheduled
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                Wallet
+            </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+                Transactions
+            </a>
+<div class="pt-4 mt-4 border-t border-border-subtle">
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                    Settings
+                </a>
+<a class="flex items-center gap-3 text-secondary hover:bg-surface-container px-4 py-3 transition-colors font-sidebar-label text-sidebar-label" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    Logout
+                </a>
+</div>
+</nav>
+</aside>
+<!-- Top Navigation -->
+<header class="fixed top-0 right-0 h-topnav-height w-[calc(100%-240px)] bg-surface border-b border-border-subtle shadow-sm flex justify-between items-center px-gutter z-40">
+<div class="flex items-center bg-surface-container-low rounded-full px-4 py-2 w-96">
+<span class="material-symbols-outlined text-secondary mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-outline" placeholder="Search transactions, bills, or users..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative hover:bg-surface-container-low rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined text-secondary" data-icon="help">help</span>
+</button>
+<button class="relative hover:bg-surface-container-low rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined text-secondary" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-8 w-[1px] bg-border-subtle"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-sm font-bold text-primary">Abena Mansa</p>
+<p class="text-[10px] text-secondary">GhanaPay Admin</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary-fixed overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional corporate headshot of a female executive in a modern bright office with subtle blue and white dÃ©cor. The lighting is crisp and clean, reflecting a high-trust fintech atmosphere. The woman has a friendly but professional expression, wearing elegant business attire." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA35EWdgrLzolHM49xdW943V7-t7REoogBZVAid_0nYUbUzhZB4MRI88OZ8U6pxYfXY_66mmSgbAG-mbHWyFwJVFw8gdrIlHz06Axqdj7ZMR5kz4puxJWkHcQ99oYj_fbDxIU1mSvgDkP29i_mh3pB1nhB47gXRyMpW7go3JPcVEreJPH8jDtAHA4f6DfoHXB12gg3PEfplhEVpQ5fqU-47DKWx1hITEB19yj42h9ZtOGcSmf0wtwQkih4e7vV6NlbTRCvxM93lHs"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[240px] mt-[64px] flex-1 overflow-y-auto p-page-padding relative">
+<div class="absolute inset-0 kente-pattern pointer-events-none"></div>
+<!-- Greeting -->
+<div class="mb-8 flex justify-between items-end relative z-10">
+<div>
+<h2 class="font-page-title text-page-title text-primary">Good morning, Abena ð</h2>
+<p class="text-secondary font-medium">Thursday, October 24, 2024</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-primary-container transition-all active:scale-95 shadow-md">
+<span class="material-symbols-outlined text-sm" data-icon="add_circle">add_circle</span>
+                New Transaction
+            </button>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 relative z-10">
+<div class="bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-5xl" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<p class="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Wallet Balance</p>
+<p class="font-metric-value text-metric-value text-primary leading-tight">âµ4,250.00</p>
+<div class="mt-4 flex items-center text-success text-xs font-bold">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="trending_up">trending_up</span>
+                    12% increase from last month
+                </div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle group">
+<p class="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Sent Today</p>
+<p class="font-metric-value text-metric-value text-primary leading-tight">âµ1,820.00</p>
+<div class="mt-4 flex items-center text-secondary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary mr-2"></span>
+                    24 transactions today
+                </div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle group">
+<p class="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Received Today</p>
+<p class="font-metric-value text-metric-value text-primary leading-tight">âµ2,440.50</p>
+<div class="mt-4 flex items-center text-success text-xs font-bold">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="call_received">call_received</span>
+                    High volume alert
+                </div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle group">
+<p class="text-secondary font-semibold text-xs uppercase tracking-wider mb-2">Saved This Month</p>
+<p class="font-metric-value text-metric-value text-primary leading-tight">âµ620.00</p>
+<div class="mt-4 flex items-center text-tertiary text-xs font-bold">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="savings">savings</span>
+                    82% of monthly goal
+                </div>
+</div>
+</div>
+<!-- Row 2: Quick Actions & Recent Activity -->
+<div class="grid grid-cols-12 gap-6 mb-8 relative z-10">
+<!-- Quick Actions -->
+<div class="col-span-12 lg:col-span-7 bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-section-title text-section-title text-primary">Quick Actions</h3>
+<button class="text-primary font-semibold text-sm flex items-center">
+                        Edit <span class="material-symbols-outlined text-sm ml-1" data-icon="edit">edit</span>
+</button>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<button class="flex flex-col items-center justify-center p-6 rounded-lg bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</div>
+<span class="text-sm font-bold text-primary">Send Money</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 rounded-lg bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="request_quote">request_quote</span>
+</div>
+<span class="text-sm font-bold text-primary">Request</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 rounded-lg bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+</div>
+<span class="text-sm font-bold text-primary">Pay Bills</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 rounded-lg bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="smartphone">smartphone</span>
+</div>
+<span class="text-sm font-bold text-primary">Airtime</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 rounded-lg bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="layers">layers</span>
+</div>
+<span class="text-sm font-bold text-primary">Bulk Pay</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 rounded-lg bg-surface border border-border-subtle hover:border-primary hover:bg-sidebar-active-light transition-all group">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="add_card">add_card</span>
+</div>
+<span class="text-sm font-bold text-primary">Add Money</span>
+</button>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-section-title text-section-title text-primary">Recent Activity</h3>
+<a class="text-primary font-semibold text-sm" href="#">View All</a>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-primary font-bold flex items-center justify-center">KW</div>
+<div>
+<p class="text-sm font-bold text-primary">Kofi Wiredu</p>
+<p class="text-[11px] text-secondary">Today, 09:42 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-error">- âµ450.00</p>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-error-container text-error font-bold uppercase tracking-wider">Failed</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-tertiary font-bold flex items-center justify-center">YA</div>
+<div>
+<p class="text-sm font-bold text-primary">Yaa Adomako</p>
+<p class="text-[11px] text-secondary">Today, 08:15 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-success">+ âµ1,200.00</p>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-primary-fixed text-primary font-bold uppercase tracking-wider">Success</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-secondary font-bold flex items-center justify-center">EC</div>
+<div>
+<p class="text-sm font-bold text-primary">ECG Payment</p>
+<p class="text-[11px] text-secondary">Yesterday, 11:30 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-error">- âµ180.00</p>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-primary-fixed text-primary font-bold uppercase tracking-wider">Success</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container font-bold flex items-center justify-center">MT</div>
+<div>
+<p class="text-sm font-bold text-primary">MTN Airtime</p>
+<p class="text-[11px] text-secondary">Yesterday, 04:20 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-error">- âµ50.00</p>
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-primary-fixed text-primary font-bold uppercase tracking-wider">Success</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 3: Spending Chart -->
+<div class="bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle mb-8 relative z-10">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="font-section-title text-section-title text-primary">Spending This Month</h3>
+<p class="text-secondary text-sm">Compared to last month's performance</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-xs font-bold text-primary uppercase">Current Month</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-0.5 bg-tertiary-container border-t border-dashed border-tertiary"></span>
+<span class="text-xs font-bold text-primary uppercase">Last Month</span>
+</div>
+<select class="bg-surface border border-border-subtle rounded-md text-xs font-bold text-primary px-3 py-1.5 focus:ring-0">
+<option>Monthly</option>
+<option>Weekly</option>
+</select>
+</div>
+</div>
+<div class="chart-container flex items-end justify-between px-4 pb-8">
+<!-- Grid Lines -->
+<div class="absolute inset-x-0 top-0 h-full flex flex-col justify-between pointer-events-none px-4">
+<div class="w-full border-t border-border-subtle h-0"></div>
+<div class="w-full border-t border-border-subtle h-0"></div>
+<div class="w-full border-t border-border-subtle h-0"></div>
+<div class="w-full border-t border-border-subtle h-0"></div>
+<div class="w-full border-b border-border-subtle h-0"></div>
+</div>
+<!-- Comparison Line (Visual Mockup) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible" preserveaspectratio="none">
+<path d="M 0 180 Q 200 120, 400 160 T 800 140 T 1200 100" fill="none" stroke="#cea62c" stroke-dasharray="6 4" stroke-width="2"></path>
+</svg>
+<!-- Bars -->
+<div class="flex flex-col items-center gap-2 w-16 relative">
+<div class="w-8 bg-primary rounded-t-sm bar-hover" style="height: 120px"></div>
+<span class="text-[10px] font-bold text-secondary">WK 01</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16 relative">
+<div class="w-8 bg-primary rounded-t-sm bar-hover" style="height: 190px"></div>
+<span class="text-[10px] font-bold text-secondary">WK 02</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16 relative">
+<div class="w-8 bg-primary rounded-t-sm bar-hover" style="height: 150px"></div>
+<span class="text-[10px] font-bold text-secondary">WK 03</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16 relative">
+<div class="w-8 bg-primary rounded-t-sm bar-hover" style="height: 240px"></div>
+<span class="text-[10px] font-bold text-secondary text-primary">WK 04</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-16 relative">
+<div class="w-8 bg-primary/20 rounded-t-sm" style="height: 80px"></div>
+<span class="text-[10px] font-bold text-outline">WK 05</span>
+</div>
+</div>
+</div>
+<!-- Row 4: AI Insights & Linked Accounts -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+<!-- AI Insights Card -->
+<div class="bg-primary-container p-card-padding rounded-xl shadow-lg border border-primary/20 text-white relative overflow-hidden group">
+<div class="absolute -right-8 -bottom-8 w-48 h-48 bg-tertiary/20 rounded-full blur-3xl group-hover:scale-125 transition-transform"></div>
+<div class="flex items-start gap-4 relative">
+<div class="p-3 rounded-lg bg-white/10 backdrop-blur-md">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-bold text-lg mb-1">GhanaPay AI Insight</h4>
+<p class="text-on-primary-container text-sm leading-relaxed mb-4">
+                            You've spent <span class="font-bold text-white">âµ200 more</span> on Utility bills this month compared to average. Consider setting a transaction limit for the <span class="font-bold text-white">ECG</span> category.
+                        </p>
+<button class="bg-white text-primary px-4 py-2 rounded-lg text-xs font-bold hover:bg-surface-container-low transition-colors">
+                            Manage Limits
+                        </button>
+</div>
+</div>
+</div>
+<!-- Linked Accounts -->
+<div class="bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-border-subtle">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-section-title text-section-title text-primary">Linked Accounts</h3>
+<button class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg border border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-10 h-6 bg-primary rounded-sm flex items-center justify-center">
+<span class="text-[8px] text-white font-bold">GCB</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">GCB Bank Savings</p>
+<p class="text-[10px] text-secondary">**** 8821</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="more_vert">more_vert</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg border border-border-subtle">
+<div class="flex items-center gap-3">
+<div class="w-10 h-6 bg-error rounded-sm flex items-center justify-center">
+<span class="text-[8px] text-white font-bold">ABSA</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">ABSA Corporate Card</p>
+<p class="text-[10px] text-secondary">**** 4410</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Info -->
+<div class="mt-12 text-center text-outline text-[11px] pb-8">
+<p>Licensed and Regulated by the Bank of Ghana. Â© 2024 GhanaPay Enterprise.</p>
+</div>
+</main>
+<script>
+        // Micro-interactions and Lightweight Atmospheric Effects
+        document.querySelectorAll('.bar-hover').forEach(bar => {
+            bar.addEventListener('mouseenter', () => {
+                bar.classList.add('scale-x-110');
+            });
+            bar.addEventListener('mouseleave', () => {
+                bar.classList.remove('scale-x-110');
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchContainer = searchInput.parentElement;
+        searchInput.addEventListener('focus', () => {
+            searchContainer.classList.add('ring-2', 'ring-primary/20', 'bg-white');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchContainer.classList.remove('ring-2', 'ring-primary/20', 'bg-white');
+        });
+    </script>
+</body></html>
