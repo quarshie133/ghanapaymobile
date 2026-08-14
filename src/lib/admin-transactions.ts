@@ -2,10 +2,14 @@ import { adminDb } from "./firebase-admin";
 import type { WalletTransactionDoc } from "./wallet-ledger";
 
 /**
- * SERVER-ONLY, admin-only. Lists real wallet transactions across ALL
- * users (was TRANSACTIONS from mock-data.ts before — fabricated rows with
- * no connection to anything that actually happened). Enriches each row
- * with the owning user's name, since walletTransactions only stores uid.
+ * SERVER-ONLY, admin-only.
+ *
+ * Lists real wallet transactions across all users.
+ * Previously, transactions came from mock-data.ts and were fabricated
+ * rather than connected to actual wallet activity.
+ *
+ * Each transaction is enriched with the owning user's name because
+ * walletTransactions stores only the user's UID.
  */
 
 export interface AdminTransactionRow extends WalletTransactionDoc {
